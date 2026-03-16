@@ -124,7 +124,28 @@
     .nav-btn.active { color: var(--primary); }
     .nav-btn.active i { transform: translateY(-4px); }
 
+
+    /* Destkop Responsiveness */
+    @media (min-width: 900px) {
+      body { flex-direction: row; }
+      
+      .bottom-nav {
+        position: sticky; top: 0; left: 0; width: 250px; height: 100vh;
+        flex-direction: column; justify-content: flex-start; align-items: flex-start;
+        padding: 40px 24px; border-top: none; border-right: 1px solid var(--glass-border);
+      }
+      .nav-btn {
+        flex-direction: row; font-size: 1rem; padding: 16px; width: 100%; gap: 16px;
+        border-radius: 12px; margin-bottom: 8px; justify-content: flex-start;
+      }
+      .nav-btn.active { background: rgba(0, 242, 96, 0.1); }
+      .nav-btn.active i { transform: translateY(0); }
+      
+      .main-content { padding: 40px 50px; max-width: 1200px; }
+      .app-header { display: none; } /* Hide mobile header on desktop for main dashboard */
+    }
   </style>
+
   <script>
     const savedTheme = localStorage.getItem('theme') || 'light';
     document.documentElement.setAttribute('data-theme', savedTheme);
@@ -212,7 +233,7 @@
     </a>
   </nav>
 
-  <button class="theme-toggle" onclick="toggleTheme()" style="position: fixed; bottom: 90px; right: 24px; z-index: 9999; background: var(--bg-surface); border: 1px solid var(--glass-border); color: var(--text-main); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--glass-shadow); transition: 0.3s; font-size: 1.2rem;">
+  <button class="theme-toggle" onclick="toggleTheme()" style="position: fixed; bottom: 30px; right: 24px; z-index: 9999; background: var(--bg-surface); border: 1px solid var(--glass-border); color: var(--text-main); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--glass-shadow); transition: 0.3s; font-size: 1.2rem;">
     <i class="fa-solid fa-moon"></i>
   </button>
   <script>

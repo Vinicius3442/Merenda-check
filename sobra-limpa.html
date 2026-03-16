@@ -116,7 +116,23 @@
     }
     .btn-submit:hover { transform: translateY(-3px); }
 
+
+    /* Desktop Responsiveness */
+    @media (min-width: 900px) {
+      .main-content { padding: 60px 40px; max-width: 800px; }
+      .app-header { padding: 20px 50px; }
+      
+      .form-box, .scanner-box, .camera-frame { padding: 50px; border-radius: 30px; }
+      .camera-frame { height: 500px; }
+      
+      .type-grid { gap: 30px; }
+      .type-btn { padding: 24px; font-size: 1.2rem; }
+      .type-btn i { font-size: 2.5rem; }
+      
+      .btn-submit { padding: 20px; font-size: 1.2rem; }
+    }
   </style>
+
   <script>
     const savedTheme = localStorage.getItem('theme') || 'light';
     document.documentElement.setAttribute('data-theme', savedTheme);
@@ -206,5 +222,25 @@
       }, 1500);
     }
   </script>
+
+  <button class="theme-toggle" onclick="toggleTheme()" style="position: fixed; bottom: 30px; right: 30px; z-index: 9999; background: var(--bg-surface); border: 1px solid var(--glass-border); color: var(--text-main); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--glass-shadow); transition: 0.3s; font-size: 1.2rem;">
+    <i class="fa-solid fa-moon"></i>
+  </button>
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      const icon = document.querySelector('.theme-toggle i');
+      if(icon) icon.className = isDark ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+      localStorage.setItem('theme', isDark ? 'light' : 'dark');
+    }
+    window.addEventListener('DOMContentLoaded', () => {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const icon = document.querySelector('.theme-toggle i');
+      if(icon) icon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+    });
+  </script>
 </body>
+
 </html>

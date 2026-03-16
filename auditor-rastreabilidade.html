@@ -4,71 +4,196 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Rastreabilidade | Merenda Check</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
   <style>
-    :root {
-      --primary-green: #059669; --sidebar-bg: #0f172a; --bg-body: #f1f5f9;
-      --text-main: #1e293b; --border-light: #e2e8f0;
+            :root {
+      --primary: #059669; --primary-dark: #047857;
+      --bg-base: #ffffff; --bg-surface: #f8fafc;
+      --text-main: #0f172a; --text-muted: #64748b;
+      --glass-border: rgba(0, 0, 0, 0.1);
+      --glass-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --neon-glow: 0 4px 12px rgba(5, 150, 105, 0.2);
+      --alert-red: #ef4444; --alert-red-glow: 0 4px 12px rgba(239, 68, 68, 0.3);
+      --alert-yellow: #f59e0b;
+      --input-bg: rgba(0, 0, 0, 0.05);
+      --card-bg: #ffffff;
+    }
+    [data-theme="dark"] {
+      --primary: #00f260; --primary-dark: #0575e6;
+      --bg-base: #030712; --bg-surface: rgba(17, 24, 39, 0.7);
+      --text-main: #f9fafb; --text-muted: #9ca3af;
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      --neon-glow: 0 0 20px rgba(0, 242, 96, 0.4);
+      --alert-red: #ef4444; --alert-red-glow: 0 0 20px rgba(239, 68, 68, 0.4);
+      --alert-yellow: #facc15;
+      --input-bg: rgba(0, 0, 0, 0.5);
+      --card-bg: rgba(255, 255, 255, 0.03);
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: "Poppins", sans-serif; background: var(--bg-body); display: flex; min-height: 100vh; }
     
-    .sidebar { width: 280px; background: var(--sidebar-bg); padding: 24px; color: #94a3b8; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; }
-    .menu-item { padding: 12px 16px; border-radius: 8px; color: inherit; font-weight: 500; display: flex; align-items: center; gap: 12px; text-decoration: none; margin-bottom: 4px; }
-    .menu-item.active { background: linear-gradient(135deg, #059669, #10b981); color: #fff; }
+    body {
+      font-family: 'Outfit', sans-serif; background-color: var(--bg-base); color: var(--text-main);
+      display: flex; min-height: 100vh; overflow-x: hidden;
+    }
 
-    .main-content { flex: 1; padding: 40px; }
+    /* Comando Center Grid background */
+    .bg-grid {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2;
+      background-image: 
+        linear-gradient(var(--glass-border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--glass-border) 1px, transparent 1px);
+      background-size: 50px 50px;
+      perspective: 1000px;
+    }
+    .bg-glow {
+      position: fixed; top: -20%; right: -10%; width: 60vw; height: 60vw; border-radius: 50%;
+      background: radial-gradient(circle, rgba(5, 117, 230, 0.1) 0%, transparent 60%); z-index: -1;
+    }
+
+    /* Utilitários */
+    .btn {
+      padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 0.95rem; text-decoration: none;
+      border: 1px solid var(--glass-border); cursor: pointer; transition: 0.3s;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--glass-border); color: var(--text-main);
+    }
+    .btn:hover { background: rgba(255,255,255,0.1); }
+    .btn.primary { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: var(--bg-base); border: none; }
+    .btn.primary:hover { box-shadow: var(--neon-glow); color: var(--text-main); }
+
+    /* Sidebar Glass */
+    .sidebar {
+      width: 280px; background: var(--bg-surface); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border-right: 1px solid var(--glass-border); padding: 32px 24px; display: flex; flex-direction: column; height: 100vh; position: sticky; top: 0;
+      box-shadow: 10px 0 30px rgba(0,0,0,0.5); z-index: 10;
+    }
+    .logo { display: flex; align-items: center; font-weight: 800; font-size: 1.6rem; color: var(--text-main); margin-bottom: 40px; letter-spacing: -0.5px;}
+    .logo i {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-right: 10px; font-size: 1.4rem;
+    }
+    
+    .menu-label { font-size: 0.75rem; text-transform: uppercase; color: #475569; font-weight: 700; margin-bottom: 16px; letter-spacing: 1.5px; }
+    .menu { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+    .menu-item {
+      padding: 12px 16px; border-radius: 8px; color: var(--text-muted); text-decoration: none;
+      font-weight: 500; transition: 0.2s; display: flex; align-items: center; gap: 12px; border: 1px solid transparent;
+    }
+    .menu-item:hover { background: var(--glass-border); color: var(--text-main); }
+    .menu-item.active { background: rgba(0, 242, 96, 0.1); color: var(--primary); border-color: rgba(0, 242, 96, 0.2); }
+    
+    .auditor-profile {
+      margin-top: auto; padding: 16px; border-radius: 12px; background: var(--glass-border); border: 1px solid var(--glass-border);
+      display: flex; align-items: center; gap: 12px;
+    }
+
+    /* Main Content */
+    .main-content { flex: 1; padding: 40px 50px; overflow-y: auto; }
     
     /* Busca Foda */
-    .search-section { background: #fff; padding: 40px; border-radius: 24px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 32px; }
-    .search-box { display: flex; max-width: 600px; margin: 24px auto; background: #f1f5f9; padding: 8px; border-radius: 50px; border: 2px solid transparent; transition: 0.3s; }
-    .search-box:focus-within { border-color: var(--primary-green); background: #fff; box-shadow: 0 0 20px rgba(5,150,105,0.1); }
-    .search-box input { flex: 1; border: none; background: transparent; padding: 0 20px; font-size: 1rem; outline: none; }
-    .btn-search { background: var(--primary-green); color: #fff; border: none; padding: 12px 28px; border-radius: 50px; font-weight: 700; cursor: pointer; }
+    .search-section { background: var(--bg-surface); padding: 40px; border-radius: 24px; text-align: center; box-shadow: var(--glass-shadow); border: 1px solid var(--glass-border); backdrop-filter: blur(10px); margin-bottom: 40px; }
+    .search-section h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 8px; }
+    .search-section p { color: var(--text-muted); font-size: 1.1rem; }
+    
+    .search-box { display: flex; max-width: 600px; margin: 30px auto 0; background: rgba(0,0,0,0.4); padding: 8px; border-radius: 50px; border: 1px solid var(--glass-border); transition: 0.3s; align-items: center;}
+    .search-box:focus-within { border-color: var(--primary); box-shadow: 0 0 20px rgba(0,242,96,0.15); }
+    .search-box input { flex: 1; border: none; background: transparent; padding: 0 20px; font-size: 1.1rem; outline: none; color: var(--text-main); font-family: inherit; }
+    .search-box input::placeholder { color: var(--text-muted); }
+    .btn-search { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: var(--bg-base); border: none; padding: 14px 32px; border-radius: 50px; font-weight: 700; cursor: pointer; transition: 0.3s; font-size: 1rem; }
+    .btn-search:hover { box-shadow: var(--neon-glow); color: var(--text-main); }
 
-    .timeline-card { background: #fff; padding: 30px; border-radius: 16px; border: 1px solid var(--border-light); max-width: 700px; margin: 0 auto; }
-    .timeline-item { position: relative; padding-left: 30px; border-left: 2px solid var(--border-light); padding-bottom: 30px; }
-    .timeline-item::before { content: ''; position: absolute; left: -9px; top: 0; width: 16px; height: 16px; border-radius: 50%; background: var(--primary-green); border: 4px solid #fff; }
-    .timeline-item:last-child { border-left-color: transparent; }
+    /* Timeline */
+    .timeline-card { background: var(--bg-surface); padding: 40px; border-radius: 24px; border: 1px solid var(--glass-border); max-width: 800px; margin: 0 auto; backdrop-filter: blur(10px); box-shadow: var(--glass-shadow); }
+    .timeline-card h3 { font-size: 1.5rem; margin-bottom: 30px; font-weight: 700; display: flex; align-items: center; gap: 12px; }
+    
+    .timeline { position: relative; padding-left: 30px; }
+    .timeline::before { content: ''; position: absolute; left: 4px; top: 10px; width: 2px; height: calc(100% - 20px); background: var(--glass-border); }
+    
+    .timeline-item { position: relative; margin-bottom: 40px; }
+    .timeline-item:last-child { margin-bottom: 0; }
+    .timeline-icon { position: absolute; left: -32px; top: 0; width: 16px; height: 16px; border-radius: 50%; background: var(--bg-base); border: 2px solid var(--primary); box-shadow: var(--neon-glow); z-index: 2; }
+    
+    .timeline-content h4 { font-size: 1.1rem; color: var(--text-main); font-weight: 700; margin-bottom: 4px;}
+    .timeline-content p { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 8px;}
+    .timeline-content .timestamp { font-family: monospace; font-size: 0.85rem; color: #475569; padding: 4px 8px; background: var(--glass-border); border-radius: 4px; display: inline-block;}
   </style>
+  <script>
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  </script>
 </head>
 <body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+
   <aside class="sidebar">
-    <div class="logo" style="font-weight: 800; font-size: 1.5rem; color: #fff; margin-bottom: 40px;">Merenda Check</div>
-    <nav>
+    <a href="index.html" class="logo" style="text-decoration: none;">
+            <svg width="40" height="40" viewBox="0 0 100 100" fill="none" stroke="var(--primary)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 12px; vertical-align: middle;">
+        <path d="M 20 80 V 20 L 50 50 L 80 20 V 80" />
+        <path d="M 35 60 L 50 75 L 85 30" stroke-width="14" stroke="var(--text-main)" />
+      </svg>
+      <span style="color: var(--text-main);">Merenda Check</span>
+    </a>
+    
+    <div class="menu-label">Malha Fina & Auditoria</div>
+    <nav class="menu">
       <a href="auditor.html" class="menu-item"><i class="fa-solid fa-chart-line"></i> Visão Global</a>
+      <a href="auditor-rastreabilidade.html" class="menu-item active"><i class="fa-solid fa-magnifying-glass-chart"></i> Rastreabilidade FIFO</a>
       <a href="auditor-escolas.html" class="menu-item"><i class="fa-solid fa-building-columns"></i> Escolas da Rede</a>
-      <a href="#" class="menu-item active"><i class="fa-solid fa-magnifying-glass-chart"></i> Rastreabilidade</a>
+      <a href="login.html" class="menu-item" style="color: #ef4444; margin-top: 20px;"><i class="fa-solid fa-power-off"></i> Encerrar Operação</a>
     </nav>
+
+    <div class="auditor-profile">
+      <i class="fa-solid fa-user-shield" style="font-size: 1.8rem; color: var(--primary);"></i>
+      <div>
+        <h4 style="font-size: 0.95rem; margin: 0; color: var(--text-main); font-weight: 700;">Auditor Chefe</h4>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">Acesso Global AES-256</span>
+      </div>
+    </div>
   </aside>
 
   <main class="main-content">
     <div class="search-section">
-      <h1>Rastreabilidade Track & Trace</h1>
-      <p style="color: #64748b;">Digite o número do Lote ou Nota Fiscal para ver a jornada do alimento.</p>
+      <h1><i class="fa-solid fa-qrcode" style="color: var(--primary);"></i> Track & Trace Criptográfico</h1>
+      <p>Digite o número do Lote ou Nota Fiscal para ver a jornada hiper-rastreável do alimento.</p>
       <div class="search-box">
         <input type="text" placeholder="Ex: LOTE-4920 ou NF-99823..." id="searchInput">
-        <button class="btn-search" onclick="buscar()">Rastrear</button>
+        <button class="btn-search" onclick="buscar()"><i class="fa-solid fa-satellite-dish"></i> Rastrear</button>
       </div>
     </div>
 
     <div id="resultado" class="timeline-card" style="display:none;">
-      <h3 style="margin-bottom: 24px;">Resultado para: <span id="tagBusca" style="color:var(--primary-green)"></span></h3>
-      <div class="timeline-item">
-        <h4 style="color:var(--primary-green)">Entrada no Município</h4>
-        <p style="font-size: 0.9rem;">Recebido do Fornecedor: <strong>Alimentos S/A</strong></p>
-        <span style="font-size: 0.8rem; color: #94a3b8;">10 Março, 2026 - 08:22</span>
-      </div>
-      <div class="timeline-item">
-        <h4>Envio para Escola</h4>
-        <p style="font-size: 0.9rem;">Destino: <strong>EMEF João Silva</strong></p>
-        <span style="font-size: 0.8rem; color: #94a3b8;">12 Março, 2026 - 14:10</span>
-      </div>
-      <div class="timeline-item" style="border-left-color: transparent;">
-        <h4>Consumo Registrado</h4>
-        <p style="font-size: 0.9rem;">Baixa de 15kg para 300 alunos.</p>
-        <span style="font-size: 0.8rem; color: #94a3b8;">Hoje - 11:45</span>
+      <h3><i class="fa-solid fa-fingerprint" style="color: var(--primary);"></i> Resultado de Busca: <span id="tagBusca" style="color: var(--text-main); font-family: monospace; background: rgba(255,255,255,0.1); padding: 4px 12px; border-radius: 8px;"></span></h3>
+      
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-icon"></div>
+          <div class="timeline-content">
+            <h4 style="color: var(--primary);">Entrada no Sistema (Origem)</h4>
+            <p>Recebido do Fornecedor: <strong>Alimentos S/A</strong>. Inspeção aprovada.</p>
+            <span class="timestamp">10-MAR-2026 08:22:45 UTC-3</span>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-icon"></div>
+          <div class="timeline-content">
+            <h4>Transferência Inter-Nós (FIFO)</h4>
+            <p>Lote transferido logisticamente para: <strong>EMEF João Silva</strong>.</p>
+            <span class="timestamp">12-MAR-2026 14:10:12 UTC-3</span>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-icon"></div>
+          <div class="timeline-content">
+            <h4>Consumo Autenticado</h4>
+            <p>Baixa orgânica registrada. Sistema reportou consumo para 300 alunos (15kg).</p>
+            <span class="timestamp">Hoje 11:45:00 UTC-3</span>
+          </div>
+        </div>
       </div>
     </div>
   </main>
@@ -80,6 +205,24 @@
       document.getElementById('tagBusca').innerText = val;
       document.getElementById('resultado').style.display = 'block';
     }
+  </script>
+  <button class="theme-toggle" onclick="toggleTheme()" style="position: fixed; bottom: 30px; right: 30px; z-index: 9999; background: var(--bg-surface); border: 1px solid var(--glass-border); color: var(--text-main); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--glass-shadow); transition: 0.3s; font-size: 1.2rem;">
+    <i class="fa-solid fa-moon"></i>
+  </button>
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      const icon = document.querySelector('.theme-toggle i');
+      if(icon) icon.className = isDark ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+      localStorage.setItem('theme', isDark ? 'light' : 'dark');
+    }
+    window.addEventListener('DOMContentLoaded', () => {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const icon = document.querySelector('.theme-toggle i');
+      if(icon) icon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+    });
   </script>
 </body>
 </html>

@@ -10,16 +10,29 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 
   <style>
-    :root {
-      --primary: #00f260;
-      --primary-dark: #0575e6;
-      --bg-base: #030712;
-      --bg-surface: rgba(17, 24, 39, 0.7);
-      --text-main: #f9fafb;
-      --text-muted: #9ca3af;
+            :root {
+      --primary: #059669; --primary-dark: #047857;
+      --bg-base: #ffffff; --bg-surface: #f8fafc;
+      --text-main: #0f172a; --text-muted: #64748b;
+      --glass-border: rgba(0, 0, 0, 0.1);
+      --glass-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --neon-glow: 0 4px 12px rgba(5, 150, 105, 0.2);
+      --alert-red: #ef4444; --alert-red-glow: 0 4px 12px rgba(239, 68, 68, 0.3);
+      --alert-yellow: #f59e0b;
+      --input-bg: rgba(0, 0, 0, 0.05);
+      --card-bg: #ffffff;
+    }
+    [data-theme="dark"] {
+      --primary: #00f260; --primary-dark: #0575e6;
+      --bg-base: #030712; --bg-surface: rgba(17, 24, 39, 0.7);
+      --text-main: #f9fafb; --text-muted: #9ca3af;
       --glass-border: rgba(255, 255, 255, 0.08);
       --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
       --neon-glow: 0 0 20px rgba(0, 242, 96, 0.4);
+      --alert-red: #ef4444; --alert-red-glow: 0 0 20px rgba(239, 68, 68, 0.4);
+      --alert-yellow: #facc15;
+      --input-bg: rgba(0, 0, 0, 0.5);
+      --card-bg: rgba(255, 255, 255, 0.03);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -53,7 +66,7 @@
     /* Navigation */
     header {
       position: fixed; width: 100%; top: 0; z-index: 1000;
-      background: rgba(3, 7, 18, 0.6);
+      background: var(--bg-surface);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--glass-border);
@@ -102,12 +115,12 @@
     }
 
     .btn.primary {
-      color: #000; border: none; font-weight: 700;
+      color: var(--bg-base); border: none; font-weight: 700;
     }
     .btn.primary::before { opacity: 1; }
     .btn.primary:hover {
       box-shadow: var(--neon-glow); transform: translateY(-3px);
-      color: #fff;
+      color: var(--text-main);
     }
 
     .btn.ghost {
@@ -115,7 +128,7 @@
     }
     .btn.ghost::before { opacity: 0; }
     .btn.ghost:hover {
-      border-color: transparent; color: #fff; box-shadow: var(--neon-glow);
+      border-color: transparent; color: var(--text-main); box-shadow: var(--neon-glow);
     }
     .btn.ghost:hover::before { opacity: 1; }
 
@@ -145,7 +158,7 @@
     }
     
     .highlight-text {
-      background: linear-gradient(135deg, #fff, #9ca3af);
+      background: linear-gradient(135deg, var(--text-main), var(--text-muted));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       display: block;
     }
@@ -194,7 +207,7 @@
     }
     
     .mockup-alert {
-      background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2);
+      background: var(--alert-red-glow); border: 1px solid rgba(239, 68, 68, 0.2);
       padding: 20px; border-radius: 16px; display: flex; gap: 16px;
       align-items: flex-start; backdrop-filter: blur(10px);
       transform: translateZ(30px); /* 3D pop effect */
@@ -240,7 +253,7 @@
     .bento-card p { color: var(--text-muted); font-size: 1.1rem; line-height: 1.5; }
 
     /* Metric Section */
-    .metrics { padding: 120px 0; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); background: rgba(3, 7, 18, 0.3); }
+    .metrics { padding: 120px 0; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); background: var(--bg-surface); }
     .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; text-align: center; }
     .metric-value { font-size: 5rem; font-weight: 900; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; margin-bottom: 10px; }
     .metric-label { font-size: 1.2rem; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 2px; }
@@ -257,6 +270,10 @@
 
     footer { padding: 60px 0; text-align: center; color: var(--text-muted); font-size: 0.9rem; }
   </style>
+  <script>
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  </script>
 </head>
 <body>
 
@@ -264,9 +281,13 @@
 
   <header id="header">
     <div class="container nav-container">
-      <div class="logo">
-        <i class="fa-solid fa-bolt logo-icon"></i> Merenda Check
-      </div>
+      <a href="index.html" class="logo" style="text-decoration: none;">
+            <svg width="40" height="40" viewBox="0 0 100 100" fill="none" stroke="var(--primary)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 12px; vertical-align: middle;">
+        <path d="M 20 80 V 20 L 50 50 L 80 20 V 80" />
+        <path d="M 35 60 L 50 75 L 85 30" stroke-width="14" stroke="var(--text-main)" />
+      </svg>
+      <span style="color: var(--text-main);">Merenda Check</span>
+    </a>
       <nav class="nav-links">
         <a href="#solucao">A Solução</a>
         <a href="#impacto">Métricas</a>
@@ -305,7 +326,7 @@
           <div class="mockup-alert" style="margin-bottom: 20px;">
             <div class="alert-icon" style="background: rgba(0, 242, 96, 0.2); color: var(--primary);"><i class="fa-solid fa-check"></i></div>
             <div>
-              <h4 style="color: #fff; margin-bottom: 4px; font-size: 1.1rem;">Lote de Polpa de Fruta Aprovado</h4>
+              <h4 style="color: var(--text-main); margin-bottom: 4px; font-size: 1.1rem;">Lote de Polpa de Fruta Aprovado</h4>
               <p style="color: var(--text-muted); font-size: 0.9rem;">Recebimento confirmado via leitura de código QR. Regra FIFO aplicada.</p>
             </div>
           </div>
@@ -370,9 +391,13 @@
 
   <footer>
     <div class="container">
-      <div class="logo" style="justify-content: center; margin-bottom: 20px; font-size: 1.5rem;">
-        <i class="fa-solid fa-bolt logo-icon"></i> Merenda Check
-      </div>
+      <a href="index.html" class="logo" style="text-decoration: none; justify-content: center; margin-bottom: 20px; font-size: 1.5rem; display: flex; align-items: center;">
+            <svg width="40" height="40" viewBox="0 0 100 100" fill="none" stroke="var(--primary)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 12px; vertical-align: middle;">
+        <path d="M 20 80 V 20 L 50 50 L 80 20 V 80" />
+        <path d="M 35 60 L 50 75 L 85 30" stroke-width="14" stroke="var(--text-main)" />
+      </svg>
+      <span style="color: var(--text-main);">Merenda Check</span>
+    </a>
       <p>&copy; 2026 Inteligência GovTech. Arquitetado para a excelência pública.</p>
     </div>
   </footer>
@@ -382,12 +407,30 @@
     window.addEventListener('scroll', () => {
       const header = document.getElementById('header');
       if (window.scrollY > 50) {
-        header.style.background = 'rgba(3, 7, 18, 0.85)';
-        header.style.boxShadow = '0 4px 30px rgba(0,0,0,0.5)';
+        header.style.background = 'var(--bg-surface)';
+        header.style.boxShadow = 'var(--glass-shadow)';
       } else {
-        header.style.background = 'rgba(3, 7, 18, 0.6)';
+        header.style.background = 'transparent';
         header.style.boxShadow = 'none';
       }
+    });
+  </script>
+  <button class="theme-toggle" onclick="toggleTheme()" style="position: fixed; bottom: 30px; right: 30px; z-index: 9999; background: var(--bg-surface); border: 1px solid var(--glass-border); color: var(--text-main); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--glass-shadow); transition: 0.3s; font-size: 1.2rem;">
+    <i class="fa-solid fa-moon"></i>
+  </button>
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      const icon = document.querySelector('.theme-toggle i');
+      if(icon) icon.className = isDark ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+      localStorage.setItem('theme', isDark ? 'light' : 'dark');
+    }
+    window.addEventListener('DOMContentLoaded', () => {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const icon = document.querySelector('.theme-toggle i');
+      if(icon) icon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
     });
   </script>
 </body>

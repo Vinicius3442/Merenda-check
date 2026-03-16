@@ -10,14 +10,29 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 
   <style>
-    :root {
+            :root {
+      --primary: #059669; --primary-dark: #047857;
+      --bg-base: #ffffff; --bg-surface: #f8fafc;
+      --text-main: #0f172a; --text-muted: #64748b;
+      --glass-border: rgba(0, 0, 0, 0.1);
+      --glass-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --neon-glow: 0 4px 12px rgba(5, 150, 105, 0.2);
+      --alert-red: #ef4444; --alert-red-glow: 0 4px 12px rgba(239, 68, 68, 0.3);
+      --alert-yellow: #f59e0b;
+      --input-bg: rgba(0, 0, 0, 0.05);
+      --card-bg: #ffffff;
+    }
+    [data-theme="dark"] {
       --primary: #00f260; --primary-dark: #0575e6;
-      --bg-base: #030712; --bg-surface: rgba(17, 24, 39, 0.5);
+      --bg-base: #030712; --bg-surface: rgba(17, 24, 39, 0.7);
       --text-main: #f9fafb; --text-muted: #9ca3af;
       --glass-border: rgba(255, 255, 255, 0.08);
       --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
       --neon-glow: 0 0 20px rgba(0, 242, 96, 0.4);
-      --alert-red: #ef4444; --alert-yellow: #facc15;
+      --alert-red: #ef4444; --alert-red-glow: 0 0 20px rgba(239, 68, 68, 0.4);
+      --alert-yellow: #facc15;
+      --input-bg: rgba(0, 0, 0, 0.5);
+      --card-bg: rgba(255, 255, 255, 0.03);
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
@@ -36,19 +51,19 @@
     .btn {
       padding: 12px 24px; border-radius: 12px; font-weight: 600; font-size: 0.95rem; text-decoration: none;
       border: 1px solid var(--glass-border); cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); color: #fff;
+      display: inline-flex; align-items: center; gap: 8px; background: var(--glass-border); color: var(--text-main);
     }
     .btn.primary {
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #000; border: none; font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: var(--bg-base); border: none; font-weight: 700;
     }
-    .btn.primary:hover { box-shadow: var(--neon-glow); transform: translateY(-2px); color: #fff; }
+    .btn.primary:hover { box-shadow: var(--neon-glow); transform: translateY(-2px); color: var(--text-main); }
 
     /* Sidebar Glass */
     .sidebar {
-      width: 280px; background: rgba(3, 7, 18, 0.6); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      width: 280px; background: var(--bg-surface); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
       border-right: 1px solid var(--glass-border); padding: 32px 24px; display: flex; flex-direction: column; height: 100vh; position: sticky; top: 0;
     }
-    .logo { display: flex; align-items: center; font-weight: 800; font-size: 1.6rem; color: #fff; margin-bottom: 40px; letter-spacing: -0.5px;}
+    .logo { display: flex; align-items: center; font-weight: 800; font-size: 1.6rem; color: var(--text-main); margin-bottom: 40px; letter-spacing: -0.5px;}
     .logo i {
       background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-right: 10px; font-size: 1.4rem;
@@ -59,16 +74,16 @@
       padding: 14px 16px; border-radius: 12px; color: var(--text-muted); text-decoration: none;
       font-weight: 500; transition: 0.3s; display: flex; align-items: center; gap: 12px; border: 1px solid transparent;
     }
-    .menu-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
+    .menu-item:hover { background: var(--glass-border); color: var(--text-main); }
     .menu-item.active { background: rgba(0, 242, 96, 0.1); color: var(--primary); border-color: rgba(0, 242, 96, 0.2); box-shadow: 0 0 15px rgba(0, 242, 96, 0.05);}
     .menu-item.danger { color: #ef4444; margin-top: auto; }
-    .menu-item.danger:hover { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.2); color: #ef4444; }
+    .menu-item.danger:hover { background: var(--alert-red-glow); border-color: rgba(239, 68, 68, 0.2); color: #ef4444; }
 
     .user-profile {
       margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--glass-border);
       display: flex; align-items: center; gap: 12px;
     }
-    .avatar { width: 44px; height: 44px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #000; font-size: 1.1rem;}
+    .avatar { width: 44px; height: 44px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--bg-base); font-size: 1.1rem;}
 
     /* Main Content */
     .main-content { flex: 1; padding: 40px 60px; overflow-y: auto; }
@@ -77,38 +92,38 @@
     .header-dash h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 4px; }
     .header-dash p { color: var(--text-muted); font-size: 1.1rem; }
     
-    .date-badge { background: var(--bg-surface); padding: 10px 20px; border-radius: 50px; font-size: 0.95rem; font-weight: 600; border: 1px solid var(--glass-border); backdrop-filter: blur(10px); color: #fff;}
+    .date-badge { background: var(--bg-surface); padding: 10px 20px; border-radius: 50px; font-size: 0.95rem; font-weight: 600; border: 1px solid var(--glass-border); backdrop-filter: blur(10px); color: var(--text-main);}
 
     .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-bottom: 40px; }
 
     .card { background: var(--bg-surface); border-radius: 24px; padding: 32px; border: 1px solid var(--glass-border); backdrop-filter: blur(20px); box-shadow: var(--glass-shadow); position: relative; overflow: hidden;}
-    .card-title { font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 24px; display: flex; align-items: center; gap: 10px; }
+    .card-title { font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 24px; display: flex; align-items: center; gap: 10px; }
 
-    .freq-action { display: flex; gap: 20px; align-items: flex-end; background: rgba(0,0,0,0.3); padding: 24px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); }
+    .freq-action { display: flex; gap: 20px; align-items: flex-end; background: var(--input-bg); padding: 24px; border-radius: 16px; border: 1px solid var(--glass-border); }
     .input-group { flex: 1; display: flex; flex-direction: column; gap: 10px; }
     .input-group label { font-size: 0.95rem; font-weight: 500; color: var(--text-muted); }
-    .input-group input { padding: 16px; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: #fff; font-family: inherit; font-size: 1.2rem; transition: 0.3s; }
+    .input-group input { padding: 16px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--glass-border); color: var(--text-main); font-family: inherit; font-size: 1.2rem; transition: 0.3s; }
     .input-group input:focus { outline: none; border-color: var(--primary); background: rgba(0,242,96,0.05); box-shadow: 0 0 10px rgba(0,242,96,0.1); }
 
     .stat-mini { display: flex; flex-direction: column; gap: 6px; }
     .stat-mini span { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-    .stat-mini strong { font-size: 2.5rem; color: #fff; line-height: 1; font-weight: 800;}
+    .stat-mini strong { font-size: 2.5rem; color: var(--text-main); line-height: 1; font-weight: 800;}
 
     .table-container { overflow-x: auto; margin-top: 10px;}
     table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
     th { color: var(--text-muted); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; padding: 0 20px 10px; text-align: left; letter-spacing: 1px;}
-    td { padding: 20px; background: rgba(255,255,255,0.02); font-size: 1rem; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); }
+    td { padding: 20px; background: var(--glass-border); font-size: 1rem; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); }
     td:first-child { border-left: 1px solid var(--glass-border); border-radius: 12px 0 0 12px; font-weight: 600; }
     td:last-child { border-right: 1px solid var(--glass-border); border-radius: 0 12px 12px 0; }
-    tr:hover td { background: rgba(255,255,255,0.05); }
+    tr:hover td { background: var(--glass-border); }
     
     .status-badge { padding: 6px 14px; border-radius: 50px; font-size: 0.8rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.5px;}
     .status-ok { background: rgba(0, 242, 96, 0.1); color: var(--primary); border: 1px solid rgba(0,242,96,0.2); }
     .status-warning { background: rgba(250, 204, 21, 0.1); color: var(--alert-yellow); border: 1px solid rgba(250,204,21,0.2); }
-    .status-locked { background: rgba(255,255,255,0.05); color: var(--text-muted); border: 1px solid var(--glass-border); }
+    .status-locked { background: var(--glass-border); color: var(--text-muted); border: 1px solid var(--glass-border); }
 
     .toast {
-      position: fixed; bottom: 30px; right: 30px; background: rgba(17, 24, 39, 0.9);
+      position: fixed; bottom: 30px; right: 30px; background: var(--bg-surface);
       padding: 20px 24px; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
       border: 1px solid var(--glass-border); border-left: 4px solid var(--primary); display: flex; align-items: center; gap: 16px;
       transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -116,15 +131,23 @@
     }
     .toast.show { transform: translateX(0); }
   </style>
+  <script>
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  </script>
 </head>
 <body>
 
   <div class="bg-video-wrapper"></div>
 
   <aside class="sidebar">
-    <div class="logo">
-      <i class="fa-solid fa-bolt"></i> Merenda Check
-    </div>
+    <a href="index.html" class="logo" style="text-decoration: none;">
+            <svg width="40" height="40" viewBox="0 0 100 100" fill="none" stroke="var(--primary)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 12px; vertical-align: middle;">
+        <path d="M 20 80 V 20 L 50 50 L 80 20 V 80" />
+        <path d="M 35 60 L 50 75 L 85 30" stroke-width="14" stroke="var(--text-main)" />
+      </svg>
+      <span style="color: var(--text-main);">Merenda Check</span>
+    </a>
     
     <nav class="menu">
       <a href="gestor.html" class="menu-item active"><i class="fa-solid fa-house"></i> Visão Geral</a>
@@ -137,7 +160,7 @@
     <div class="user-profile">
       <div class="avatar">CR</div>
       <div>
-        <h4 style="font-size: 1rem; margin: 0; color: #fff; font-weight: 700;">Carlos Roberto</h4>
+        <h4 style="font-size: 1rem; margin: 0; color: var(--text-main); font-weight: 700;">Carlos Roberto</h4>
         <span style="font-size: 0.85rem; color: var(--text-muted);">Diretor Escolar</span>
       </div>
     </div>
@@ -238,8 +261,8 @@
       <i class="fa-solid fa-check"></i>
     </div>
     <div>
-      <h4 style="margin: 0; color: #fff; font-size: 1.1rem;">Integridade Sincronizada!</h4>
-      <p style="margin: 0; color: var(--text-muted); font-size: 0.9rem;">Algoritmo atualizado com <strong id="toastQtd" style="color: #fff;"></strong> registros de catraca.</p>
+      <h4 style="margin: 0; color: var(--text-main); font-size: 1.1rem;">Integridade Sincronizada!</h4>
+      <p style="margin: 0; color: var(--text-muted); font-size: 0.9rem;">Algoritmo atualizado com <strong id="toastQtd" style="color: var(--text-main);"></strong> registros de catraca.</p>
     </div>
   </div>
 
@@ -270,6 +293,24 @@
         }, 5000);
       }, 1200);
     }
+  </script>
+  <button class="theme-toggle" onclick="toggleTheme()" style="position: fixed; bottom: 30px; right: 30px; z-index: 9999; background: var(--bg-surface); border: 1px solid var(--glass-border); color: var(--text-main); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--glass-shadow); transition: 0.3s; font-size: 1.2rem;">
+    <i class="fa-solid fa-moon"></i>
+  </button>
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      const icon = document.querySelector('.theme-toggle i');
+      if(icon) icon.className = isDark ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+      localStorage.setItem('theme', isDark ? 'light' : 'dark');
+    }
+    window.addEventListener('DOMContentLoaded', () => {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const icon = document.querySelector('.theme-toggle i');
+      if(icon) icon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+    });
   </script>
 </body>
 </html>

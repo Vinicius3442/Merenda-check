@@ -7,10 +7,29 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   <style>
-    :root {
-      --primary-green: #059669; --primary-green-light: #10b981; 
-      --bg-body: #f3f4f6; --bg-card: #ffffff; --text-main: #1f2937; --text-muted: #6b7280;
-      --border-light: #e5e7eb; --radius-lg: 20px;
+            :root {
+      --primary: #059669; --primary-dark: #047857;
+      --bg-base: #ffffff; --bg-surface: #f8fafc;
+      --text-main: #0f172a; --text-muted: #64748b;
+      --glass-border: rgba(0, 0, 0, 0.1);
+      --glass-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --neon-glow: 0 4px 12px rgba(5, 150, 105, 0.2);
+      --alert-red: #ef4444; --alert-red-glow: 0 4px 12px rgba(239, 68, 68, 0.3);
+      --alert-yellow: #f59e0b;
+      --input-bg: rgba(0, 0, 0, 0.05);
+      --card-bg: #ffffff;
+    }
+    [data-theme="dark"] {
+      --primary: #00f260; --primary-dark: #0575e6;
+      --bg-base: #030712; --bg-surface: rgba(17, 24, 39, 0.7);
+      --text-main: #f9fafb; --text-muted: #9ca3af;
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      --neon-glow: 0 0 20px rgba(0, 242, 96, 0.4);
+      --alert-red: #ef4444; --alert-red-glow: 0 0 20px rgba(239, 68, 68, 0.4);
+      --alert-yellow: #facc15;
+      --input-bg: rgba(0, 0, 0, 0.5);
+      --card-bg: rgba(255, 255, 255, 0.03);
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: "Poppins", sans-serif; background: var(--bg-body); color: var(--text-main); display: flex; min-height: 100vh; }
@@ -18,14 +37,14 @@
     .sidebar { width: 280px; background: #fff; border-right: 1px solid var(--border-light); padding: 24px; position: sticky; top: 0; height: 100vh; }
     .logo { font-weight: 800; font-size: 1.5rem; color: var(--primary-green); margin-bottom: 40px; display: flex; align-items: center; }
     .menu-item { padding: 14px 16px; border-radius: 12px; color: #6b7280; font-weight: 500; display: flex; align-items: center; gap: 12px; text-decoration: none; margin-bottom: 8px; }
-    .menu-item.active { background: var(--primary-green); color: #fff; }
+    .menu-item.active { background: var(--primary-green); color: var(--text-main); }
 
     .main-content { flex: 1; padding: 40px; display: flex; justify-content: center; align-items: flex-start; }
     
     .profile-card { background: #fff; border-radius: var(--radius-lg); padding: 40px; border: 1px solid var(--border-light); width: 100%; max-width: 700px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
     
     .profile-header { display: flex; align-items: center; gap: 24px; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 1px solid var(--border-light); }
-    .avatar-upload { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, #059669, #10b981); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 700; position: relative; cursor: pointer; }
+    .avatar-upload { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, #059669, #10b981); color: var(--text-main); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 700; position: relative; cursor: pointer; }
     .avatar-upload i { position: absolute; bottom: 0; right: 0; background: #fff; color: var(--text-main); width: 32px; height: 32px; border-radius: 50%; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
     
     .form-group { margin-bottom: 24px; }
@@ -33,14 +52,24 @@
     .form-group input { width: 100%; padding: 14px; border-radius: 10px; border: 1px solid var(--border-light); font-size: 1rem; font-family: inherit; color: var(--text-main); background: #f9fafb; outline: none; transition: 0.2s; }
     .form-group input:focus { border-color: var(--primary-green); background: #fff; }
     
-    .btn-save { padding: 16px 32px; border-radius: 12px; font-weight: 600; border: none; cursor: pointer; background: var(--primary-green); color: #fff; font-size: 1.05rem; display: flex; align-items: center; gap: 8px; transition: 0.2s; width: 100%; justify-content: center; margin-top: 20px; }
+    .btn-save { padding: 16px 32px; border-radius: 12px; font-weight: 600; border: none; cursor: pointer; background: var(--primary-green); color: var(--text-main); font-size: 1.05rem; display: flex; align-items: center; gap: 8px; transition: 0.2s; width: 100%; justify-content: center; margin-top: 20px; }
     .btn-save:hover { background: var(--primary-green-light); transform: translateY(-2px); }
   </style>
+  <script>
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  </script>
 </head>
 <body>
 
   <aside class="sidebar">
-    <div class="logo"><i class="fa-solid fa-check" style="margin-right:8px;"></i> Merenda Check</div>
+    <a href="index.html" class="logo" style="text-decoration: none;">
+            <svg width="40" height="40" viewBox="0 0 100 100" fill="none" stroke="var(--primary)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 12px; vertical-align: middle;">
+        <path d="M 20 80 V 20 L 50 50 L 80 20 V 80" />
+        <path d="M 35 60 L 50 75 L 85 30" stroke-width="14" stroke="var(--text-main)" />
+      </svg>
+      <span style="color: var(--text-main);">Merenda Check</span>
+    </a>
     <nav>
       <a href="gestor.html" class="menu-item"><i class="fa-solid fa-house"></i> Voltar ao Painel</a>
       <a href="#" class="menu-item active"><i class="fa-solid fa-user"></i> Meu Perfil</a>
@@ -115,6 +144,24 @@
         }, 3000);
       }, 1200);
     }
+  </script>
+  <button class="theme-toggle" onclick="toggleTheme()" style="position: fixed; bottom: 30px; right: 30px; z-index: 9999; background: var(--bg-surface); border: 1px solid var(--glass-border); color: var(--text-main); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--glass-shadow); transition: 0.3s; font-size: 1.2rem;">
+    <i class="fa-solid fa-moon"></i>
+  </button>
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      const icon = document.querySelector('.theme-toggle i');
+      if(icon) icon.className = isDark ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+      localStorage.setItem('theme', isDark ? 'light' : 'dark');
+    }
+    window.addEventListener('DOMContentLoaded', () => {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const icon = document.querySelector('.theme-toggle i');
+      if(icon) icon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+    });
   </script>
 </body>
 </html>

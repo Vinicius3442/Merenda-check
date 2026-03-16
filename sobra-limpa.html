@@ -3,244 +3,89 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sobra Limpa | Merenda Check</title>
+  <title>Sobra Limpa (Panela) | Merenda Check</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/global.css" />
+
   <style>
-    :root {
-      --primary: #059669; --primary-dark: #047857;
-      --bg-base: #ffffff; --bg-surface: #f8fafc;
-      --text-main: #0f172a; --text-muted: #64748b;
-      --glass-border: rgba(0, 0, 0, 0.1);
-      --glass-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      --neon-glow: 0 4px 12px rgba(5, 150, 105, 0.2);
-      --alert-red: #ef4444; --alert-red-glow: 0 4px 12px rgba(239, 68, 68, 0.3);
-      --alert-yellow: #f59e0b;
-      --input-bg: rgba(0, 0, 0, 0.05);
-      --card-bg: #ffffff;
-    }
-    [data-theme="dark"] {
-      --primary: #00f260; --primary-dark: #0575e6;
-      --bg-base: #030712; --bg-surface: rgba(17, 24, 39, 0.7);
-      --text-main: #f9fafb; --text-muted: #9ca3af;
-      --glass-border: rgba(255, 255, 255, 0.08);
-      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-      --neon-glow: 0 0 20px rgba(0, 242, 96, 0.4);
-      --alert-red: #ef4444; --alert-red-glow: 0 0 20px rgba(239, 68, 68, 0.4);
-      --alert-yellow: #facc15;
-      --input-bg: rgba(0, 0, 0, 0.5);
-      --card-bg: rgba(255, 255, 255, 0.03);
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: "Outfit", sans-serif; background: var(--bg-base); color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+    .header-dash { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 20px;}
+    .header-dash h1 { font-size: 2.2rem; margin-bottom: 8px; }
+
+    .wizard-container { max-width: 700px; margin: 0 auto; }
     
-    /* Background Grid */
-    .bg-grid {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2;
-      background-image: 
-        linear-gradient(var(--glass-border) 1px, transparent 1px),
-        linear-gradient(90deg, var(--glass-border) 1px, transparent 1px);
-      background-size: 50px 50px;
+    .large-input-group { position: relative; display: flex; align-items: center; }
+    .large-input {
+      font-size: 3rem; text-align: right; font-weight: 800; padding: 20px 80px 20px 20px; font-family: 'Outfit';
+      background: var(--input-bg); border: 2px dashed var(--input-border); flex: 1;
     }
-    .bg-glow {
-      position: fixed; top: -20%; right: -10%; width: 60vw; height: 60vw; border-radius: 50%;
-      background: radial-gradient(circle, rgba(5, 117, 230, 0.1) 0%, transparent 60%); z-index: -1;
-    }
-
-    /* Mobile / Tablet App Structure */
-    .app-header {
-      background: var(--bg-surface); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-      border-bottom: 1px solid var(--glass-border); padding: 15px 24px;
-      display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000;
-      box-shadow: var(--glass-shadow);
-    }
-    .back-btn { display: flex; align-items: center; gap: 8px; color: var(--text-main); text-decoration: none; font-weight: 600; font-size: 1.1rem; }
-    .back-btn i { color: var(--primary); }
-
-    .main-content {
-      flex: 1; padding: 30px 24px 100px; max-width: 600px; margin: 0 auto; width: 100%;
-    }
+    .large-input:focus { border-style: solid; box-shadow: 0 0 0 5px rgba(239, 68, 68, 0.1); border-color: var(--alert-red); outline: none; }
     
-    .page-title { text-align: center; margin-bottom: 30px; }
-    .page-title h1 { font-size: 2rem; font-weight: 800; margin-bottom: 8px; letter-spacing: -1px; }
-    .page-title p { color: var(--text-muted); font-size: 1rem; }
-
-    /* Main Form */
-    .form-box {
-      background: var(--bg-surface); border: 1px solid var(--glass-border); border-radius: 20px;
-      padding: 30px 20px; box-shadow: var(--glass-shadow); backdrop-filter: blur(20px);
-    }
-
-    .form-group { margin-bottom: 24px; }
-    .form-group label { display: block; font-size: 0.9rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-    
-    /* Type Selection (Tabs) */
-    .type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 10px; }
-    .type-btn {
-      padding: 16px; border-radius: 12px; border: 2px solid var(--glass-border); background: var(--input-bg);
-      color: var(--text-muted); font-weight: 700; cursor: pointer; transition: 0.3s;
-      display: flex; flex-direction: column; align-items: center; gap: 10px; font-size: 1rem;
-    }
-    .type-btn i { font-size: 1.8rem; }
-    .type-btn:hover { border-color: rgba(0, 242, 96, 0.4); color: var(--text-main); }
-    .type-btn.active {
-      background: rgba(0, 242, 96, 0.1); border-color: var(--primary); color: var(--primary); box-shadow: var(--neon-glow);
-    }
-    .type-btn.active[data-type="ingesta"] {
-      background: rgba(239, 68, 68, 0.1); border-color: var(--alert-red); color: var(--alert-red); box-shadow: var(--alert-red-glow);
-    }
-
-    .input-wrapper { position: relative; display: flex; align-items: center; }
-    .input-wrapper input {
-      width: 100%; padding: 16px 50px 16px 16px; border-radius: 12px; border: 1px solid var(--glass-border);
-      font-size: 1.2rem; font-family: inherit; font-weight: 700; color: var(--text-main); background: var(--input-bg);
-      outline: none; transition: 0.2s; text-align: center;
-    }
-    .input-wrapper input:focus { border-color: var(--primary); box-shadow: var(--neon-glow); }
-    .input-suffix { position: absolute; right: 16px; font-weight: 700; color: var(--text-muted); pointer-events: none; }
-
-    .textarea-box {
-      width: 100%; padding: 16px; border-radius: 12px; border: 1px solid var(--glass-border);
-      font-size: 1rem; font-family: inherit; color: var(--text-main); background: var(--input-bg);
-      outline: none; transition: 0.2s; resize: vertical; min-height: 100px;
-    }
-    .textarea-box:focus { border-color: var(--primary); box-shadow: var(--neon-glow); }
-
-    .btn-submit {
-      width: 100%; padding: 18px; border-radius: 12px; font-weight: 700; border: none; cursor: pointer;
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: var(--bg-base);
-      font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 10px;
-      transition: 0.3s; margin-top: 30px; box-shadow: var(--neon-glow);
-    }
-    .btn-submit:hover { transform: translateY(-3px); }
-
-
-    /* Desktop Responsiveness */
-    @media (min-width: 900px) {
-      .main-content { padding: 60px 40px; max-width: 800px; }
-      .app-header { padding: 20px 50px; }
-      
-      .form-box, .scanner-box, .camera-frame { padding: 50px; border-radius: 30px; }
-      .camera-frame { height: 500px; }
-      
-      .type-grid { gap: 30px; }
-      .type-btn { padding: 24px; font-size: 1.2rem; }
-      .type-btn i { font-size: 2.5rem; }
-      
-      .btn-submit { padding: 20px; font-size: 1.2rem; }
+    .unit-label {
+      position: absolute; right: 20px; font-size: 1.5rem; font-weight: 800; color: var(--text-muted); font-family: 'Outfit'; pointer-events: none;
     }
   </style>
-
-  <script>
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-  </script>
 </head>
 <body>
 
-  <div class="bg-grid"></div>
-  <div class="bg-glow"></div>
+  <div class="bg-mesh"></div>
 
-  <header class="app-header">
-    <a href="operador.html" class="back-btn">
-      <i class="fa-solid fa-chevron-left"></i> Voltar
-    </a>
-    <span style="font-weight: 700; color: var(--text-muted);">Monitoramento</span>
-  </header>
-
-  <main class="main-content">
-    <div class="page-title">
-      <h1>Sobra Limpa</h1>
-      <p>Registre peso de panelas servidas ou descartadas para controle da IA Preditiva.</p>
-    </div>
-
-    <form class="form-box" onsubmit="registrarSobra(event)">
+  <div class="app-container">
+    <main class="app-main" style="padding-top: 60px;">
       
-      <div class="form-group">
-        <label>Tipo do Desperdício/Sobra</label>
-        <div class="type-grid">
-          <button type="button" class="type-btn active" data-type="limpa" onclick="selecionarTipo(this)">
-            <i class="fa-solid fa-leaf"></i>
-            Sobra Limpa
-            <span style="font-weight: 400; font-size: 0.75rem;">Ficou na Panela</span>
-          </button>
-          
-          <button type="button" class="type-btn" data-type="ingesta" onclick="selecionarTipo(this)">
-            <i class="fa-solid fa-trash-can"></i>
-            Resto Ingesta
-            <span style="font-weight: 400; font-size: 0.75rem;">Prato do Aluno</span>
-          </button>
+      <div class="wizard-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+          <a href="operador.html" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
+          <img src="assets/logo.png" alt="Merenda Check" class="logo-img" />
         </div>
-      </div>
-
-      <div class="form-group">
-        <label>Balança Eletrônica (Peso Verificado)</label>
-        <div class="input-wrapper">
-          <input type="number" step="0.1" id="peso" placeholder="0.0" required>
-          <span class="input-suffix">KG</span>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Observação Analítica (Opcional)</label>
-        <textarea class="textarea-box" placeholder="Ex: Sobrou bastante arroz porque muitos alunos faltaram por causa da chuva hoje."></textarea>
-      </div>
-
-      <button type="submit" class="btn-submit" id="submit-btn">
-        <i class="fa-solid fa-paper-plane"></i> Lançar Relatório
-      </button>
-
-    </form>
-  </main>
-
-  <script>
-    let tipoAtual = 'limpa';
-
-    function selecionarTipo(btn) {
-      document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      tipoAtual = btn.getAttribute('data-type');
-    }
-
-    function registrarSobra(e) {
-      e.preventDefault();
-      const btn = document.getElementById('submit-btn');
-      const peso = document.getElementById('peso').value;
-
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Auditando...';
-      btn.style.pointerEvents = 'none';
-
-      setTimeout(() => {
-        btn.innerHTML = `<i class="fa-solid fa-check-double"></i> Documentado (${peso}kg)`;
-        btn.style.background = tipoAtual === 'limpa' ? '#f59e0b' : '#ef4444'; // Alerta amarelo pra sobra e vermelho pra lixo
         
-        setTimeout(() => {
-          window.location.href = 'operador.html';
-        }, 2000);
-      }, 1500);
-    }
-  </script>
+        <div class="header-dash animate-fade-in">
+          <div>
+            <h1>Medição de Desperdício Tátil</h1>
+            <p style="color: var(--text-muted); font-size: 1.1rem;">Preencha a tara pesada da sobra das panelas (Sobra Limpa).</p>
+          </div>
+        </div>
 
-  <button class="theme-toggle" onclick="toggleTheme()" style="position: fixed; bottom: 30px; right: 30px; z-index: 9999; background: var(--bg-surface); border: 1px solid var(--glass-border); color: var(--text-main); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--glass-shadow); transition: 0.3s; font-size: 1.2rem;">
-    <i class="fa-solid fa-moon"></i>
-  </button>
-  <script>
-    function toggleTheme() {
-      const html = document.documentElement;
-      const isDark = html.getAttribute('data-theme') === 'dark';
-      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
-      const icon = document.querySelector('.theme-toggle i');
-      if(icon) icon.className = isDark ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-      localStorage.setItem('theme', isDark ? 'light' : 'dark');
-    }
-    window.addEventListener('DOMContentLoaded', () => {
-      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      const icon = document.querySelector('.theme-toggle i');
-      if(icon) icon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-    });
-  </script>
+        <div class="glass-panel animate-slide-up" style="padding: 40px; border-top: 4px solid var(--alert-red);">
+          
+          <div style="text-align: center; margin-bottom: 30px;">
+            <div style="width: 80px; height: 80px; background: rgba(239, 68, 68, 0.1); color: var(--alert-red); font-size: 2.5rem; display: inline-flex; justify-content: center; align-items: center; border-radius: 50%; margin-bottom: 16px;">
+              <i class="fa-solid fa-scale-unbalanced"></i>
+            </div>
+            <h3 class="brand-font" style="font-size: 1.4rem;">Peso Aferido na Balança</h3>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 40px;">
+            <div class="large-input-group">
+              <input type="number" step="0.1" class="form-control large-input" placeholder="0.0" id="fPeso" />
+              <span class="unit-label">kg</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Motivo (Parametrização IA)</label>
+            <select class="form-control">
+              <option value="super">Superestimativa Baseada na Frequência Real (Baixa Adesão)</option>
+              <option value="sabor">Rejeição Organoléptica (Sabor/Aparência)</option>
+              <option value="validade">Vencimento Súbito Pós-Despacho</option>
+            </select>
+          </div>
+
+          <div style="margin-top: 40px;">
+            <button class="btn btn-primary" style="width: 100%; padding: 18px; font-size: 1.1rem; background: var(--alert-red); box-shadow: var(--alert-red-glow);" data-action="mock-submit" data-redirect="operador.html" data-success-title="Anomalia Catalogada" data-success-msg="O desperdício penaliza a eficiência da escola no Ranking Seduc.">
+              <i class="fa-solid fa-triangle-exclamation"></i> Registrar Perda
+            </button>
+          </div>
+          
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="assets/js/main.js"></script>
 </body>
-
 </html>

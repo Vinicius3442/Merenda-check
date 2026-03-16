@@ -1,279 +1,206 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Acesso Restrito | Merenda Check</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acesso Seguro | Merenda Check</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  
+  <link rel="stylesheet" href="assets/css/global.css">
+
   <style>
-    :root {
-      --primary: #059669; --primary-dark: #047857;
-      --bg-base: #ffffff; --bg-surface: #f8fafc;
-      --text-main: #0f172a; --text-muted: #64748b;
-      --glass-border: rgba(0, 0, 0, 0.1);
-      --glass-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      --neon-glow: 0 4px 12px rgba(5, 150, 105, 0.2);
-      --alert-red: #ef4444; --alert-red-glow: 0 4px 12px rgba(239, 68, 68, 0.3);
-      --alert-yellow: #f59e0b;
-      --input-bg: rgba(0, 0, 0, 0.05);
-      --card-bg: #ffffff;
-    }
-    [data-theme="dark"] {
-      --primary: #00f260; --primary-dark: #0575e6;
-      --bg-base: #030712; --bg-surface: rgba(17, 24, 39, 0.7);
-      --text-main: #f9fafb; --text-muted: #9ca3af;
-      --glass-border: rgba(255, 255, 255, 0.08);
-      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-      --neon-glow: 0 0 20px rgba(0, 242, 96, 0.4);
-      --alert-red: #ef4444; --alert-red-glow: 0 0 20px rgba(239, 68, 68, 0.4);
-      --alert-yellow: #facc15;
-      --input-bg: rgba(0, 0, 0, 0.5);
-      --card-bg: rgba(255, 255, 255, 0.03);
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { padding: 0; margin: 0; min-height: 100vh; display: flex; }
     
-    body {
-      font-family: 'Outfit', sans-serif; background-color: var(--bg-base); color: var(--text-main);
-      height: 100vh; overflow: hidden; display: flex;
-    }
-
-    .bg-video-wrapper {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; overflow: hidden;
-      background: radial-gradient(circle at center, #0575e6 0%, var(--bg-base) 100%);
-    }
-    .particles {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-      background-image: radial-gradient(var(--glass-border) 1px, transparent 1px);
-      background-size: 50px 50px; opacity: 0.3;
-      animation: pan 60s linear infinite;
-    }
-    @keyframes pan { 0% { background-position: 0 0; } 100% { background-position: 500px 500px; } }
-
-    .split-layout { display: flex; width: 100%; height: 100%; position: relative; z-index: 1; }
-
-    .brand-side {
-      flex: 1.2; padding: 60px; display: flex; flex-direction: column; justify-content: space-between;
-      backdrop-filter: blur(10px); background: linear-gradient(90deg, var(--bg-base) 0%, var(--bg-base) 100%);
-    }
-
-    .logo { font-size: 2rem; font-weight: 800; display: flex; align-items: center; gap: 12px; letter-spacing: -0.5px; }
-    .logo i {
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-
-    .brand-content { max-width: 500px; margin-top: -100px; }
-    .brand-content h1 { font-size: 4rem; line-height: 1.1; font-weight: 800; margin-bottom: 24px; letter-spacing: -1px; }
-    .brand-content p { font-size: 1.2rem; color: var(--text-muted); line-height: 1.6; }
-
-    .security-badge {
-      display: inline-flex; align-items: center; gap: 16px; margin-top: 40px;
-      background: var(--bg-surface); border: 1px solid var(--glass-border);
-      padding: 16px 24px; border-radius: 16px; backdrop-filter: blur(10px);
-    }
-    .security-badge i { font-size: 2rem; color: var(--primary); }
-
-    .form-side {
-      flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px;
-      background: var(--bg-surface); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-      border-left: 1px solid var(--glass-border); box-shadow: -10px 0 30px rgba(0,0,0,0.5);
-    }
-
-    .login-container { width: 100%; max-width: 440px; }
-    .login-header { margin-bottom: 40px; text-align: center; }
-    .login-header h2 { font-size: 2.2rem; font-weight: 700; margin-bottom: 10px; }
-    .login-header p { color: var(--text-muted); font-size: 1rem; }
-
-    .input-group { margin-bottom: 24px; text-align: left; }
-    .input-group label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; color: var(--text-main); }
-    .input-wrapper {
-      position: relative; display: flex; align-items: center;
-      background: var(--input-bg); border: 1px solid var(--glass-border);
-      border-radius: 12px; transition: 0.3s;
-    }
-    .input-wrapper:focus-within { border-color: var(--primary); box-shadow: var(--neon-glow); }
-    .input-wrapper i { position: absolute; left: 16px; color: var(--text-muted); font-size: 1.1rem; }
-    .input-wrapper input {
-      width: 100%; padding: 16px 16px 16px 48px; min-height: 52px;
-      background: transparent; border: none; color: var(--text-main); font-family: inherit; font-size: 1rem;
-      outline: none;
-    }
-    .input-wrapper input::placeholder { color: var(--text-muted); opacity: 0.7; }
-    .toggle-password { left: auto !important; right: 16px; cursor: pointer; transition: 0.3s; }
-    .toggle-password:hover { color: var(--text-main) !important; }
-
-    .form-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; font-size: 0.95rem; }
-    .checkbox-container { display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-muted); user-select: none; font-weight: 500; }
-    .checkbox-container input { display: none; }
-    .checkmark { width: 20px; height: 20px; border: 2px solid var(--glass-border); border-radius: 6px; display: flex; align-items: center; justify-content: center; transition: 0.2s; background: var(--input-bg); }
-    .checkbox-container input:checked ~ .checkmark { background: var(--primary); border-color: var(--primary); }
-    <!-- Corrected Font Awesome slash escaping for python formatting just in case, wait, this is direct code content so single slash `\f00c` is ok if it's evaluated safely. Wait, double slash is safer if passing strings, but write_to_file uses raw markdown formatting if we don't. I'll just put standard CSS unicode -->
-    .checkbox-container input:checked ~ .checkmark::after { content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; color: #fff; font-size: 0.75rem; }
+    .login-split { display: flex; width: 100%; min-height: 100vh; }
     
-    .forgot-pwd { color: var(--primary); text-decoration: none; font-weight: 600; transition: 0.3s; }
-    .forgot-pwd:hover { color: var(--primary-dark); text-decoration: underline; }
-
-    .btn {
-      padding: 14px 32px; border-radius: 50px; font-weight: 600; font-size: 1rem;
-      cursor: pointer; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      display: inline-flex; align-items: center; gap: 10px; border: none;
-      position: relative; overflow: hidden; z-index: 1; text-decoration: none;
+    .login-visual {
+      flex: 1.2;
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 60px;
+      color: #fff;
+      overflow: hidden;
     }
-    .btn::before {
-      content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      z-index: -1; transition: opacity 0.4s ease;
+    
+    .login-visual::before {
+      content: ''; position: absolute; inset: 0;
+      background: url('https://images.unsplash.com/photo-1542626991-cbc4e32524cc?q=80&w=1500') center/cover;
+      opacity: 0.2; mix-blend-mode: overlay;
     }
-    .btn.primary { color: var(--bg-base); font-weight: 700; width: 100%; justify-content: center; padding: 18px; border-radius: 12px; font-size: 1.1rem; }
-    .btn.primary::before { opacity: 1; }
-    .btn.primary:hover { box-shadow: var(--neon-glow); transform: translateY(-3px); color: var(--text-main); }
 
-    .register-link { text-align: center; margin-top: 40px; color: var(--text-muted); font-size: 0.95rem; }
-    .register-link a { color: var(--primary); text-decoration: none; font-weight: 700; transition: 0.3s; box-shadow: none; border: none; }
-    .register-link a:hover { color: var(--primary-dark); text-decoration: underline; }
-
-    .back-home {
-      position: absolute; top: 40px; right: 40px; color: var(--text-muted); text-decoration: none;
-      display: flex; align-items: center; gap: 8px; font-weight: 500; transition: 0.3s;
+    .login-form-side {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 60px 8%;
+      background: var(--bg-base);
+      position: relative;
     }
-    .back-home:hover { color: var(--text-main); }
 
-    @media (max-width: 900px) { .brand-side { display: none; } .form-side { border-left: none; } }
+    .login-card {
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .badge-role-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-bottom: 40px;
+    }
+
+    .role-btn {
+      background: var(--bg-surface);
+      border: 2px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 20px 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      color: var(--text-muted);
+    }
+    
+    .role-btn i { font-size: 2.5rem; margin-bottom: 12px; display: block; }
+    .role-btn span { font-weight: 600; font-size: 0.95rem; }
+
+    .role-btn:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--primary-light);
+    }
+
+    .role-btn.active {
+      background: rgba(12, 166, 80, 0.05);
+      border-color: var(--primary);
+      color: var(--primary);
+      box-shadow: 0 10px 20px rgba(12, 166, 80, 0.1);
+    }
+
+    .quote-box {
+      position: relative; z-index: 2; max-width: 600px;
+    }
+    
+    .quote-box h2 { font-size: 3rem; margin-bottom: 20px; line-height: 1.2; font-family: 'Poppins'; }
+    .quote-box p { font-size: 1.25rem; opacity: 0.9; line-height: 1.6; }
+
+    @media (max-width: 1000px) {
+      .login-split { flex-direction: column; }
+      .login-visual { flex: 0.5; padding: 40px; }
+      .quote-box h2 { font-size: 2.2rem; }
+      .badge-role-selector { grid-template-columns: 1fr; }
+    }
   </style>
-  <script>
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-  </script>
 </head>
-<body>
+<body data-theme="dark">
 
-  <div class="bg-video-wrapper"></div>
-  <div class="particles"></div>
-
-  <div class="split-layout">
-    <div class="brand-side">
-      <a href="index.html" class="logo" style="text-decoration: none;">
-        <svg width="40" height="40" viewBox="0 0 100 100" fill="none" stroke="var(--primary)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 12px; vertical-align: middle;">
-          <path d="M 20 80 V 20 L 50 50 L 80 20 V 80" />
-          <path d="M 35 60 L 50 75 L 85 30" stroke-width="14" stroke="var(--text-main)" />
-        </svg>
-        <span style="color: var(--text-main);">Merenda Check</span>
-      </a>
-      
-      <div class="brand-content">
-        <h1>Autenticação<br>Classificada.</h1>
-        <p>Acesso exclusivo à malha preditiva e auditoria contínua da rede escolar. Todo acesso é criptografado e registrado no log de imutabilidade.</p>
-        
-        <div class="security-badge">
-          <i class="fa-solid fa-fingerprint"></i>
-          <div>
-            <div style="font-weight: 700; font-size: 1.1rem; color: var(--text-main);">Nível de Segurança Máximo</div>
-            <div style="color: var(--text-muted); font-size: 0.9rem;">Gov.BR Auth 2.0 Integration</div>
-          </div>
-        </div>
-      </div>
-      
-      <div style="color: var(--text-muted); font-size: 0.9rem;">&copy; 2026 Inteligência de Estado</div>
-    </div>
-
-    <div class="form-side">
-      <a href="index.html" class="back-home"><i class="fa-solid fa-arrow-left"></i> Início</a>
-      
-      <div class="login-container">
-        <div class="login-header">
-          <h2>Bem-vindo de volta</h2>
-          <p>Insira suas credenciais para acessar o painel preditivo.</p>
-        </div>
-
-        <form id="loginForm" onsubmit="autenticar(event)">
-          <div class="input-group">
-            <label for="email">E-mail Institucional ou CPF</label>
-            <div class="input-wrapper">
-              <i class="fa-solid fa-envelope"></i>
-              <input type="text" id="email" placeholder="usuario@educacao.gov.br" required autocomplete="username">
-            </div>
-          </div>
-          
-          <div class="input-group">
-            <label for="password">Senha Gov.BR</label>
-            <div class="input-wrapper">
-              <i class="fa-solid fa-lock"></i>
-              <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password">
-              <i class="fa-solid fa-eye-slash toggle-password" onclick="togglePwd(this)"></i>
-            </div>
-          </div>
-
-          <div class="form-actions">
-            <label class="checkbox-container">
-              <input type="checkbox">
-              <span class="checkmark"></span>
-              Lembrar de mim
-            </label>
-            <a href="#" class="forgot-pwd">Esqueci minha senha</a>
-          </div>
-
-          <button type="submit" class="btn primary auth-btn" id="submitBtn">
-            Acessar Sistema <i class="fa-solid fa-arrow-right-to-bracket"></i>
-          </button>
-        </form>
-
-        <div class="register-link">
-          Não possui credenciais? <a href="#">Solicitar Cadastro de Nó</a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    function togglePwd(icon) {
-      const input = document.getElementById('password');
-      if (input.type === 'password') {
-        input.type = 'text';
-        icon.classList.remove('fa-eye-slash');
-        icon.classList.add('fa-eye');
-      } else {
-        input.type = 'password';
-        icon.classList.remove('fa-eye');
-        icon.classList.add('fa-eye-slash');
-      }
-    }
-
-    function autenticar(event) {
-      event.preventDefault();
-      
-      const btn = document.getElementById('submitBtn');
-      const originalHTML = btn.innerHTML;
-      
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Autenticando...';
-      btn.style.opacity = '0.8';
-      btn.style.pointerEvents = 'none';
-      
-      setTimeout(() => {
-        // Redireciona para o painel principal
-        window.location.href = 'gestor.html';
-      }, 1500);
-    }
-  </script>
-  <button class="theme-toggle" onclick="toggleTheme()" style="position: fixed; bottom: 30px; right: 30px; z-index: 9999; background: var(--bg-surface); border: 1px solid var(--glass-border); color: var(--text-main); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--glass-shadow); transition: 0.3s; font-size: 1.2rem;">
+  <button class="theme-toggle-btn" onclick="App.toggleTheme()" style="top: 30px; bottom: auto;">
     <i class="fa-solid fa-moon"></i>
   </button>
+
+  <div class="login-split">
+    
+    <div class="login-visual">
+      <div class="quote-box animate-slide-up">
+        <h2>
+          Gerencie o recurso público com <span style="color: var(--accent-light);">Certeza Matemática.</span>
+        </h2>
+        <p>O Merenda Check valida cada grama consumida através de biometria nas escolas e trilhas inalteráveis da rede de abastecimento.</p>
+        
+        <div style="margin-top: 60px; display: flex; align-items: center; gap: 20px;">
+          <i class="fa-solid fa-shield-halved" style="font-size: 2.5rem; color: var(--accent-light);"></i>
+          <div style="font-size: 1.1rem; font-weight: 600;">Governança de Estado. Auditoria em Tempo Real.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="login-form-side">
+      <div class="login-card animate-fade-in delay-100">
+        
+        <div style="text-align: center; margin-bottom: 40px;">
+          <img src="assets/logo.png" alt="Merenda Check" class="logo-img" style="height: 60px; margin-bottom: 20px;" />
+          <h1 style="font-size: 2rem;">Acesso de Servidor</h1>
+          <p style="color: var(--text-muted); font-size: 1.05rem;">Selecione seu nível de credencial (Gestor de Identidade)</p>
+        </div>
+
+        <div class="badge-role-selector" id="roleSelector">
+          <div class="role-btn active" data-role="operador">
+            <i class="fa-solid fa-clipboard-user"></i>
+            <span>Operador</span>
+          </div>
+          <div class="role-btn" data-role="gestor">
+            <i class="fa-solid fa-user-tie"></i>
+            <span>Gestor</span>
+          </div>
+          <div class="role-btn" data-role="auditor">
+            <i class="fa-solid fa-building-columns"></i>
+            <span>Auditoria</span>
+          </div>
+        </div>
+
+        <form id="loginForm" onsubmit="handleDemoLogin(event)">
+          <div class="form-group">
+            <label class="form-label">Chave de Matrícula (ID Funcional)</label>
+            <input type="text" class="form-control" placeholder="Ex: 99.888.11" autocomplete="off" />
+          </div>
+
+          <div class="form-group" style="margin-bottom: 40px;">
+            <label class="form-label">Chave Biométrica (Token 2FA)</label>
+            <input type="password" class="form-control" placeholder="••••••••" />
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; padding: 20px; font-size: 1.2rem;">
+            Autenticar <i class="fa-solid fa-fingerprint" style="margin-left: 10px;"></i>
+          </button>
+        </form>
+        
+        <p style="text-align: center; margin-top: 30px; font-size: 0.95rem; color: var(--text-muted);">
+          <i class="fa-solid fa-lock"></i> Conexão Simétrica Validada
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="assets/js/main.js"></script>
   <script>
-    function toggleTheme() {
-      const html = document.documentElement;
-      const isDark = html.getAttribute('data-theme') === 'dark';
-      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
-      const icon = document.querySelector('.theme-toggle i');
-      if(icon) icon.className = isDark ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-      localStorage.setItem('theme', isDark ? 'light' : 'dark');
-    }
-    window.addEventListener('DOMContentLoaded', () => {
-      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      const icon = document.querySelector('.theme-toggle i');
-      if(icon) icon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+    let selectedRoute = 'operador.html';
+
+    document.querySelectorAll('.role-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+        e.currentTarget.classList.add('active');
+        
+        const role = e.currentTarget.getAttribute('data-role');
+        selectedRoute = `${role}.html`;
+      });
     });
+
+    function handleDemoLogin(e) {
+      e.preventDefault();
+      
+      const btn = e.target.querySelector('button');
+      const originalHtml = btn.innerHTML;
+      btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Desencriptando...';
+      btn.style.opacity = '0.7';
+
+      setTimeout(() => {
+        App.showToast('Autenticação Aprovada', 'Log de acesso gravado na malha.', 'success');
+        
+        setTimeout(() => {
+          window.location.href = selectedRoute;
+        }, 1200);
+
+      }, 1000);
+    }
   </script>
 </body>
 </html>

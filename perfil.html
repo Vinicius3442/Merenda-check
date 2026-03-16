@@ -3,237 +3,110 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Meu Perfil | Merenda Check</title>
+  <title>Minhas Configurações | Merenda Check</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/global.css" />
+
   <style>
-    :root {
-      --primary: #059669; --primary-dark: #047857;
-      --bg-base: #ffffff; --bg-surface: #f8fafc;
-      --text-main: #0f172a; --text-muted: #64748b;
-      --glass-border: rgba(0, 0, 0, 0.1);
-      --glass-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      --neon-glow: 0 4px 12px rgba(5, 150, 105, 0.2);
-      --alert-red: #ef4444; --alert-red-glow: 0 4px 12px rgba(239, 68, 68, 0.3);
-      --alert-yellow: #f59e0b;
-      --input-bg: rgba(0, 0, 0, 0.05);
-      --card-bg: #ffffff;
-    }
-    [data-theme="dark"] {
-      --primary: #00f260; --primary-dark: #0575e6;
-      --bg-base: #030712; --bg-surface: rgba(17, 24, 39, 0.7);
-      --text-main: #f9fafb; --text-muted: #9ca3af;
-      --glass-border: rgba(255, 255, 255, 0.08);
-      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-      --neon-glow: 0 0 20px rgba(0, 242, 96, 0.4);
-      --alert-red: #ef4444; --alert-red-glow: 0 0 20px rgba(239, 68, 68, 0.4);
-      --alert-yellow: #facc15;
-      --input-bg: rgba(0, 0, 0, 0.5);
-      --card-bg: rgba(255, 255, 255, 0.03);
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: "Outfit", sans-serif; background: var(--bg-base); color: var(--text-main); display: flex; min-height: 100vh; overflow-x: hidden; }
-    
-    /* Background Grid */
-    .bg-grid {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2;
-      background-image: 
-        linear-gradient(var(--glass-border) 1px, transparent 1px),
-        linear-gradient(90deg, var(--glass-border) 1px, transparent 1px);
-      background-size: 50px 50px;
-    }
-    .bg-glow {
-      position: fixed; top: -20%; right: -10%; width: 60vw; height: 60vw; border-radius: 50%;
-      background: radial-gradient(circle, rgba(5, 117, 230, 0.1) 0%, transparent 60%); z-index: -1;
-    }
+    /* For this demo, no sidebar logic to allow universal access, just an isolated view. */
+    .profile-nav { position: fixed; width: 100%; top: 0; padding: 20px 40px; background: rgba(var(--bg-surface-rgb), 0.8); backdrop-filter: blur(10px); z-index: 100; border-bottom: 1px solid var(--border-subtle);}
+    .profile-wrap { max-width: 800px; margin: 120px auto 40px; }
 
-    /* Sidebar Glass */
-    .sidebar {
-      width: 280px; background: var(--bg-surface); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-      border-right: 1px solid var(--glass-border); padding: 32px 24px; display: flex; flex-direction: column; height: 100vh; position: sticky; top: 0;
-      box-shadow: 10px 0 30px rgba(0,0,0,0.5); z-index: 10;
-    }
-    .logo { display: flex; align-items: center; font-weight: 800; font-size: 1.6rem; color: var(--text-main); margin-bottom: 40px; letter-spacing: -0.5px;}
-    
-    .menu-label { font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 16px; letter-spacing: 1.5px; }
-    .menu { display: flex; flex-direction: column; gap: 6px; flex: 1; }
-    .menu-item {
-      padding: 12px 16px; border-radius: 8px; color: var(--text-muted); text-decoration: none;
-      font-weight: 500; transition: 0.2s; display: flex; align-items: center; gap: 12px; border: 1px solid transparent;
-    }
-    .menu-item:hover { background: var(--glass-border); color: var(--text-main); }
-    .menu-item.active { background: rgba(0, 242, 96, 0.1); color: var(--primary); border-color: rgba(0, 242, 96, 0.2); }
-    
-    .main-content { flex: 1; padding: 40px 50px; display: flex; flex-direction: column; align-items: center; overflow-y: auto; }
-    
-    .header-dash { width: 100%; max-width: 800px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
-    .header-dash h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 4px; display: flex; align-items: center; gap: 12px;}
-    .header-dash p { color: var(--text-muted); font-size: 1.05rem; }
+    .header-dash { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 20px;}
+    .header-dash h1 { font-size: 2.2rem; margin-bottom: 8px; }
 
-    .profile-card { 
-      background: var(--bg-surface); border-radius: 20px; padding: 40px; 
-      border: 1px solid var(--glass-border); width: 100%; max-width: 800px; 
-      backdrop-filter: blur(20px); box-shadow: var(--glass-shadow); 
+    .profile-card { padding: 40px; border-radius: 20px; text-align: center; margin-bottom: 30px; }
+    .big-avatar { width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); margin: 0 auto 20px; display: flex; justify-content: center; align-items: center; font-size: 3rem; color: #fff; font-weight: 800; border: 4px solid var(--bg-surface); box-shadow: var(--neon-glow);}
+    
+    .theme-switch-container {
+      display: flex; justify-content: center; gap: 20px; margin-top: 30px;
     }
     
-    .profile-header { display: flex; align-items: center; gap: 24px; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 1px solid var(--glass-border); }
-    .avatar-upload { 
-      width: 100px; height: 100px; border-radius: 50%; 
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
-      color: var(--bg-base); display: flex; align-items: center; justify-content: center; 
-      font-size: 2.5rem; font-weight: 700; position: relative; cursor: pointer;
-      box-shadow: var(--neon-glow);
+    .theme-opt {
+      width: 150px; padding: 20px; border: 2px solid var(--border-subtle); border-radius: 16px; cursor: pointer; transition: 0.3s;
+      background: var(--bg-surface); color: var(--text-muted); font-weight: 600;
     }
-    .avatar-upload i { 
-      position: absolute; bottom: 0; right: 0; background: var(--bg-surface); color: var(--text-main); 
-      width: 32px; height: 32px; border-radius: 50%; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; 
-      border: 1px solid var(--glass-border);
-    }
+    .theme-opt.active { border-color: var(--primary); color: var(--primary); background: rgba(5, 150, 105, 0.05); }
+    .theme-opt i { font-size: 2rem; margin-bottom: 10px; display: block;}
     
-    .form-group { margin-bottom: 24px; width: 100%; }
-    .form-group label { display: block; font-size: 0.9rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .form-group input { 
-      width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--glass-border); 
-      font-size: 1rem; font-family: inherit; color: var(--text-main); background: var(--input-bg); 
-      outline: none; transition: 0.2s; 
-    }
-    .form-group input:focus { border-color: var(--primary); box-shadow: var(--neon-glow); }
-    .form-group input:disabled { opacity: 0.6; cursor: not-allowed; }
-    
-    .btn-save { 
-      padding: 16px 32px; border-radius: 12px; font-weight: 700; border: none; cursor: pointer; 
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: var(--bg-base); 
-      font-size: 1.05rem; display: flex; align-items: center; gap: 8px; transition: 0.2s; 
-      width: 100%; justify-content: center; margin-top: 20px; box-shadow: var(--neon-glow);
-    }
-    .btn-save:hover { transform: translateY(-3px); color: var(--text-main); }
   </style>
-  <script>
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-  </script>
 </head>
 <body>
 
-  <div class="bg-grid"></div>
-  <div class="bg-glow"></div>
+  <div class="bg-mesh"></div>
 
-  <aside class="sidebar">
-    <a href="index.html" class="logo" style="text-decoration: none;">
-      <svg width="40" height="40" viewBox="0 0 100 100" fill="none" stroke="var(--primary)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 12px; vertical-align: middle;">
-        <path d="M 20 80 V 20 L 50 50 L 80 20 V 80" />
-        <path d="M 35 60 L 50 75 L 85 30" stroke-width="14" stroke="var(--text-main)" />
-      </svg>
-      <span style="color: var(--text-main);">Merenda Check</span>
-    </a>
-    
-    <div class="menu-label">Opções</div>
-    <nav class="menu">
-      <a href="auditor.html" class="menu-item"><i class="fa-solid fa-arrow-left"></i> Voltar ao Painel (Auditor)</a>
-      <a href="gestor.html" class="menu-item"><i class="fa-solid fa-arrow-left"></i> Voltar ao Painel (Gestor)</a>
-      <a href="#" class="menu-item active"><i class="fa-solid fa-user-shield"></i> Meu Perfil</a>
-      <a href="login.html" class="menu-item" style="color: var(--alert-red); margin-top: 40px;"><i class="fa-solid fa-power-off"></i> Sair do Sistema</a>
-    </nav>
-  </aside>
+  <div class="profile-nav" style="display: flex; justify-content: space-between; align-items: center;">
+     <button class="btn btn-secondary" onclick="history.back()"><i class="fa-solid fa-arrow-left"></i> Retornar ao Console Anterior</button>
+     <img src="assets/logo.png" alt="Merenda Check" class="logo-img" />
+  </div>
 
-  <main class="main-content">
-    <div class="header-dash">
-      <div>
-        <h1><i class="fa-solid fa-id-card" style="color: var(--primary); font-size: 1.8rem;"></i> Identidade Funcional</h1>
-        <p>Gerencie suas credenciais e chaves criptográficas de acesso.</p>
-      </div>
-    </div>
-
-    <div class="profile-card">
-      <div class="profile-header">
-        <div class="avatar-upload">
-          AC
-          <i class="fa-solid fa-camera"></i>
-        </div>
+  <div class="profile-wrap">
+     <div class="header-dash animate-fade-in">
         <div>
-          <h2 style="font-size: 1.8rem; margin-bottom: 4px; color: var(--text-main); font-weight: 800;">Auditor Chefe</h2>
-          <p style="color: var(--text-muted); font-weight: 500;">Acesso Global AES-256 • Secretaria de Estado</p>
+          <h1>Configurações do Oráculo</h1>
+          <p style="color: var(--text-muted); font-size: 1.1rem;">Ajuste suas preferências visuais e biométricas.</p>
         </div>
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-        <div class="form-group">
-          <label>Nome Completo (Blockchain Auth)</label>
-          <input type="text" value="Auditor Chefe de Controle Preditivo">
-        </div>
-        <div class="form-group">
-          <label>Hash de Identificação (CPF)</label>
-          <input type="text" value="0x8B...4F9A" disabled>
-        </div>
+      <div class="profile-card glass-panel animate-slide-up">
+         <div class="big-avatar">M</div>
+         <h2 class="brand-font" style="margin-bottom: 5px;">Mestre / Operador Padrão</h2>
+         <p style="color: var(--text-muted); margin-bottom: 30px;">ID do Token: 0x9321AABCDC99</p>
+
+         <div style="border-top: 1px dashed var(--border-subtle); padding-top: 30px;">
+           <h3 class="brand-font" style="font-size: 1.2rem; margin-bottom: 10px;">Motor de Tema Universal</h3>
+           <p style="color: var(--text-muted); font-size: 0.9rem;">Força a preferência de iluminação em todas as telas da criptografia simulada.</p>
+           
+           <div class="theme-switch-container">
+              <div class="theme-opt" id="optLight" onclick="forceThemeLocal('light')">
+                <i class="fa-solid fa-sun"></i> Modo Luz
+              </div>
+              <div class="theme-opt" id="optDark" onclick="forceThemeLocal('dark')">
+                <i class="fa-solid fa-moon"></i> Cyber Escuro
+              </div>
+           </div>
+         </div>
+         
+         <div style="margin-top: 50px;">
+           <button class="btn btn-primary" style="padding: 16px 32px;" onclick="history.back()"><i class="fa-solid fa-floppy-disk"></i> Gravar & Retornar</button>
+         </div>
       </div>
+  </div>
 
-      <div class="form-group">
-        <label>E-mail Governamental (Seguro)</label>
-        <input type="email" value="auditor.chefe@merendacheck.gov.br">
-      </div>
-
-      <h3 style="margin: 40px 0 20px; font-size: 1.2rem; border-top: 1px solid var(--glass-border); padding-top: 30px; color: var(--text-main); font-weight: 700;">
-        <i class="fa-solid fa-shield-halved" style="color: var(--primary);"></i> Chaves de Assinatura Eletrônica
-      </h3>
-
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-        <div class="form-group">
-          <label>Nova Senha Master</label>
-          <input type="password" placeholder="••••••••••••">
-        </div>
-        <div class="form-group">
-          <label>Verificação 2FA (TOTP)</label>
-          <input type="text" placeholder="Código de 6 dígitos">
-        </div>
-      </div>
-
-      <button class="btn-save" onclick="salvarPerfil(this)">
-        <i class="fa-solid fa-fingerprint"></i> Assinar & Salvar Alterações
-      </button>
-
-    </div>
-  </main>
-
+  <script src="assets/js/main.js"></script>
   <script>
-    function salvarPerfil(btn) {
-      const textoOriginal = btn.innerHTML;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Validando Criptografia...';
-      btn.style.opacity = '0.8';
-      btn.style.pointerEvents = 'none';
-      
-      setTimeout(() => {
-        btn.innerHTML = '<i class="fa-solid fa-shield-check"></i> Identidade Atualizada!';
-        btn.style.background = 'var(--primary)';
-        btn.style.opacity = '1';
-        
-        setTimeout(() => {
-          btn.innerHTML = textoOriginal;
-          btn.style.pointerEvents = 'all';
-          btn.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-dark))';
-        }, 3000);
-      }, 1500);
-    }
-  </script>
-  
-  <button class="theme-toggle" onclick="toggleTheme()" style="position: fixed; bottom: 30px; right: 30px; z-index: 9999; background: var(--bg-surface); border: 1px solid var(--glass-border); color: var(--text-main); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--glass-shadow); transition: 0.3s; font-size: 1.2rem;">
-    <i class="fa-solid fa-moon"></i>
-  </button>
-  <script>
-    function toggleTheme() {
-      const html = document.documentElement;
-      const isDark = html.getAttribute('data-theme') === 'dark';
-      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
-      const icon = document.querySelector('.theme-toggle i');
-      if(icon) icon.className = isDark ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-      localStorage.setItem('theme', isDark ? 'light' : 'dark');
-    }
-    window.addEventListener('DOMContentLoaded', () => {
-      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      const icon = document.querySelector('.theme-toggle i');
-      if(icon) icon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+    document.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem('theme') || 'dark';
+      updateSelection(saved);
     });
+
+    function forceThemeLocal(theme) {
+      // Reuse logic from main.js implicitly
+      const html = document.documentElement;
+      html.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+      
+      App.updateThemeIcon(theme);
+      window.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: theme } }));
+      
+      updateSelection(theme);
+      App.showToast('Configuração Aplicada', `Renderizador alterado com sucesso.`, 'success');
+    }
+
+    function updateSelection(theme) {
+      document.getElementById('optLight').classList.remove('active');
+      document.getElementById('optDark').classList.remove('active');
+      
+      if(theme === 'dark') {
+        document.getElementById('optDark').classList.add('active');
+      } else {
+        document.getElementById('optLight').classList.add('active');
+      }
+    }
   </script>
 </body>
 </html>

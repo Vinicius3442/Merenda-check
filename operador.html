@@ -4,252 +4,124 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Painel do Operador | Merenda Check</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/global.css" />
+
   <style>
-    :root {
-      --primary: #059669; --primary-dark: #047857;
-      --bg-base: #ffffff; --bg-surface: #f8fafc;
-      --text-main: #0f172a; --text-muted: #64748b;
-      --glass-border: rgba(0, 0, 0, 0.1);
-      --glass-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      --neon-glow: 0 4px 12px rgba(5, 150, 105, 0.2);
-      --alert-red: #ef4444; --alert-red-glow: 0 4px 12px rgba(239, 68, 68, 0.3);
-      --alert-yellow: #f59e0b;
-      --input-bg: rgba(0, 0, 0, 0.05);
-      --card-bg: #ffffff;
-    }
-    [data-theme="dark"] {
-      --primary: #00f260; --primary-dark: #0575e6;
-      --bg-base: #030712; --bg-surface: rgba(17, 24, 39, 0.7);
-      --text-main: #f9fafb; --text-muted: #9ca3af;
-      --glass-border: rgba(255, 255, 255, 0.08);
-      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-      --neon-glow: 0 0 20px rgba(0, 242, 96, 0.4);
-      --alert-red: #ef4444; --alert-red-glow: 0 0 20px rgba(239, 68, 68, 0.4);
-      --alert-yellow: #facc15;
-      --input-bg: rgba(0, 0, 0, 0.5);
-      --card-bg: rgba(255, 255, 255, 0.03);
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: "Outfit", sans-serif; background: var(--bg-base); color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
-    
-    /* Background Grid */
-    .bg-grid {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2;
-      background-image: 
-        linear-gradient(var(--glass-border) 1px, transparent 1px),
-        linear-gradient(90deg, var(--glass-border) 1px, transparent 1px);
-      background-size: 50px 50px;
-    }
-    .bg-glow {
-      position: fixed; top: -20%; right: -10%; width: 60vw; height: 60vw; border-radius: 50%;
-      background: radial-gradient(circle, rgba(5, 117, 230, 0.1) 0%, transparent 60%); z-index: -1;
-    }
+    .menu { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .menu-item { padding: 14px 16px; border-radius: 12px; color: var(--text-muted); text-decoration: none; font-weight: 500; transition: all var(--transition-fast); display: flex; align-items: center; gap: 12px; }
+    .menu-item:hover { background: var(--border-subtle); color: var(--text-main); }
+    .menu-item.active { background: rgba(5, 150, 105, 0.1); color: var(--primary); border: 1px solid rgba(5, 150, 105, 0.2); }
+    .menu-item.danger { color: var(--alert-red); margin-top: auto; }
+    .menu-item.danger:hover { background: var(--alert-red-glow); color: var(--alert-red); }
 
-    /* Mobile / Tablet App Structure */
-    .app-header {
-      background: var(--bg-surface); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-      border-bottom: 1px solid var(--glass-border); padding: 20px 24px;
-      display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000;
-      box-shadow: var(--glass-shadow);
-    }
-    .logo { display: flex; align-items: center; font-weight: 800; font-size: 1.4rem; color: var(--text-main); text-decoration: none; letter-spacing: -0.5px; }
-    
-    .operator-badge {
-      display: flex; align-items: center; gap: 12px; background: var(--input-bg);
-      padding: 8px 16px; border-radius: 50px; border: 1px solid var(--glass-border); font-weight: 600; font-size: 0.9rem;
-    }
-    .operator-badge i { color: var(--primary); }
-    
-    .main-content {
-      flex: 1; padding: 30px 24px 100px; max-width: 800px; margin: 0 auto; width: 100%;
-    }
-    
-    .greeting { text-align: center; margin-bottom: 40px; }
-    .greeting h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 8px; letter-spacing: -1px; }
-    .greeting p { color: var(--text-muted); font-size: 1.1rem; }
+    .user-profile { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-subtle); display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .avatar { width: 44px; height: 44px; background: linear-gradient(135deg, var(--alert-blue), #2563eb); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #fff; font-size: 1.1rem; }
 
-    /* Action Grid for Operators */
-    .action-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 40px;
-    }
+    .header-dash { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 20px;}
+    .header-dash h1 { font-size: 2.2rem; margin-bottom: 8px; }
 
+    .action-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-bottom: 40px;}
+    
     .action-card {
-      background: var(--bg-surface); border: 1px solid var(--glass-border); border-radius: 24px; padding: 32px 24px;
-      display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer;
-      backdrop-filter: blur(20px); transition: 0.3s; position: relative; overflow: hidden; text-decoration: none; color: inherit;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      padding: 30px; border-radius: 20px; text-decoration: none; color: var(--text-main);
+      display: flex; flex-direction: column; transition: transform var(--transition-smooth), border-color var(--transition-smooth);
+      position: relative; overflow: hidden;
     }
-    .action-card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: var(--neon-glow); }
-    
-    .action-icon {
+    .action-card .icon-wrapper {
       width: 80px; height: 80px; border-radius: 20px; display: flex; align-items: center; justify-content: center;
-      background: linear-gradient(135deg, rgba(0, 242, 96, 0.1), rgba(5, 117, 230, 0.1));
-      color: var(--primary); font-size: 2.5rem; margin-bottom: 20px; transition: 0.3s;
+      font-size: 2.5rem; margin-bottom: 24px; transition: transform 0.3s;
     }
-    .action-card:hover .action-icon {
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: var(--bg-base); box-shadow: var(--neon-glow);
-    }
-
-    .action-card h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 10px; }
-    .action-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
-
-    /* Quick Stats */
-    .stats-container {
-      background: var(--bg-surface); border: 1px solid var(--glass-border); border-radius: 20px;
-      padding: 24px; backdrop-filter: blur(20px);
-    }
-    .stats-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+    .action-card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: var(--glass-shadow); }
+    .action-card:hover .icon-wrapper { transform: scale(1.1); }
     
-    .stats-row { display: flex; justify-content: space-around; text-align: center; gap: 16px; flex-wrap: wrap; }
-    .stat-box { flex: 1; min-width: 120px; padding: 16px; background: var(--input-bg); border-radius: 16px; border: 1px solid var(--glass-border); }
-    .stat-num { font-size: 2rem; font-weight: 800; color: var(--primary); margin-bottom: 4px; }
-    .stat-label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
+    .card-receive { border: 1px solid var(--alert-green); }
+    .card-receive .icon-wrapper { background: rgba(16, 185, 129, 0.1); color: var(--alert-green); }
+    
+    .card-dispatch { border: 1px solid var(--alert-yellow); }
+    .card-dispatch .icon-wrapper { background: rgba(245, 158, 11, 0.1); color: var(--alert-yellow); }
 
-    /* Mobile Bottom Nav Bar */
-    .bottom-nav {
-      position: fixed; bottom: 0; left: 0; width: 100%; height: 70px;
-      background: var(--bg-surface); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-      border-top: 1px solid var(--glass-border); display: flex; justify-content: space-around; align-items: center; z-index: 1000;
-    }
-    .nav-btn {
-      display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--text-muted); text-decoration: none;
-      font-size: 0.75rem; font-weight: 600; transition: 0.3s; padding: 10px; flex: 1;
-    }
-    .nav-btn i { font-size: 1.4rem; transition: 0.3s; }
-    .nav-btn:hover { color: var(--text-main); }
-    .nav-btn.active { color: var(--primary); }
-    .nav-btn.active i { transform: translateY(-4px); }
+    .card-meal { border: 1px solid var(--primary); }
+    .card-meal .icon-wrapper { background: rgba(5, 150, 105, 0.1); color: var(--primary); }
+    
+    .card-waste { border: 1px solid var(--alert-red); }
+    .card-waste .icon-wrapper { background: rgba(239, 68, 68, 0.1); color: var(--alert-red); }
 
-
-    /* Destkop Responsiveness */
-    @media (min-width: 900px) {
-      body { flex-direction: row; }
-      
-      .bottom-nav {
-        position: sticky; top: 0; left: 0; width: 250px; height: 100vh;
-        flex-direction: column; justify-content: flex-start; align-items: flex-start;
-        padding: 40px 24px; border-top: none; border-right: 1px solid var(--glass-border);
-      }
-      .nav-btn {
-        flex-direction: row; font-size: 1rem; padding: 16px; width: 100%; gap: 16px;
-        border-radius: 12px; margin-bottom: 8px; justify-content: flex-start;
-      }
-      .nav-btn.active { background: rgba(0, 242, 96, 0.1); }
-      .nav-btn.active i { transform: translateY(0); }
-      
-      .main-content { padding: 40px 50px; max-width: 1200px; }
-      .app-header { display: none; } /* Hide mobile header on desktop for main dashboard */
-    }
+    .card-desc { color: var(--text-muted); font-size: 1rem; flex: 1; }
+    
+    .pulse-badge { position: absolute; top: 20px; right: 20px; background: rgba(239, 68, 68, 0.1); color: var(--alert-red); padding: 4px 12px; border-radius: 50px; font-size: 0.8rem; font-weight: bold; border: 1px solid rgba(239, 68, 68, 0.3); animation: pulseGlow 1.5s infinite; }
   </style>
-
-  <script>
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-  </script>
 </head>
 <body>
 
-  <div class="bg-grid"></div>
-  <div class="bg-glow"></div>
+  <div class="bg-mesh"></div>
 
-  <header class="app-header">
-    <a href="index.html" class="logo">
-      <svg width="32" height="32" viewBox="0 0 100 100" fill="none" stroke="var(--primary)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 10px;">
-        <path d="M 20 80 V 20 L 50 50 L 80 20 V 80" />
-        <path d="M 35 60 L 50 75 L 85 30" stroke-width="14" stroke="var(--text-main)" />
-      </svg>
-      <span>Merenda Check</span>
-    </a>
-    <div class="operator-badge">
-      <i class="fa-solid fa-fire-burner"></i> Cozinha - EMEF João Silva
-    </div>
-  </header>
-
-  <main class="main-content">
-    <div class="greeting">
-      <h1>Bom dia, Márcia!</h1>
-      <p>O que vamos fazer na operação hoje?</p>
-    </div>
-
-    <div class="action-grid">
-      <a href="registrar-refeicao.html" class="action-card">
-        <div class="action-icon"><i class="fa-solid fa-qrcode"></i></div>
-        <h3>Registrar Refeição</h3>
-        <p>Escanear carteirinha ou QR code do aluno na linha de serviço.</p>
-      </a>
-
-      <a href="baixa-insumo.html" class="action-card">
-        <div class="action-icon"><i class="fa-solid fa-box-open"></i></div>
-        <h3>Baixa de Insumo</h3>
-        <p>Registrar saída de produtos da despensa para preparo do dia.</p>
+  <div class="app-container">
+    <aside class="app-sidebar">
+      <a href="index.html" class="logo" style="margin-bottom: 40px; display: block;">
+        <img src="assets/logo.png" alt="Merenda Check" class="logo-img" />
       </a>
       
-      <a href="sobra-limpa.html" class="action-card">
-        <div class="action-icon"><i class="fa-solid fa-scale-balanced"></i></div>
-        <h3>Sobra Limpa</h3>
-        <p>Pesar e registrar sobras ou nível de desperdício das panelas.</p>
-      </a>
-    </div>
+      <nav class="menu">
+        <a href="operador.html" class="menu-item active"><i class="fa-solid fa-hand-holding-hand"></i> Atividades</a>
+        <a href="gestor-estoque.html" class="menu-item"><i class="fa-solid fa-boxes-stacked"></i> Consultar Despensa</a>
+        
+        <a href="login.html" class="menu-item danger"><i class="fa-solid fa-power-off"></i> Encerrar Sessão</a>
+      </nav>
 
-    <div class="stats-container">
-      <div class="stats-title"><i class="fa-solid fa-chart-pie" style="color: var(--primary);"></i> Resumo do Turno Atual</div>
-      <div class="stats-row">
-        <div class="stat-box">
-          <div class="stat-num">312</div>
-          <div class="stat-label">Refeições Servidas</div>
+      <a href="perfil.html" class="user-profile">
+        <div class="avatar">JM</div>
+        <div>
+          <h4 style="font-size: 1rem; margin: 0; color: var(--text-main); font-weight: 700;">João Maria</h4>
+          <span style="font-size: 0.85rem; color: var(--text-muted);">Nutricionista/Chefe</span>
         </div>
-        <div class="stat-box">
-          <div class="stat-num">82%</div>
-          <div class="stat-label">Meta Atingida</div>
-        </div>
-        <div class="stat-box" style="border-color: rgba(239, 68, 68, 0.3);">
-          <div class="stat-num" style="color: #ef4444;">4kg</div>
-          <div class="stat-label">Resto Ingesta</div>
+      </a>
+    </aside>
+
+    <main class="app-main">
+      <div class="header-dash animate-fade-in">
+        <div>
+          <h1>Operação Local</h1>
+          <p style="color: var(--text-muted); font-size: 1.1rem;">Ações de linha de frente: Almoxarifado e Refeitório.</p>
         </div>
       </div>
-    </div>
-  </main>
 
-  <nav class="bottom-nav">
-    <a href="#" class="nav-btn active">
-      <i class="fa-solid fa-house"></i>
-      Início
-    </a>
-    <a href="#" class="nav-btn">
-      <i class="fa-solid fa-clipboard-list"></i>
-      Cardápio
-    </a>
-    <a href="perfil.html" class="nav-btn">
-      <i class="fa-solid fa-user"></i>
-      Perfil
-    </a>
-    <a href="login.html" class="nav-btn" style="color: var(--alert-red);">
-      <i class="fa-solid fa-power-off"></i>
-      Sair
-    </a>
-  </nav>
+      <div class="action-grid animate-slide-up delay-100">
+        
+        <a href="entrada.html" class="action-card glass-panel card-receive">
+          <div class="icon-wrapper"><i class="fa-solid fa-truck-ramp-box"></i></div>
+          <h3 class="brand-font" style="font-size: 1.5rem; margin-bottom: 12px;">Receber Caminhão (Entrada)</h3>
+          <p class="card-desc">Escaneie o QR Code do fornecedor para confirmar via Smart Contract que os insumos chegaram conformes.</p>
+        </a>
 
-  <button class="theme-toggle" onclick="toggleTheme()" style="position: fixed; bottom: 30px; right: 24px; z-index: 9999; background: var(--bg-surface); border: 1px solid var(--glass-border); color: var(--text-main); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--glass-shadow); transition: 0.3s; font-size: 1.2rem;">
-    <i class="fa-solid fa-moon"></i>
-  </button>
-  <script>
-    function toggleTheme() {
-      const html = document.documentElement;
-      const isDark = html.getAttribute('data-theme') === 'dark';
-      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
-      const icon = document.querySelector('.theme-toggle i');
-      if(icon) icon.className = isDark ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-      localStorage.setItem('theme', isDark ? 'light' : 'dark');
-    }
-    window.addEventListener('DOMContentLoaded', () => {
-      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      const icon = document.querySelector('.theme-toggle i');
-      if(icon) icon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-    });
-  </script>
+        <a href="baixa-insumo.html" class="action-card glass-panel card-dispatch">
+          <div class="pulse-badge"><i class="fa-solid fa-clock"></i> FIFO Obrigatório</div>
+          <div class="icon-wrapper"><i class="fa-solid fa-fire-burner"></i></div>
+          <h3 class="brand-font" style="font-size: 1.5rem; margin-bottom: 12px;">Retirar para Cozinha</h3>
+          <p class="card-desc">Despache carne, arroz e demais insumos seguindo a fila lógica para preparo do dia.</p>
+        </a>
+
+        <a href="registrar-refeicao.html" class="action-card glass-panel card-meal">
+          <div class="icon-wrapper"><i class="fa-solid fa-utensils"></i></div>
+          <h3 class="brand-font" style="font-size: 1.5rem; margin-bottom: 12px;">Apontar Almoço Servido</h3>
+          <p class="card-desc">Informe a contagem volumosa caso a integração biométrica da catraca oscile.</p>
+        </a>
+
+        <a href="sobra-limpa.html" class="action-card glass-panel card-waste">
+          <div class="icon-wrapper"><i class="fa-solid fa-scale-unbalanced"></i></div>
+          <h3 class="brand-font" style="font-size: 1.5rem; margin-bottom: 12px;">Pesar Sobra Limpa (Panela)</h3>
+          <p class="card-desc">O volume restante não servido cruzado com os algoritmos preditivos que alertam a secretaria.</p>
+        </a>
+
+      </div>
+
+    </main>
+  </div>
+
+  <script src="assets/js/main.js"></script>
 </body>
 </html>

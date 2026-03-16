@@ -3,204 +3,147 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Recepção de Lotes | Merenda Check</title>
+  <title>Recepção de Lote | Merenda Check</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/global.css" />
 
   <style>
-            :root {
-      --primary: #059669; --primary-dark: #047857;
-      --bg-base: #ffffff; --bg-surface: #f8fafc;
-      --text-main: #0f172a; --text-muted: #64748b;
-      --glass-border: rgba(0, 0, 0, 0.1);
-      --glass-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      --neon-glow: 0 4px 12px rgba(5, 150, 105, 0.2);
-      --alert-red: #ef4444; --alert-red-glow: 0 4px 12px rgba(239, 68, 68, 0.3);
-      --alert-yellow: #f59e0b;
-      --input-bg: rgba(0, 0, 0, 0.05);
-      --card-bg: #ffffff;
-    }
-    [data-theme="dark"] {
-      --primary: #00f260; --primary-dark: #0575e6;
-      --bg-base: #030712; --bg-surface: rgba(17, 24, 39, 0.7);
-      --text-main: #f9fafb; --text-muted: #9ca3af;
-      --glass-border: rgba(255, 255, 255, 0.08);
-      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-      --neon-glow: 0 0 20px rgba(0, 242, 96, 0.4);
-      --alert-red: #ef4444; --alert-red-glow: 0 0 20px rgba(239, 68, 68, 0.4);
-      --alert-yellow: #facc15;
-      --input-bg: rgba(0, 0, 0, 0.5);
-      --card-bg: rgba(255, 255, 255, 0.03);
-    }
+    .header-dash { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 20px;}
+    .header-dash h1 { font-size: 2.2rem; margin-bottom: 8px; }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    .wizard-container { max-width: 900px; margin: 0 auto; }
     
-    body {
-      font-family: 'Outfit', sans-serif; background-color: var(--bg-base); color: var(--text-main);
-      user-select: none; padding-bottom: 120px; overflow-x: hidden;
+    .scanner-mock {
+      width: 100%; height: 300px; border-radius: 20px; border: 2px dashed var(--primary);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: rgba(5, 150, 105, 0.05); color: var(--primary); margin-bottom: 30px; position: relative;
+      overflow: hidden; cursor: pointer;
     }
-
-    .bg-video-wrapper {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2;
-      background: radial-gradient(circle at bottom center, rgba(5, 117, 230, 0.08), transparent 40%);
-    }
-
-    .topbar {
-      background: var(--bg-surface); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      padding: 20px 24px; display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid var(--glass-border); position: sticky; top: 0; z-index: 100;
-    }
-    .btn-back {
-      background: var(--glass-border); color: var(--text-main); border: 1px solid var(--glass-border);
-      padding: 12px 20px; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer;
-      display: flex; align-items: center; gap: 10px; text-decoration: none; transition: 0.3s;
-    }
-    .btn-back:hover { background: rgba(255,255,255,0.1); }
-    .topbar h2 { font-size: 1.3rem; margin: 0; position: absolute; left: 50%; transform: translateX(-50%); font-weight: 700; letter-spacing: -0.5px;}
-
-    .container { max-width: 650px; margin: 40px auto; padding: 0 24px; display: flex; flex-direction: column; gap: 30px; animation: slideUp 0.6s ease forwards; opacity: 0; transform: translateY(20px);}
-    @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
-
-    .card { background: var(--bg-surface); border-radius: 24px; padding: 32px; backdrop-filter: blur(20px); border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); }
-    .card-title { font-size: 1.2rem; color: var(--text-main); margin-bottom: 24px; font-weight: 700; display: flex; justify-content: space-between; align-items: center;}
-
-    .scan-area {
-      border: 2px dashed rgba(0, 242, 96, 0.4); border-radius: 20px; padding: 40px 20px;
-      text-align: center; background: rgba(0, 242, 96, 0.02); cursor: pointer; transition: 0.3s;
-    }
-    .scan-area:active { transform: scale(0.98); background: rgba(0, 242, 96, 0.05); }
-    .scan-icon { font-size: 4rem; color: var(--primary); margin-bottom: 16px; filter: drop-shadow(0 0 10px rgba(0,242,96,0.3));}
-    .scan-text { font-size: 1.2rem; font-weight: 600; color: var(--text-main); margin-bottom: 8px;}
-    .scan-subtext { font-size: 0.95rem; color: var(--text-muted); }
-
-    .input-group { margin-bottom: 20px;}
-    .input-group label { display: block; font-size: 0.95rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;}
-    .input-ctrl { width: 100%; padding: 18px 20px; font-size: 1.1rem; border: 1px solid var(--glass-border); border-radius: 12px; background: var(--glass-border); color: var(--text-main); font-family: inherit; transition: 0.3s;}
-    .input-ctrl:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 10px rgba(0,242,96,0.1); background: rgba(0,242,96,0.02);}
-
-    .bottom-bar {
-      position: fixed; bottom: 0; left: 0; width: 100%; background: var(--bg-surface); backdrop-filter: blur(20px);
-      padding: 24px; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); border-top: 1px solid var(--glass-border); z-index: 100;
-    }
-    .btn-submit {
-      width: 100%; max-width: 650px; margin: 0 auto; display: flex; padding: 20px; border-radius: 20px; font-size: 1.3rem;
-      font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: var(--bg-base);
-      border: none; cursor: pointer; align-items: center; justify-content: center; gap: 12px;
-      box-shadow: var(--neon-glow); transition: 0.2s; letter-spacing: -0.5px;
-    }
-    .btn-submit:active { transform: scale(0.98); }
-
-    .modal-overlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-surface); backdrop-filter: blur(10px);
-      display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: 0.4s;
-    }
-    .modal-overlay.show { opacity: 1; pointer-events: all; }
-    .modal-content {
-      background: var(--bg-surface); padding: 50px 40px; border-radius: 32px; text-align: center; max-width: 450px; width: 90%;
-      transform: translateY(40px) scale(0.95); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid var(--glass-border); box-shadow: 0 0 50px rgba(0,242,96,0.2);
-    }
-    .modal-overlay.show .modal-content { transform: translateY(0) scale(1); }
     
-    .modal-icon {
-      width: 100px; height: 100px; background: rgba(0, 242, 96, 0.1); color: var(--primary); border: 1px solid rgba(0,242,96,0.3);
-      border-radius: 50%; font-size: 3rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 30px; box-shadow: var(--neon-glow);
+    .scanner-line {
+      position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--primary);
+      box-shadow: var(--neon-glow); animation: scan 2s linear infinite; display: none;
     }
+
+    @keyframes scan {
+      0% { top: 0; }
+      100% { top: 100%; }
+    }
+
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; opacity: 0.4; pointer-events: none; transition: 0.3s;}
+    .info-grid.active { opacity: 1; pointer-events: auto; }
   </style>
-  <script>
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-  </script>
 </head>
 <body>
-  <div class="bg-video-wrapper"></div>
-  <header class="topbar">
-    <a href="operador.html" class="btn-back"><i class="fa-solid fa-chevron-left"></i> Voltar</a>
-    <h2>Entrada e Hash Fiscal</h2>
-    <div style="width: 100px;"></div>
-  </header>
 
-  <main class="container">
-    <div class="card">
-      <div class="scan-area" onclick="simularLeitura()">
-        <div class="scan-icon"><i class="fa-solid fa-qrcode"></i></div>
-        <div class="scan-text">Escanear Nota Fiscal (NFe)</div>
-        <div class="scan-subtext">Use a câmera do tablet para entrada expressa</div>
-      </div>
-    </div>
+  <div class="bg-mesh"></div>
 
-    <div class="card" id="formManual">
-      <div class="card-title">Inserção Manual de Lote</div>
+  <div class="app-container">
+    <main class="app-main" style="padding-top: 60px;">
       
-      <div class="input-group">
-        <label>Código do Produto (SKU)</label>
-        <input type="text" class="input-ctrl" placeholder="Ex: 88470" />
-      </div>
+      <div class="wizard-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+          <a href="operador.html" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
+          <img src="assets/logo.png" alt="Merenda Check" class="logo-img" />
+        </div>
+        <div class="header-dash animate-fade-in">
+          <div>
+            <h1>Recepção Integrada Oráculo</h1>
+            <p style="color: var(--text-muted); font-size: 1.1rem;">Escaneie o manifesto digital do motorista enviado pelo Oráculo Central (SEDUC).</p>
+          </div>
+        </div>
 
-      <div class="input-group">
-        <label>Identificação de Lote</label>
-        <input type="text" class="input-ctrl" placeholder="Numeração Fornecedor" />
-      </div>
-      
-      <div class="input-group">
-        <label>Quantidade Recebida (kg/und)</label>
-        <input type="number" class="input-ctrl" placeholder="0" />
-      </div>
+        <div class="glass-panel animate-slide-up" style="padding: 40px;">
+          
+          <div class="scanner-mock" id="scannerMock">
+            <div class="scanner-line"></div>
+            <i class="fa-solid fa-qrcode" style="font-size: 4rem; margin-bottom: 16px;"></i>
+            <h3 class="brand-font" style="font-size: 1.2rem;">Clique para simular Escaneamento Óptico</h3>
+            <p style="font-size: 0.9rem; margin-top: 8px;">Simula liberação de câmera e handshake SSL do Hash</p>
+          </div>
 
-      <div class="input-group">
-        <label>Validade Legal</label>
-        <input type="date" class="input-ctrl" />
-      </div>
-    </div>
-  </main>
+          <div class="info-grid" id="dataGrid">
+            <div class="form-group">
+              <label class="form-label">Hash Lote (Block ID)</label>
+              <input type="text" class="form-control" id="fHash" readonly placeholder="Aguardando..." />
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Identificação do Insumo</label>
+              <input type="text" class="form-control" id="fItem" readonly placeholder="Aguardando..." />
+            </div>
 
-  <div class="bottom-bar">
-    <button class="btn-submit" onclick="confirmarEntrada()">
-      <i class="fa-solid fa-truck-ramp-box"></i> Autenticar no Inventário Global
-    </button>
+            <div class="form-group">
+              <label class="form-label">Volume Declarado Central</label>
+              <input type="text" class="form-control" id="fQtd" readonly placeholder="Aguardando..." />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Fornecedor Responsável</label>
+              <input type="text" class="form-control" id="fForn" readonly placeholder="Aguardando..." />
+            </div>
+            
+            <div class="form-group">
+               <label class="form-label">Volume Efetivamente Recebido (kg)</label>
+               <input type="number" class="form-control" placeholder="Aferir na balança local..." id="fReal" />
+            </div>
+          </div>
+          
+          <div style="margin-top: 40px; text-align: right;">
+            <button class="btn btn-primary" id="btnConfirmar" disabled data-action="mock-submit" data-redirect="operador.html" data-success-title="Blockchain Sincronizado" data-success-msg="Entrada adicionada ao protocolo DAO e registrada do estoque.">
+              <i class="fa-solid fa-fingerprint"></i> Assinar Recebimento
+            </button>
+          </div>
+          
+        </div>
+
+      </div>
+    </main>
   </div>
 
-  <div class="modal-overlay" id="modalSucesso">
-    <div class="modal-content">
-      <div class="modal-icon"><i class="fa-solid fa-shield-check"></i></div>
-      <h2 style="color: var(--text-main); margin-bottom: 16px; font-weight: 800; font-size: 2rem; letter-spacing: -1px;">Insumos Autenticados</h2>
-      <p style="color: var(--text-muted); margin-bottom: 32px; font-size: 1.1rem; line-height: 1.6;">O novo lote passará a integrar a malha FIFO e será regido pela Inteligência Artificial.</p>
-      <button onclick="window.location.href='operador.html'" style="width: 100%; padding: 18px; background: var(--glass-border); border: 1px solid var(--glass-border); border-radius: 16px; font-weight: 700; color: var(--text-main); font-size: 1.1rem; cursor: pointer; transition: 0.3s;">Voltar ao Dashboard</button>
-    </div>
-  </div>
-
+  <script src="assets/js/main.js"></script>
   <script>
-    const modal = document.getElementById('modalSucesso');
-    
-    function simularLeitura() {
-      const area = document.querySelector('.scan-area');
-      area.innerHTML = '<div class="scan-icon" style="color:#0575e6;"><i class="fa-solid fa-spinner fa-spin"></i></div><div class="scan-text">Processando Criptografia...</div>';
+    document.getElementById('scannerMock').addEventListener('click', function() {
+      if(this.dataset.scanned) return;
+      
+      const icon = this.querySelector('i');
+      const text = this.querySelector('h3');
+      const desc = this.querySelector('p');
+      const line = this.querySelector('.scanner-line');
+      
+      icon.className = 'fa-solid fa-camera-viewfinder';
+      text.innerText = "Sincronizando Óptica...";
+      desc.innerText = "Conectando ao oráculo...";
+      line.style.display = 'block';
+
       setTimeout(() => {
-        confirmarEntrada();
-      }, 1500);
-    }
+        this.dataset.scanned = 'true';
+        this.style.borderColor = 'var(--alert-green)';
+        this.style.background = 'transparent';
+        line.style.display = 'none';
+        
+        icon.className = 'fa-solid fa-check-circle';
+        icon.style.color = 'var(--alert-green)';
+        text.innerText = "Hash Lote Verificado";
+        desc.innerText = "Handshake Bem-sucedido";
 
-    function confirmarEntrada() {
-      modal.classList.add('show');
-    }
-  </script>
-  <button class="theme-toggle" onclick="toggleTheme()" style="position: fixed; bottom: 30px; right: 30px; z-index: 9999; background: var(--bg-surface); border: 1px solid var(--glass-border); color: var(--text-main); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--glass-shadow); transition: 0.3s; font-size: 1.2rem;">
-    <i class="fa-solid fa-moon"></i>
-  </button>
-  <script>
-    function toggleTheme() {
-      const html = document.documentElement;
-      const isDark = html.getAttribute('data-theme') === 'dark';
-      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
-      const icon = document.querySelector('.theme-toggle i');
-      if(icon) icon.className = isDark ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-      localStorage.setItem('theme', isDark ? 'light' : 'dark');
-    }
-    window.addEventListener('DOMContentLoaded', () => {
-      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      const icon = document.querySelector('.theme-toggle i');
-      if(icon) icon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        // Fill data
+        const grid = document.getElementById('dataGrid');
+        grid.classList.add('active');
+        
+        document.getElementById('fHash').value = "0x8F9B2C-11Z";
+        document.getElementById('fItem').value = "Filé de Frango Grelhado Premium";
+        document.getElementById('fQtd').value = "100 kg";
+        document.getElementById('fForn').value = "AgroSul Alimentos SA";
+        
+        document.getElementById('btnConfirmar').removeAttribute('disabled');
+        
+        App.showToast('Recepção Verificada', 'Oráculo confirmou a existência deste lote em trânsito.', 'success');
+      }, 2000);
     });
   </script>
 </body>

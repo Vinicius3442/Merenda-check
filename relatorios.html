@@ -3,254 +3,127 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Relatórios e Transparência | Merenda Check</title>
+  <title>Relatórios Criptográficos | Merenda Check</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/global.css" />
+
   <style>
-            :root {
-      --primary: #059669; --primary-dark: #047857;
-      --bg-base: #ffffff; --bg-surface: #f8fafc;
-      --text-main: #0f172a; --text-muted: #64748b;
-      --glass-border: rgba(0, 0, 0, 0.1);
-      --glass-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      --neon-glow: 0 4px 12px rgba(5, 150, 105, 0.2);
-      --alert-red: #ef4444; --alert-red-glow: 0 4px 12px rgba(239, 68, 68, 0.3);
-      --alert-yellow: #f59e0b;
-      --input-bg: rgba(0, 0, 0, 0.05);
-      --card-bg: #ffffff;
-    }
-    [data-theme="dark"] {
-      --primary: #00f260; --primary-dark: #0575e6;
-      --bg-base: #030712; --bg-surface: rgba(17, 24, 39, 0.7);
-      --text-main: #f9fafb; --text-muted: #9ca3af;
-      --glass-border: rgba(255, 255, 255, 0.08);
-      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-      --neon-glow: 0 0 20px rgba(0, 242, 96, 0.4);
-      --alert-red: #ef4444; --alert-red-glow: 0 0 20px rgba(239, 68, 68, 0.4);
-      --alert-yellow: #facc15;
-      --input-bg: rgba(0, 0, 0, 0.5);
-      --card-bg: rgba(255, 255, 255, 0.03);
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    
-    body {
-      font-family: 'Outfit', sans-serif; background-color: var(--bg-base); color: var(--text-main);
-      display: flex; min-height: 100vh; overflow-x: hidden;
-    }
-
-    .bg-video-wrapper {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2;
-      background: radial-gradient(circle at 10% 10%, rgba(5, 117, 230, 0.15), transparent 50%),
-                  radial-gradient(circle at 90% 90%, rgba(0, 242, 96, 0.1), transparent 50%);
-    }
-
-    /* Utilitários */
-    .btn {
-      padding: 12px 24px; border-radius: 12px; font-weight: 600; font-size: 0.95rem; text-decoration: none;
-      border: 1px solid var(--glass-border); cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--glass-border); color: var(--text-main);
-    }
-    .btn:hover { background: rgba(255,255,255,0.1); }
-    .btn.primary { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: var(--bg-base); border: none; font-weight: 700; }
-    .btn.primary:hover { box-shadow: var(--neon-glow); transform: translateY(-2px); color: var(--text-main); }
-    
-    .btn.pdf { background: var(--alert-red-glow); color: var(--alert-red); border-color: var(--alert-red); }
-    .btn.pdf:hover { background: #ef4444; color: var(--text-main); }
-    .btn.excel { background: rgba(16, 124, 65, 0.2); color: var(--primary); border-color: rgba(74, 222, 128, 0.3); }
-    .btn.excel:hover { background: #16a34a; color: var(--text-main); }
-
-    /* Sidebar Glass */
-    .sidebar {
-      width: 280px; background: var(--bg-surface); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-      border-right: 1px solid var(--glass-border); padding: 32px 24px; display: flex; flex-direction: column; height: 100vh; position: sticky; top: 0;
-    }
-    .logo { display: flex; align-items: center; font-weight: 800; font-size: 1.6rem; color: var(--text-main); margin-bottom: 40px; letter-spacing: -0.5px;}
-    .logo i {
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-right: 10px; font-size: 1.4rem;
-    }
-    
     .menu { display: flex; flex-direction: column; gap: 8px; flex: 1; }
     .menu-item {
       padding: 14px 16px; border-radius: 12px; color: var(--text-muted); text-decoration: none;
-      font-weight: 500; transition: 0.3s; display: flex; align-items: center; gap: 12px; border: 1px solid transparent;
+      font-weight: 500; transition: all var(--transition-fast); display: flex; align-items: center; gap: 12px;
     }
-    .menu-item:hover { background: var(--glass-border); color: var(--text-main); }
-    .menu-item.active { background: rgba(0, 242, 96, 0.1); color: var(--primary); border-color: rgba(0, 242, 96, 0.2); box-shadow: 0 0 15px rgba(0, 242, 96, 0.05);}
-    .menu-item.danger { color: #ef4444; margin-top: auto; }
-    .menu-item.danger:hover { background: var(--alert-red-glow); border-color: rgba(239, 68, 68, 0.2); color: #ef4444; }
+    .menu-item:hover { background: var(--border-subtle); color: var(--text-main); }
+    .menu-item.active { background: rgba(5, 150, 105, 0.1); color: var(--primary); border: 1px solid rgba(5, 150, 105, 0.2); }
+    .menu-item.danger { color: var(--alert-red); margin-top: auto; }
+    .menu-item.danger:hover { background: var(--alert-red-glow); color: var(--alert-red); }
 
     .user-profile {
-      margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--glass-border);
-      display: flex; align-items: center; gap: 12px;
+      margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-subtle);
+      display: flex; align-items: center; gap: 12px; text-decoration: none;
     }
-    .avatar { width: 44px; height: 44px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--bg-base); font-size: 1.1rem;}
+    .avatar { width: 44px; height: 44px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #fff; font-size: 1.1rem; }
 
-    /* Main Content */
-    .main-content { flex: 1; padding: 40px 60px; overflow-y: auto; }
-    
-    .header-dash { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; }
-    .header-dash h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 4px; }
-    .header-dash p { color: var(--text-muted); font-size: 1.1rem; }
+    .header-dash { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 20px;}
+    .header-dash h1 { font-size: 2.2rem; margin-bottom: 8px; }
 
-    .reports-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    /* Report Generation Cards */
+    .report-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;
+    }
     
-    .report-card { background: var(--bg-surface); border-radius: 24px; padding: 32px; border: 1px solid var(--glass-border); backdrop-filter: blur(20px); box-shadow: var(--glass-shadow); position: relative; overflow: hidden; display: flex; flex-direction: column; transition: 0.3s; }
-    .report-card:hover { transform: translateY(-5px); border-color: rgba(0, 242, 96, 0.3); box-shadow: 0 12px 40px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(0,242,96,0.1); }
-    
-    .report-icon { width: 56px; height: 56px; border-radius: 16px; background: rgba(0, 242, 96, 0.1); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin-bottom: 20px; border: 1px solid rgba(0,242,96,0.2); box-shadow: var(--neon-glow);}
-    .report-card h3 { font-size: 1.3rem; margin-bottom: 12px; font-weight: 700; color: var(--text-main);}
-    .report-card p { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 30px; flex: 1; line-height: 1.6;}
+    .report-card {
+      padding: 40px; border-radius: 20px; border: 1px solid var(--border-subtle);
+      position: relative; overflow: hidden;
+      display: flex; flex-direction: column; height: 100%; transition: all var(--transition-fast);
+    }
+    .report-card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: var(--neon-glow); }
+    .report-card::after {
+      content: '\f15c'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+      position: absolute; right: -20px; bottom: -20px; font-size: 8rem; color: var(--bg-surface-elevated); z-index: -1;
+      transform: rotate(-15deg);
+    }
 
-    .btn-group { display: flex; gap: 12px; }
-    
-    /* Modal de Geração */
-    .overlay { position: fixed; inset: 0; background: var(--bg-surface); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s; z-index: 1000; }
-    .overlay.show { opacity: 1; pointer-events: all; }
-    .loading-box { background: var(--bg-surface); border: 1px solid var(--glass-border); padding: 50px 40px; border-radius: 24px; text-align: center; max-width: 360px; width: 100%; transform: scale(0.9); transition: 0.3s; box-shadow: 0 20px 50px rgba(0,0,0,0.6); }
-    .overlay.show .loading-box { transform: scale(1); }
-    .spinner { font-size: 3.5rem; color: var(--primary); animation: spin 1s linear infinite; margin-bottom: 24px; filter: drop-shadow(0 0 10px rgba(0,242,96,0.5));}
-    @keyframes spin { 100% { transform: rotate(360deg); } }
+    .report-icon {
+      width: 64px; height: 64px; border-radius: 16px; background: rgba(5, 150, 105, 0.1); color: var(--primary);
+      display: flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 24px;
+    }
   </style>
-  <script>
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-  </script>
 </head>
 <body>
 
-  <div class="bg-video-wrapper"></div>
+  <div class="bg-mesh"></div>
 
-  <aside class="sidebar">
-    <a href="index.html" class="logo" style="text-decoration: none;">
-            <svg width="40" height="40" viewBox="0 0 100 100" fill="none" stroke="var(--primary)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 12px; vertical-align: middle;">
-        <path d="M 20 80 V 20 L 50 50 L 80 20 V 80" />
-        <path d="M 35 60 L 50 75 L 85 30" stroke-width="14" stroke="var(--text-main)" />
-      </svg>
-      <span style="color: var(--text-main);">Merenda Check</span>
-    </a>
-    
-    <nav class="menu">
-      <a href="gestor.html" class="menu-item"><i class="fa-solid fa-house"></i> Visão Geral</a>
-      <a href="gestor-estoque.html" class="menu-item"><i class="fa-solid fa-boxes-stacked"></i> Estoque Local</a>
-      <a href="relatorios.html" class="menu-item active"><i class="fa-solid fa-file-invoice"></i> Relatórios</a>
+  <div class="app-container">
+    <aside class="app-sidebar">
+      <a href="index.html" class="logo" style="margin-bottom: 40px; display: block;">
+        <img src="assets/logo.png" alt="Merenda Check" class="logo-img" />
+      </a>
       
-      <a href="login.html" class="menu-item danger"><i class="fa-solid fa-power-off"></i> Encerrar Sessão</a>
-    </nav>
+      <nav class="menu">
+        <a href="gestor.html" class="menu-item"><i class="fa-solid fa-house"></i> Visão Geral</a>
+        <a href="gestor-estoque.html" class="menu-item"><i class="fa-solid fa-boxes-stacked"></i> Estoque Local</a>
+        <a href="relatorios.html" class="menu-item active"><i class="fa-solid fa-file-invoice"></i> Relatórios</a>
+        
+        <a href="login.html" class="menu-item danger"><i class="fa-solid fa-power-off"></i> Encerrar Sessão</a>
+      </nav>
 
-    <a href="perfil.html" class="user-profile" style="text-decoration: none; cursor: pointer; transition: 0.2s;">
-      <div class="avatar">CR</div>
-      <div>
-        <h4 style="font-size: 1rem; margin: 0; color: var(--text-main); font-weight: 700;">Carlos Roberto</h4>
-        <span style="font-size: 0.85rem; color: var(--text-muted);">Diretor Escolar</span>
-      </div>
-    </a>
-  </aside>
+      <a href="perfil.html" class="user-profile">
+        <div class="avatar">CR</div>
+        <div>
+          <h4 style="font-size: 1rem; margin: 0; color: var(--text-main); font-weight: 700;">Carlos Roberto</h4>
+          <span style="font-size: 0.85rem; color: var(--text-muted);">Diretor Escolar</span>
+        </div>
+      </a>
+    </aside>
 
-  <main class="main-content">
-    <div class="header-dash">
-      <div>
-        <h1>Portal de Transparência</h1>
-        <p>Emissão de relatórios oficiais para prestação de contas (FNDE / Tribunal de Contas).</p>
-      </div>
-    </div>
-
-    <div class="reports-grid">
-      <div class="report-card">
-        <div class="report-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
-        <h3>Relatório de Economia (FIFO)</h3>
-        <p>Demonstrativo financeiro do desperdício evitado pelo bloqueio de lotes vencidos.</p>
-        <div class="btn-group">
-          <button class="btn pdf" style="flex: 1;" onclick="simularDownload('PDF')"><i class="fa-solid fa-file-pdf"></i> Gerar PDF</button>
-          <button class="btn excel" style="flex: 1;" onclick="simularDownload('Excel')"><i class="fa-solid fa-file-excel"></i> Excel</button>
+    <main class="app-main">
+      <div class="header-dash animate-fade-in">
+        <div>
+          <h1>Repositório Documental</h1>
+          <p style="color: var(--text-muted); font-size: 1.1rem;">Emissão de prestação de contas selada via Smart Contracts para prefeituras.</p>
         </div>
       </div>
 
-      <div class="report-card">
-        <div class="report-icon" style="color: var(--alert-red); background: var(--alert-red-glow); border-color: rgba(239, 68, 68, 0.2); box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);"><i class="fa-solid fa-scale-balanced"></i></div>
-        <h3>Dossiê de Inconsistências</h3>
-        <p>Listagem completa das ocorrências detectadas pela Auditoria Preditiva no mês.</p>
-        <div class="btn-group">
-          <button class="btn pdf" style="flex: 1;" onclick="simularDownload('PDF')"><i class="fa-solid fa-file-pdf"></i> Gerar PDF</button>
+      <div class="report-grid animate-slide-up delay-100">
+        
+        <div class="report-card glass-panel">
+          <div class="report-icon"><i class="fa-solid fa-clipboard-check"></i></div>
+          <h3 class="brand-font" style="font-size: 1.5rem; margin-bottom: 12px;">Auditoria de Sobra Limpa</h3>
+          <p style="color: var(--text-muted); margin-bottom: 30px; flex: 1;">Exporta um documento fiscal detalhando a diferença grama por grama entre baixas de estoque e a sobra das panelas do dia de hoje.</p>
+          <button class="btn btn-primary" data-action="mock-submit" data-success-title="Download Iniciado" data-success-msg="Relatório extraído da Ledger (PDF Assinado).">
+             <i class="fa-solid fa-download"></i> Gerar Extrato (D-0)
+          </button>
         </div>
+
+        <div class="report-card glass-panel">
+          <div class="report-icon" style="background: rgba(59, 130, 246, 0.1); color: var(--alert-blue);"><i class="fa-solid fa-chart-line"></i></div>
+          <h3 class="brand-font" style="font-size: 1.5rem; margin-bottom: 12px;">Evolução de Consumo</h3>
+          <p style="color: var(--text-muted); margin-bottom: 30px; flex: 1;">Comparativo mensal gerado pela IA indicando melhorias na calibração de compra x catracas do mês passado.</p>
+          <div style="display: flex; gap: 10px;">
+            <input type="month" class="form-control" style="flex: 1;" />
+            <button class="btn btn-secondary" data-action="mock-submit" data-success-msg="Gerando PDF..."><i class="fa-solid fa-magnifying-glass-chart"></i> Consultar</button>
+          </div>
+        </div>
+
+        <div class="report-card glass-panel">
+          <div class="report-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--alert-yellow);"><i class="fa-solid fa-file-shield"></i></div>
+          <h3 class="brand-font" style="font-size: 1.5rem; margin-bottom: 12px;">Certificado de Conformidade</h3>
+          <p style="color: var(--text-muted); margin-bottom: 30px; flex: 1;">Atestado governamental de que a escola não violou nenhum protocolo FIFO ou rejeitou inspeções ópticas nesta semana.</p>
+          <button class="btn btn-secondary" style="color: var(--alert-yellow); border-color: var(--alert-yellow);" data-action="mock-submit" data-success-title="Selo Aprovado" data-success-msg="Documento chancelado pela auditoria estadual.">
+             <i class="fa-solid fa-certificate"></i> Emitir Selo (PDF)
+          </button>
+        </div>
+
       </div>
 
-      <div class="report-card">
-        <div class="report-icon" style="color: var(--alert-yellow); background: rgba(250, 204, 21, 0.1); border-color: rgba(250, 204, 21, 0.2); box-shadow: 0 0 20px rgba(250, 204, 21, 0.4);"><i class="fa-solid fa-boxes-packing"></i></div>
-        <h3>Consumo Per Capita</h3>
-        <p>Relação de alimentos consumidos por aluno nas unidades escolares da rede.</p>
-        <div class="btn-group">
-          <button class="btn pdf" style="flex: 1;" onclick="simularDownload('PDF')"><i class="fa-solid fa-file-pdf"></i> Gerar PDF</button>
-          <button class="btn excel" style="flex: 1;" onclick="simularDownload('Excel')"><i class="fa-solid fa-file-excel"></i> Excel</button>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <div class="overlay" id="downloadModal">
-    <div class="loading-box">
-      <i class="fa-solid fa-circle-notch spinner" id="modalIcon"></i>
-      <h3 style="color: var(--text-main); margin-bottom: 12px; font-weight: 700; font-size: 1.4rem;" id="modalTitle">Compilando Dados...</h3>
-      <p style="font-size: 0.95rem; color: var(--text-muted);">Isso pode levar alguns segundos.</p>
-    </div>
+    </main>
   </div>
 
-  <script>
-    function simularDownload(tipo) {
-      const modal = document.getElementById('downloadModal');
-      const icon = document.getElementById('modalIcon');
-      const title = document.getElementById('modalTitle');
-      
-      // Reseta o modal
-      icon.className = 'fa-solid fa-circle-notch spinner';
-      icon.style.color = 'var(--primary)';
-      icon.style.animation = 'spin 1s linear infinite';
-      icon.style.filter = 'drop-shadow(0 0 10px rgba(0,242,96,0.5))';
-      title.innerText = `Gerando ${tipo}...`;
-      
-      modal.classList.add('show');
-
-      // Simula o tempo de geração do arquivo
-      setTimeout(() => {
-        icon.className = 'fa-solid fa-check';
-        icon.style.animation = 'none';
-        
-        if(tipo === 'PDF') {
-          icon.style.color = '#ef4444';
-          icon.style.filter = 'drop-shadow(0 0 10px rgba(239,68,68,0.5))';
-        } else {
-          icon.style.color = '#16a34a';
-          icon.style.filter = 'drop-shadow(0 0 10px rgba(22,163,74,0.5))';
-        }
-
-        title.innerText = 'Download Concluído!';
-        
-        // Fecha o modal logo depois
-        setTimeout(() => {
-          modal.classList.remove('show');
-        }, 1500);
-      }, 2000);
-    }
-  </script>
-  <button class="theme-toggle" onclick="toggleTheme()" style="position: fixed; bottom: 30px; right: 30px; z-index: 9999; background: var(--bg-surface); border: 1px solid var(--glass-border); color: var(--text-main); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--glass-shadow); transition: 0.3s; font-size: 1.2rem;">
-    <i class="fa-solid fa-moon"></i>
-  </button>
-  <script>
-    function toggleTheme() {
-      const html = document.documentElement;
-      const isDark = html.getAttribute('data-theme') === 'dark';
-      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
-      const icon = document.querySelector('.theme-toggle i');
-      if(icon) icon.className = isDark ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-      localStorage.setItem('theme', isDark ? 'light' : 'dark');
-    }
-    window.addEventListener('DOMContentLoaded', () => {
-      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      const icon = document.querySelector('.theme-toggle i');
-      if(icon) icon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-    });
-  </script>
+  <script src="assets/js/main.js"></script>
 </body>
 </html>

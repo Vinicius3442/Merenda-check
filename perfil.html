@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meu Perfil | Merenda Check</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <style>
+    :root {
+      --primary-green: #059669; --primary-green-light: #10b981; 
+      --bg-body: #f3f4f6; --bg-card: #ffffff; --text-main: #1f2937; --text-muted: #6b7280;
+      --border-light: #e5e7eb; --radius-lg: 20px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: "Poppins", sans-serif; background: var(--bg-body); color: var(--text-main); display: flex; min-height: 100vh; }
+    
+    .sidebar { width: 280px; background: #fff; border-right: 1px solid var(--border-light); padding: 24px; position: sticky; top: 0; height: 100vh; }
+    .logo { font-weight: 800; font-size: 1.5rem; color: var(--primary-green); margin-bottom: 40px; display: flex; align-items: center; }
+    .menu-item { padding: 14px 16px; border-radius: 12px; color: #6b7280; font-weight: 500; display: flex; align-items: center; gap: 12px; text-decoration: none; margin-bottom: 8px; }
+    .menu-item.active { background: var(--primary-green); color: #fff; }
+
+    .main-content { flex: 1; padding: 40px; display: flex; justify-content: center; align-items: flex-start; }
+    
+    .profile-card { background: #fff; border-radius: var(--radius-lg); padding: 40px; border: 1px solid var(--border-light); width: 100%; max-width: 700px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
+    
+    .profile-header { display: flex; align-items: center; gap: 24px; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 1px solid var(--border-light); }
+    .avatar-upload { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, #059669, #10b981); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 700; position: relative; cursor: pointer; }
+    .avatar-upload i { position: absolute; bottom: 0; right: 0; background: #fff; color: var(--text-main); width: 32px; height: 32px; border-radius: 50%; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    
+    .form-group { margin-bottom: 24px; }
+    .form-group label { display: block; font-size: 0.9rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
+    .form-group input { width: 100%; padding: 14px; border-radius: 10px; border: 1px solid var(--border-light); font-size: 1rem; font-family: inherit; color: var(--text-main); background: #f9fafb; outline: none; transition: 0.2s; }
+    .form-group input:focus { border-color: var(--primary-green); background: #fff; }
+    
+    .btn-save { padding: 16px 32px; border-radius: 12px; font-weight: 600; border: none; cursor: pointer; background: var(--primary-green); color: #fff; font-size: 1.05rem; display: flex; align-items: center; gap: 8px; transition: 0.2s; width: 100%; justify-content: center; margin-top: 20px; }
+    .btn-save:hover { background: var(--primary-green-light); transform: translateY(-2px); }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="logo"><i class="fa-solid fa-check" style="margin-right:8px;"></i> Merenda Check</div>
+    <nav>
+      <a href="gestor.html" class="menu-item"><i class="fa-solid fa-house"></i> Voltar ao Painel</a>
+      <a href="#" class="menu-item active"><i class="fa-solid fa-user"></i> Meu Perfil</a>
+      <a href="login.html" class="menu-item" style="color: #ef4444; margin-top: 40px;"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sair do Sistema</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <div class="profile-card">
+      
+      <div class="profile-header">
+        <div class="avatar-upload">
+          CR
+          <i class="fa-solid fa-camera"></i>
+        </div>
+        <div>
+          <h2 style="font-size: 1.8rem; margin-bottom: 4px;">Carlos Roberto</h2>
+          <p style="color: var(--text-muted);">Diretor Escolar • EMEF João Silva</p>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div class="form-group">
+          <label>Nome Completo</label>
+          <input type="text" value="Carlos Roberto de Almeida">
+        </div>
+        <div class="form-group">
+          <label>CPF Funcional</label>
+          <input type="text" value="***.492.118-**" disabled style="color: #9ca3af; cursor: not-allowed;">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>E-mail Institucional</label>
+        <input type="email" value="carlos.roberto@educacao.gov.br">
+      </div>
+
+      <h3 style="margin: 30px 0 20px; font-size: 1.2rem; border-top: 1px solid var(--border-light); padding-top: 30px;">Segurança</h3>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div class="form-group">
+          <label>Nova Senha</label>
+          <input type="password" placeholder="••••••••">
+        </div>
+        <div class="form-group">
+          <label>Confirmar Nova Senha</label>
+          <input type="password" placeholder="••••••••">
+        </div>
+      </div>
+
+      <button class="btn-save" onclick="salvarPerfil(this)">
+        <i class="fa-solid fa-floppy-disk"></i> Salvar Alterações
+      </button>
+
+    </div>
+  </main>
+
+  <script>
+    function salvarPerfil(btn) {
+      const textoOriginal = btn.innerHTML;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Atualizando...';
+      btn.style.opacity = '0.8';
+      
+      setTimeout(() => {
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> Perfil Atualizado!';
+        btn.style.background = '#10b981';
+        btn.style.opacity = '1';
+        
+        setTimeout(() => {
+          btn.innerHTML = textoOriginal;
+          btn.style.background = 'var(--primary-green)';
+        }, 3000);
+      }, 1200);
+    }
+  </script>
+</body>
+</html>

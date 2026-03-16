@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Escolas da Rede | Merenda Check</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <style>
+    :root {
+      --primary-green: #059669; --sidebar-bg: #0f172a; --sidebar-text: #94a3b8;
+      --bg-body: #f1f5f9; --bg-card: #ffffff; --text-main: #1e293b; --text-muted: #64748b;
+      --border-light: #e2e8f0; --alert-red: #ef4444; --alert-yellow: #f59e0b;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: "Poppins", sans-serif; background: var(--bg-body); color: var(--text-main); display: flex; min-height: 100vh; }
+    
+    .sidebar { width: 280px; background: var(--sidebar-bg); color: var(--sidebar-text); padding: 24px; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; }
+    .logo { display: flex; align-items: center; font-weight: 800; font-size: 1.5rem; color: #fff; margin-bottom: 40px; }
+    .menu-item { padding: 12px 16px; border-radius: 8px; color: var(--sidebar-text); font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 12px; text-decoration: none; margin-bottom: 4px; }
+    .menu-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
+    .menu-item.active { background: linear-gradient(135deg, #059669, #10b981); color: #fff; }
+
+    .main-content { flex: 1; padding: 40px; }
+    .header-dash { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+    
+    .school-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+    .school-card { background: #fff; border-radius: 16px; padding: 24px; border: 1px solid var(--border-light); box-shadow: 0 4px 6px rgba(0,0,0,0.02); transition: 0.3s; }
+    .school-card:hover { transform: translateY(-5px); box-shadow: 0 12px 20px rgba(0,0,0,0.05); }
+    
+    .status-indicator { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 700; margin-bottom: 12px; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot.green { background: var(--primary-green); box-shadow: 0 0 10px rgba(5, 150, 105, 0.4); }
+    .dot.red { background: var(--alert-red); box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); animation: pulse 1.5s infinite; }
+    
+    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+    .btn-view { width: 100%; padding: 10px; margin-top: 16px; border-radius: 8px; border: 1px solid var(--border-light); background: #f8fafc; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .btn-view:hover { background: var(--primary-green); color: #fff; border-color: var(--primary-green); }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo"><span>M</span><i class="fa-solid fa-check" style="color:var(--primary-green)"></i>erenda Check</div>
+    <nav class="menu">
+      <a href="auditor.html" class="menu-item"><i class="fa-solid fa-chart-line"></i> Visão Global</a>
+      <a href="#" class="menu-item active"><i class="fa-solid fa-building-columns"></i> Escolas da Rede</a>
+      <a href="auditor-rastreabilidade.html" class="menu-item"><i class="fa-solid fa-magnifying-glass-chart"></i> Rastreabilidade</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <div class="header-dash">
+      <h1>Escolas da Rede Municipal</h1>
+      <button style="padding:10px 20px; border-radius:8px; border:none; background:var(--primary-green); color:#fff; font-weight:600; cursor:pointer;">+ Cadastrar Escola</button>
+    </div>
+
+    <div class="school-grid">
+      <div class="school-card">
+        <div class="status-indicator">
+          <div class="dot green"></div> <span style="color: var(--primary-green)">COMPLIANCE OK</span>
+        </div>
+        <h3 style="margin-bottom: 4px;">EMEF João Silva</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;"><i class="fa-solid fa-location-dot"></i> Bairro Central</p>
+        <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+          <span>Alunos: <strong>320</strong></span>
+          <span>Estoque: <strong>85%</strong></span>
+        </div>
+        <button class="btn-view" onclick="window.location.href='gestor.html'">Acessar Painel Local</button>
+      </div>
+
+      <div class="school-card" style="border-color: var(--alert-red);">
+        <div class="status-indicator">
+          <div class="dot red"></div> <span style="color: var(--alert-red)">ALERTA DE DESVIO</span>
+        </div>
+        <h3 style="margin-bottom: 4px;">EMEF Profª Maria</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;"><i class="fa-solid fa-location-dot"></i> Setor Norte</p>
+        <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+          <span>Alunos: <strong>415</strong></span>
+          <span style="color: var(--alert-red);">Furo: <strong>-12kg</strong></span>
+        </div>
+        <button class="btn-view" style="color: var(--alert-red);" onclick="window.location.href='auditor.html'">Ver Ocorrência</button>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Relatórios e Transparência | Merenda Check</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <style>
+    :root {
+      --primary-green: #059669; --primary-green-light: #10b981; 
+      --bg-body: #f1f5f9; --bg-card: #ffffff; --text-main: #1e293b; --text-muted: #64748b;
+      --border-light: #e2e8f0; --sidebar-bg: #0f172a; --sidebar-text: #94a3b8;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: "Poppins", sans-serif; background: var(--bg-body); color: var(--text-main); display: flex; min-height: 100vh; }
+    
+    /* Usando a Sidebar do Auditor (Centro de Comando) */
+    .sidebar { width: 280px; background: var(--sidebar-bg); padding: 24px; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; }
+    .logo { font-weight: 800; font-size: 1.5rem; color: #fff; margin-bottom: 40px; display: flex; align-items: center; }
+    .logo i { color: var(--primary-green); margin-right: 8px; }
+    .menu-item { padding: 12px 16px; border-radius: 8px; color: var(--sidebar-text); font-weight: 500; display: flex; align-items: center; gap: 12px; text-decoration: none; margin-bottom: 4px; transition: 0.2s; }
+    .menu-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
+    .menu-item.active { background: linear-gradient(135deg, #059669, #10b981); color: #fff; }
+
+    .main-content { flex: 1; padding: 40px; }
+    .header-dash { margin-bottom: 32px; }
+    .header-dash h1 { font-size: 1.8rem; margin-bottom: 8px; }
+
+    .reports-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    
+    .report-card { background: var(--bg-card); border-radius: 16px; padding: 24px; border: 1px solid var(--border-light); display: flex; flex-direction: column; transition: 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+    .report-card:hover { transform: translateY(-5px); box-shadow: 0 12px 24px rgba(0,0,0,0.05); border-color: var(--primary-green-light); }
+    
+    .report-icon { width: 50px; height: 50px; border-radius: 12px; background: #f0fdf4; color: var(--primary-green); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 16px; }
+    .report-card h3 { font-size: 1.1rem; margin-bottom: 8px; }
+    .report-card p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 24px; flex: 1; }
+
+    .btn-group { display: flex; gap: 10px; }
+    .btn { flex: 1; padding: 10px; border-radius: 8px; border: none; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s; }
+    .btn-pdf { background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; }
+    .btn-pdf:hover { background: #ef4444; color: #fff; }
+    .btn-excel { background: #dcfce7; color: #16a34a; border: 1px solid #86efac; }
+    .btn-excel:hover { background: #16a34a; color: #fff; }
+
+    /* Modal de Geração */
+    .overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.8); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s; z-index: 1000; }
+    .overlay.show { opacity: 1; pointer-events: all; }
+    .loading-box { background: #fff; padding: 40px; border-radius: 16px; text-align: center; max-width: 300px; width: 100%; transform: scale(0.9); transition: 0.3s; }
+    .overlay.show .loading-box { transform: scale(1); }
+    .spinner { font-size: 3rem; color: var(--primary-green); animation: spin 1s linear infinite; margin-bottom: 16px; }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="logo"><i class="fa-solid fa-check"></i> Merenda Check</div>
+    <nav class="menu">
+      <a href="auditor.html" class="menu-item"><i class="fa-solid fa-chart-line"></i> Visão Global</a>
+      <a href="auditor-escolas.html" class="menu-item"><i class="fa-solid fa-building-columns"></i> Escolas da Rede</a>
+      <a href="#" class="menu-item active"><i class="fa-solid fa-file-pdf"></i> Transparência</a>
+      <a href="perfil.html" class="menu-item" style="margin-top: 40px;"><i class="fa-solid fa-gear"></i> Configurações</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <div class="header-dash">
+      <h1>Portal de Transparência</h1>
+      <p style="color: var(--text-muted);">Emissão de relatórios oficiais para prestação de contas (FNDE / Tribunal de Contas).</p>
+    </div>
+
+    <div class="reports-grid">
+      <div class="report-card">
+        <div class="report-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+        <h3>Relatório de Economia (FIFO)</h3>
+        <p>Demonstrativo financeiro do desperdício evitado pelo bloqueio de lotes vencidos.</p>
+        <div class="btn-group">
+          <button class="btn btn-pdf" onclick="simularDownload('PDF')"><i class="fa-solid fa-file-pdf"></i> Gerar PDF</button>
+          <button class="btn btn-excel" onclick="simularDownload('Excel')"><i class="fa-solid fa-file-excel"></i> Excel</button>
+        </div>
+      </div>
+
+      <div class="report-card">
+        <div class="report-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+        <h3>Dossiê de Inconsistências</h3>
+        <p>Listagem completa das ocorrências detectadas pela Auditoria Preditiva no mês.</p>
+        <div class="btn-group">
+          <button class="btn btn-pdf" onclick="simularDownload('PDF')"><i class="fa-solid fa-file-pdf"></i> Gerar PDF</button>
+        </div>
+      </div>
+
+      <div class="report-card">
+        <div class="report-icon"><i class="fa-solid fa-boxes-packing"></i></div>
+        <h3>Consumo Per Capita (Escolas)</h3>
+        <p>Relação de alimentos consumidos por aluno nas unidades escolares da rede.</p>
+        <div class="btn-group">
+          <button class="btn btn-pdf" onclick="simularDownload('PDF')"><i class="fa-solid fa-file-pdf"></i> Gerar PDF</button>
+          <button class="btn btn-excel" onclick="simularDownload('Excel')"><i class="fa-solid fa-file-excel"></i> Excel</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="overlay" id="downloadModal">
+    <div class="loading-box">
+      <i class="fa-solid fa-circle-notch spinner" id="modalIcon"></i>
+      <h3 style="color: var(--text-main); margin-bottom: 8px;" id="modalTitle">Compilando Dados...</h3>
+      <p style="font-size: 0.85rem; color: var(--text-muted);">Isso pode levar alguns segundos.</p>
+    </div>
+  </div>
+
+  <script>
+    function simularDownload(tipo) {
+      const modal = document.getElementById('downloadModal');
+      const icon = document.getElementById('modalIcon');
+      const title = document.getElementById('modalTitle');
+      
+      // Reseta o modal
+      icon.className = 'fa-solid fa-circle-notch spinner';
+      icon.style.color = 'var(--primary-green)';
+      title.innerText = `Gerando ${tipo}...`;
+      
+      modal.classList.add('show');
+
+      // Simula o tempo de geração do arquivo
+      setTimeout(() => {
+        icon.className = 'fa-solid fa-check';
+        icon.style.animation = 'none';
+        icon.style.color = tipo === 'PDF' ? '#ef4444' : '#16a34a';
+        title.innerText = 'Download Concluído!';
+        
+        // Fecha o modal logo depois
+        setTimeout(() => {
+          modal.classList.remove('show');
+        }, 1500);
+      }, 2000);
+    }
+  </script>
+</body>
+</html>

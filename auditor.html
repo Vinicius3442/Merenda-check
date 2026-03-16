@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Centro de Comando | Merenda Check</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+  <style>
+    :root {
+      --primary: #00f260; --primary-dark: #0575e6;
+      --bg-base: #020617; --bg-surface: rgba(15, 23, 42, 0.4);
+      --text-main: #f8fafc; --text-muted: #94a3b8;
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+      --neon-glow: 0 0 20px rgba(0, 242, 96, 0.4);
+      --alert-red: #ef4444; --alert-red-glow: 0 0 20px rgba(239, 68, 68, 0.4);
+      --alert-yellow: #eab308;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Outfit', sans-serif; background-color: var(--bg-base); color: var(--text-main);
+      display: flex; min-height: 100vh; overflow-x: hidden;
+    }
+
+    /* Comando Center Grid background */
+    .bg-grid {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      perspective: 1000px;
+    }
+    .bg-glow {
+      position: fixed; top: -20%; right: -10%; width: 60vw; height: 60vw; border-radius: 50%;
+      background: radial-gradient(circle, rgba(5, 117, 230, 0.1) 0%, transparent 60%); z-index: -1;
+    }
+
+    /* Utilitários */
+    .btn {
+      padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; text-decoration: none;
+      border: 1px solid var(--glass-border); cursor: pointer; transition: 0.3s;
+      display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); color: #fff;
+    }
+    .btn:hover { background: rgba(255,255,255,0.1); }
+    .btn.primary { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #000; border: none; }
+    .btn.primary:hover { box-shadow: var(--neon-glow); color: #fff; }
+    .btn.excel { background: rgba(16, 124, 65, 0.2); color: #4ade80; border-color: rgba(74, 222, 128, 0.3); }
+    .btn.excel:hover { background: rgba(16, 124, 65, 0.4); border-color: #4ade80; }
+    .btn.danger { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border-color: rgba(239, 68, 68, 0.3); }
+
+    /* Sidebar Glass */
+    .sidebar {
+      width: 280px; background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border-right: 1px solid var(--glass-border); padding: 32px 24px; display: flex; flex-direction: column; height: 100vh; position: sticky; top: 0;
+      box-shadow: 10px 0 30px rgba(0,0,0,0.5); z-index: 10;
+    }
+    .logo { display: flex; align-items: center; font-weight: 800; font-size: 1.6rem; color: #fff; margin-bottom: 40px; letter-spacing: -0.5px;}
+    .logo i {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-right: 10px; font-size: 1.4rem;
+    }
+    
+    .menu-label { font-size: 0.75rem; text-transform: uppercase; color: #475569; font-weight: 700; margin-bottom: 16px; letter-spacing: 1.5px; }
+    .menu { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+    .menu-item {
+      padding: 12px 16px; border-radius: 8px; color: var(--text-muted); text-decoration: none;
+      font-weight: 500; transition: 0.2s; display: flex; align-items: center; gap: 12px; border: 1px solid transparent;
+    }
+    .menu-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
+    .menu-item.active { background: rgba(0, 242, 96, 0.1); color: var(--primary); border-color: rgba(0, 242, 96, 0.2); }
+    
+    .auditor-profile {
+      margin-top: auto; padding: 16px; border-radius: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border);
+      display: flex; align-items: center; gap: 12px;
+    }
+
+    /* Main Content */
+    .main-content { flex: 1; padding: 40px 50px; overflow-y: auto; }
+    
+    .header-dash { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+    .header-dash h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 4px; display: flex; align-items: center; gap: 12px;}
+    .header-dash p { color: var(--text-muted); font-size: 1.05rem; }
+
+    /* KPIs */
+    .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 40px; }
+    .kpi-card { background: var(--bg-surface); border-radius: 16px; padding: 24px; border: 1px solid var(--glass-border); backdrop-filter: blur(10px); position: relative; overflow: hidden; box-shadow: var(--glass-shadow); }
+    .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--primary); box-shadow: var(--neon-glow); }
+    .kpi-card.danger::before { background: var(--alert-red); box-shadow: var(--alert-red-glow); }
+    .kpi-card.warning::before { background: var(--alert-yellow); box-shadow: 0 0 20px rgba(234, 179, 8, 0.4); }
+    
+    .kpi-title { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px;}
+    .kpi-value { font-size: 2.4rem; font-weight: 900; color: #fff; line-height: 1; letter-spacing: -1px; display: flex; align-items: baseline; gap: 6px;}
+    .kpi-trend { font-size: 0.85rem; margin-top: 12px; display: flex; align-items: center; gap: 6px; font-weight: 500;}
+    .trend-up { color: var(--primary); }
+    .trend-down { color: #fca5a5; }
+
+    /* Tabela / Malha Fina */
+    .section-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; letter-spacing: -0.5px;}
+    
+    .audit-panel { background: var(--bg-surface); border-radius: 20px; border: 1px solid var(--glass-border); backdrop-filter: blur(20px); overflow: hidden; margin-bottom: 40px; box-shadow: var(--glass-shadow); }
+    .audit-header { padding: 20px 24px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); }
+    
+    .live-indicator { display: flex; align-items: center; gap: 10px; font-weight: 800; color: var(--alert-red); font-size: 0.9rem; letter-spacing: 1px;}
+    .pulse-dot { width: 12px; height: 12px; background: var(--alert-red); border-radius: 50%; box-shadow: var(--alert-red-glow); animation: pulse-red 1.5s infinite; }
+    @keyframes pulse-red { 0% { transform: scale(0.95); opacity: 0.7; } 50% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(0.95); opacity: 0.7; } }
+
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 18px 24px; text-align: left; border-bottom: 1px solid var(--glass-border); font-size: 0.95rem; }
+    th { color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; background: rgba(255,255,255,0.02); }
+    tr:hover td { background: rgba(255,255,255,0.03); }
+    
+    .badge { padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display: inline-block;}
+    .badge-red { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
+    
+    .math-highlight { display: flex; align-items: center; gap: 10px; font-family: monospace; font-size: 1rem; color: #fff; background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 8px; border: 1px dashed var(--glass-border); display: inline-flex;}
+
+    /* Modal Rastreabilidade */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: 0.3s; }
+    .modal-overlay.show { opacity: 1; pointer-events: all; }
+    .modal-content { background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; width: 750px; max-width: 90%; transform: scale(0.95); transition: 0.3s; overflow: hidden; box-shadow: 0 0 50px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.05); }
+    .modal-overlay.show .modal-content { transform: scale(1); }
+    
+    .modal-head { background: linear-gradient(90deg, rgba(239, 68, 68, 0.2), transparent); border-bottom: 1px solid rgba(239, 68, 68, 0.2); padding: 24px; display: flex; justify-content: space-between; align-items: center; }
+    .modal-body { padding: 32px 24px; }
+    
+    .timeline { position: relative; padding-left: 28px; margin-top: 24px; }
+    .timeline::before { content: ''; position: absolute; left: 3px; top: 8px; width: 2px; height: calc(100% - 16px); background: var(--glass-border); }
+    .timeline-item { position: relative; margin-bottom: 32px; }
+    .timeline-item:last-child { margin-bottom: 0; }
+    .timeline-icon { position: absolute; left: -30px; top: 2px; width: 14px; height: 14px; border-radius: 50%; background: var(--bg-base); border: 2px solid var(--primary); box-shadow: var(--neon-glow); }
+    .timeline-item.fraud .timeline-icon { border-color: var(--alert-red); background: var(--alert-red); box-shadow: var(--alert-red-glow); }
+    
+    .timeline-content h4 { font-size: 1.05rem; margin-bottom: 6px; color: #fff; font-weight: 700;}
+    .timeline-content p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;}
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+
+  <aside class="sidebar">
+    <div class="logo"><i class="fa-solid fa-bolt"></i> Merenda Check</div>
+    
+    <div class="menu-label">Malha Fina & Auditoria</div>
+    <nav class="menu">
+      <a href="auditor.html" class="menu-item active"><i class="fa-solid fa-chart-line"></i> Visão Global</a>
+      <a href="auditor-rastreabilidade.html" class="menu-item"><i class="fa-solid fa-magnifying-glass-chart"></i> Rastreabilidade FIFO</a>
+      <a href="auditor-escolas.html" class="menu-item"><i class="fa-solid fa-building-columns"></i> Escolas da Rede</a>
+      <a href="login.html" class="menu-item" style="color: #ef4444; margin-top: 20px;"><i class="fa-solid fa-power-off"></i> Encerrar Operação</a>
+    </nav>
+
+    <div class="auditor-profile">
+      <i class="fa-solid fa-user-shield" style="font-size: 1.8rem; color: var(--primary);"></i>
+      <div>
+        <h4 style="font-size: 0.95rem; margin: 0; color: #fff; font-weight: 700;">Auditor Chefe</h4>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">Acesso Global AES-256</span>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="header-dash">
+      <div>
+        <h1><i class="fa-solid fa-satellite-dish" style="color: var(--primary); font-size: 1.8rem;"></i> Command Center</h1>
+        <p>Monitoramento em tempo real do ecossistema educacional.</p>
+      </div>
+      <div style="display: flex; gap: 12px;">
+        <button class="btn excel"><i class="fa-solid fa-file-excel"></i> Exportar Dados</button>
+        <button class="btn"><i class="fa-solid fa-filter"></i> Filtros Avançados</button>
+      </div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-title">Alunos Auditados (Hoje)</div>
+        <div class="kpi-value">12.840</div>
+        <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-trend-up"></i> Catraca sincronizada</div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-title">Insumos em Risco</div>
+        <div class="kpi-value">840 <span style="font-size: 1.2rem; color: var(--text-muted);">kg</span></div>
+        <div class="kpi-trend" style="color: var(--alert-yellow);"><i class="fa-solid fa-lock"></i> Trava rígida FIFO ativa</div>
+      </div>
+      <div class="kpi-card danger">
+        <div class="kpi-title">Inconsistências Graves</div>
+        <div class="kpi-value" style="color: #fca5a5;">03</div>
+        <div class="kpi-trend trend-down"><i class="fa-solid fa-triangle-exclamation"></i> Requerem ação imediata</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Recurso Preservado</div>
+        <div class="kpi-value">R$ 14.2k</div>
+        <div class="kpi-trend trend-up"><i class="fa-solid fa-piggy-bank"></i> Economia neste ciclo</div>
+      </div>
+    </div>
+
+    <h3 class="section-title"><i class="fa-solid fa-microchip" style="color: var(--primary);"></i> Algoritmo Preditivo: Log de Anomalias</h3>
+    
+    <div class="audit-panel">
+      <div class="audit-header">
+        <div class="live-indicator">
+          <div class="pulse-dot"></div> MONITORAMENTO ATIVO [LIVE]
+        </div>
+        <input type="text" placeholder="Buscar Hash, Lote ou Unidade..." style="padding: 10px 16px; border: 1px solid var(--glass-border); border-radius: 8px; width: 280px; background: rgba(0,0,0,0.5); color: #fff; font-family: inherit;">
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Nó (Escola)</th>
+            <th>Ativo (Identificador)</th>
+            <th>Equação da IA (Catraca vs Baixa)</th>
+            <th>Classificação</th>
+            <th>Comando</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-weight: 600; color: #fff;">09:14:22</td>
+            <td><strong>EMEF João Silva</strong><br><span style="font-size: 0.8rem; color: var(--text-muted);">Resp. Carlos Roberto</span></td>
+            <td>Arroz Agulhinha<br><span style="font-size: 0.8rem; font-family: monospace; color: var(--text-muted);">#LOTE-4920</span></td>
+            <td>
+              <div class="math-highlight">
+                <span style="color: var(--primary);">Esp. 15kg</span> <i class="fa-solid fa-not-equal" style="color: #ef4444; font-size: 0.8rem;"></i> <span>Baixa 25kg</span>
+              </div>
+              <div style="font-size: 0.85rem; color: #fca5a5; margin-top: 6px; font-weight: 700;">Alerta: Desvio de 10kg</div>
+            </td>
+            <td><span class="badge badge-red"><i class="fa-solid fa-bug"></i> Furo Detectado</span></td>
+            <td><button class="btn danger" onclick="abrirInvestigacao()"><i class="fa-solid fa-microscope"></i> Analisar Dossiê</button></td>
+          </tr>
+          
+          <tr>
+            <td style="font-weight: 500; color: var(--text-muted);">08:30:11</td>
+            <td><strong>EMEF Profª Maria</strong><br><span style="font-size: 0.8rem; color: var(--text-muted);">Resp. Ana Souza</span></td>
+            <td>Feijão Carioca<br><span style="font-size: 0.8rem; font-family: monospace; color: var(--text-muted);">#LOTE-5012</span></td>
+            <td>
+              <div class="math-highlight" style="opacity: 0.6; border-color: transparent; background: transparent;">
+                <span>Esp. 8kg</span> <i class="fa-solid fa-equals" style="color: var(--primary); font-size: 0.8rem;"></i> <span>Baixa 8kg</span>
+              </div>
+            </td>
+            <td><span class="badge" style="background: rgba(0,242,96,0.1); color: var(--primary); border: 1px solid rgba(0,242,96,0.2);"><i class="fa-solid fa-shield-check"></i> Integridade OK</span></td>
+            <td><button class="btn" style="opacity: 0.4; cursor: not-allowed;" disabled>Verificado</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <div class="modal-overlay" id="modalInvestiga">
+    <div class="modal-content">
+      <div class="modal-head">
+        <h3 style="margin: 0; display: flex; align-items: center; gap: 10px; color: #fff; font-weight: 800;"><i class="fa-solid fa-fingerprint" style="color: #fca5a5;"></i> Dossiê Criptográfico: #LOTE-4920</h3>
+        <button onclick="fecharInvestigacao()" style="background: rgba(255,255,255,0.1); border: none; color: #fff; width: 36px; height: 36px; border-radius: 8px; cursor: pointer; transition: 0.2s;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <p style="margin-bottom: 24px; color: #fff; font-weight: 500; font-size: 1.1rem;">Trilha de auditoria ponta-a-ponta certificada pela rede:</p>
+        
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-icon"></div>
+            <div class="timeline-content">
+              <h4>Inserção na Rede (Armazém)</h4>
+              <p>Autenticado do Fornecedor "Alimentos S/A" (Hash NF: 0x99823). Volume total: 500kg.</p>
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 6px; font-family: monospace;">TIMESTAMP: 10-MAR-2026 08:00:12</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-icon"></div>
+            <div class="timeline-content">
+              <h4>Transferência e Delegação (FIFO)</h4>
+              <p>Contrato inteligente repassou custódia para EMEF João Silva. Volume: 50kg.</p>
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 6px; font-family: monospace;">TIMESTAMP: 12-MAR-2026 14:30:45</p>
+            </div>
+          </div>
+          <div class="timeline-item fraud">
+            <div class="timeline-icon"></div>
+            <div class="timeline-content">
+              <h4 style="color: #fca5a5; font-size: 1.2rem;">Falha de Consenso no Consumo</h4>
+              <p>Nó "Cozinha" declarou baixa em 25kg. Nó "Gestão" reportou 300 acessos na catraca.<br>Cálculo estrito: 300 alunos * 50g = 15kg Esperados.</p>
+              <div style="background: rgba(239, 68, 68, 0.1); padding: 16px; border-radius: 12px; margin-top: 12px; border: 1px solid rgba(239, 68, 68, 0.3); color: #fff;">
+                <strong><i class="fa-solid fa-lock"></i> Bloqueio Sistêmico:</strong> Divergência inaceitável de 10kg identificada pela IA. Transação suspensa e guardada no log imutável.
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div style="margin-top: 40px; display: flex; justify-content: flex-end; gap: 16px; padding-top: 24px;">
+          <button class="btn" onclick="fecharInvestigacao()">Retornar ao Painel</button>
+          <button class="btn danger" style="padding: 12px 24px; font-weight: 700;"><i class="fa-solid fa-gavel"></i> Iniciar Processo de Justificativa</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const modal = document.getElementById('modalInvestiga');
+    function abrirInvestigacao() { modal.classList.add('show'); }
+    function fecharInvestigacao() { modal.classList.remove('show'); }
+  </script>
+</body>
+</html>

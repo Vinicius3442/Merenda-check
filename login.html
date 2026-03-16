@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Acesso Restrito | Merenda Check</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <style>
+    :root {
+      --primary: #00f260; --primary-dark: #0575e6;
+      --bg-base: #030712; --bg-surface: rgba(17, 24, 39, 0.7);
+      --text-main: #f9fafb; --text-muted: #9ca3af;
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      --neon-glow: 0 0 20px rgba(0, 242, 96, 0.4);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Outfit', sans-serif; background-color: var(--bg-base); color: var(--text-main);
+      height: 100vh; overflow: hidden; display: flex;
+    }
+
+    .bg-video-wrapper {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; overflow: hidden;
+      background: radial-gradient(circle at center, #0575e6 0%, #030712 100%);
+    }
+    .particles {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+      background-image: radial-gradient(var(--glass-border) 1px, transparent 1px);
+      background-size: 50px 50px; opacity: 0.3;
+      animation: pan 60s linear infinite;
+    }
+    @keyframes pan { 0% { background-position: 0 0; } 100% { background-position: 500px 500px; } }
+
+    .split-layout { display: flex; width: 100%; height: 100%; position: relative; z-index: 1; }
+
+    .brand-side {
+      flex: 1.2; padding: 60px; display: flex; flex-direction: column; justify-content: space-between;
+      backdrop-filter: blur(10px); background: linear-gradient(90deg, rgba(3,7,18,0.9) 0%, rgba(3,7,18,0) 100%);
+    }
+
+    .logo { font-size: 2rem; font-weight: 800; display: flex; align-items: center; gap: 12px; letter-spacing: -0.5px; }
+    .logo i {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
+    .brand-content { max-width: 500px; margin-top: -100px; }
+    .brand-content h1 { font-size: 4rem; line-height: 1.1; font-weight: 800; margin-bottom: 24px; letter-spacing: -1px; }
+    .brand-content p { font-size: 1.2rem; color: var(--text-muted); line-height: 1.6; }
+
+    .security-badge {
+      display: inline-flex; align-items: center; gap: 16px; margin-top: 40px;
+      background: var(--bg-surface); border: 1px solid var(--glass-border);
+      padding: 16px 24px; border-radius: 16px; backdrop-filter: blur(10px);
+    }
+    .security-badge i { font-size: 2rem; color: var(--primary); }
+
+    .form-side {
+      flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px;
+      background: rgba(3, 7, 18, 0.8); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border-left: 1px solid var(--glass-border); box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+    }
+
+    .login-container { width: 100%; max-width: 440px; }
+    .login-header { margin-bottom: 40px; text-align: center; }
+    .login-header h2 { font-size: 2.2rem; font-weight: 700; margin-bottom: 10px; }
+    .login-header p { color: var(--text-muted); font-size: 1rem; }
+
+    .role-buttons { display: flex; flex-direction: column; gap: 20px; }
+
+    .role-card {
+      background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border);
+      padding: 20px; border-radius: 20px; cursor: pointer; display: flex; align-items: center; justify-content: space-between;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); text-decoration: none; color: white;
+    }
+    
+    .role-card:hover {
+      background: rgba(255, 255, 255, 0.05); border-color: rgba(0, 242, 96, 0.5);
+      transform: translateX(10px); box-shadow: var(--neon-glow);
+    }
+    .role-card:active { transform: translateX(5px); }
+
+    .role-icon {
+      width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, rgba(0, 242, 96, 0.1), rgba(5, 117, 230, 0.1));
+      color: var(--primary); font-size: 1.5rem; transition: 0.3s;
+    }
+
+    .role-card:hover .role-icon {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff;
+    }
+
+    .role-info { flex: 1; margin-left: 20px; text-align: left; }
+    .role-info h4 { font-size: 1.1rem; font-weight: 600; margin-bottom: 4px; }
+    .role-info p { font-size: 0.85rem; color: var(--text-muted); }
+
+    .chevron { color: var(--text-muted); transition: 0.3s; }
+    .role-card:hover .chevron { color: var(--primary); transform: translateX(5px); }
+
+    .back-home {
+      position: absolute; top: 40px; right: 40px; color: var(--text-muted); text-decoration: none;
+      display: flex; align-items: center; gap: 8px; font-weight: 500; transition: 0.3s;
+    }
+    .back-home:hover { color: #fff; }
+
+    @media (max-width: 900px) { .brand-side { display: none; } .form-side { border-left: none; } }
+  </style>
+</head>
+<body>
+
+  <div class="bg-video-wrapper"></div>
+  <div class="particles"></div>
+
+  <div class="split-layout">
+    <div class="brand-side">
+      <div class="logo"><i class="fa-solid fa-bolt"></i> Merenda Check</div>
+      
+      <div class="brand-content">
+        <h1>Autenticação<br>Classificada.</h1>
+        <p>Acesso exclusivo à malha preditiva e auditoria contínua da rede escolar. Todo acesso é criptografado e registrado no log de imutabilidade.</p>
+        
+        <div class="security-badge">
+          <i class="fa-solid fa-fingerprint"></i>
+          <div>
+            <div style="font-weight: 700; font-size: 1.1rem;">Nível de Segurança Máximo</div>
+            <div style="color: var(--text-muted); font-size: 0.9rem;">Gov.BR Auth 2.0 Integration</div>
+          </div>
+        </div>
+      </div>
+      
+      <div style="color: var(--text-muted); font-size: 0.9rem;">&copy; 2026 Inteligência de Estado</div>
+    </div>
+
+    <div class="form-side">
+      <a href="index.html" class="back-home"><i class="fa-solid fa-arrow-left"></i> Início</a>
+      
+      <div class="login-container">
+        <div class="login-header">
+          <h2>Painel Virtual</h2>
+          <p>Selecione a credencial de acesso para simulação</p>
+        </div>
+
+        <div class="role-buttons">
+          <a href="#" class="role-card" onclick="autenticar('operador.html', this)">
+            <div class="role-icon"><i class="fa-solid fa-fire-burner"></i></div>
+            <div class="role-info">
+              <h4>Operador de Ponta</h4>
+              <p>Interface de Cozinha (Mobile/Tablet)</p>
+            </div>
+            <i class="fa-solid fa-chevron-right chevron"></i>
+          </a>
+
+          <a href="#" class="role-card" onclick="autenticar('gestor.html', this)">
+            <div class="role-icon"><i class="fa-solid fa-school"></i></div>
+            <div class="role-info">
+              <h4>Gestor Escolar</h4>
+              <p>Visão de Diretoria (Desktop)</p>
+            </div>
+            <i class="fa-solid fa-chevron-right chevron"></i>
+          </a>
+
+          <a href="#" class="role-card" onclick="autenticar('auditor.html', this)">
+            <div class="role-icon"><i class="fa-solid fa-shield-halved"></i></div>
+            <div class="role-info">
+              <h4>Auditoria Executiva</h4>
+              <p>Controle Macroeconômico (Secretaria)</p>
+            </div>
+            <i class="fa-solid fa-chevron-right chevron"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function autenticar(url, element) {
+      event.preventDefault();
+      const info = element.querySelector('.role-info');
+      const originalHTML = info.innerHTML;
+      
+      info.innerHTML = '<h4 style="color: var(--primary);">Estabelecendo Conexão Segura...</h4><p>Gerando chaves criptográficas</p>';
+      element.style.borderColor = 'var(--primary)';
+      element.querySelector('.role-icon').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+      
+      setTimeout(() => {
+        window.location.href = url;
+      }, 1200);
+    }
+  </script>
+</body>
+</html>

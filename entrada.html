@@ -52,8 +52,8 @@
         </div>
         <div class="header-dash animate-fade-in">
           <div>
-            <h1>Recepção Integrada Oráculo</h1>
-            <p style="color: var(--text-muted); font-size: 1.1rem;">Escaneie o manifesto digital do motorista enviado pelo Oráculo Central (SEDUC).</p>
+            <h1>Recepção Integrada de Insumos</h1>
+            <p style="color: var(--text-muted); font-size: 1.1rem;">Escaneie o manifesto digital do motorista enviado pelo Sistema Central (SEDUC).</p>
           </div>
         </div>
 
@@ -63,12 +63,12 @@
             <div class="scanner-line"></div>
             <i class="fa-solid fa-qrcode" style="font-size: 4rem; margin-bottom: 16px;"></i>
             <h3 class="brand-font" style="font-size: 1.2rem;">Clique para simular Escaneamento Óptico</h3>
-            <p style="font-size: 0.9rem; margin-top: 8px;">Simula liberação de câmera e handshake SSL do Hash</p>
+            <p style="font-size: 0.9rem; margin-top: 8px;">Simula liberação de câmera segura</p>
           </div>
 
           <div class="info-grid" id="dataGrid">
             <div class="form-group">
-              <label class="form-label">Hash Lote (Block ID)</label>
+              <label class="form-label">Código de Rastreio (Lote)</label>
               <input type="text" class="form-control" id="fHash" readonly placeholder="Aguardando..." />
             </div>
             
@@ -94,8 +94,8 @@
           </div>
           
           <div style="margin-top: 40px; text-align: right;">
-            <button class="btn btn-primary" id="btnConfirmar" disabled data-action="mock-submit" data-redirect="operador.html" data-success-title="Blockchain Sincronizado" data-success-msg="Entrada adicionada ao protocolo DAO e registrada do estoque.">
-              <i class="fa-solid fa-fingerprint"></i> Assinar Recebimento
+            <button class="btn btn-primary btn-lg" id="btnConfirmar" disabled data-action="mock-submit" data-redirect="operador.html" data-success-title="Registros Sincronizados" data-success-msg="Entrada adicionada ao protocolo da SEDUC e registrada no estoque local.">
+              <i class="fa-solid fa-check"></i> Confirmar Recebimento
             </button>
           </div>
           
@@ -117,7 +117,7 @@
       
       icon.className = 'fa-solid fa-camera-viewfinder';
       text.innerText = "Sincronizando Óptica...";
-      desc.innerText = "Conectando ao oráculo...";
+      desc.innerText = "Conectando ao sistema central...";
       line.style.display = 'block';
 
       setTimeout(() => {
@@ -128,8 +128,8 @@
         
         icon.className = 'fa-solid fa-check-circle';
         icon.style.color = 'var(--alert-green)';
-        text.innerText = "Hash Lote Verificado";
-        desc.innerText = "Handshake Bem-sucedido";
+        text.innerText = "Código Verificado";
+        desc.innerText = "Validação Bem-sucedida";
 
         // Fill data
         const grid = document.getElementById('dataGrid');
@@ -142,7 +142,7 @@
         
         document.getElementById('btnConfirmar').removeAttribute('disabled');
         
-        App.showToast('Recepção Verificada', 'Oráculo confirmou a existência deste lote em trânsito.', 'success');
+        App.showToast('Recepção Verificada', 'O sistema confirmou a existência deste lote em trânsito.', 'success');
       }, 2000);
     });
   </script>

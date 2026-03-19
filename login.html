@@ -111,13 +111,13 @@
     <div class="login-visual">
       <div class="quote-box animate-slide-up">
         <h2>
-          Gerencie o recurso público com <span style="color: var(--accent-light);">Certeza Matemática.</span>
+          Gerencie o programa alimentar com <span style="color: var(--accent-light);">Segurança e Dados.</span>
         </h2>
-        <p>O Merenda Check valida cada grama consumida através de biometria nas escolas e trilhas inalteráveis da rede de abastecimento.</p>
+        <p>A plataforma valida e rastreia em tempo real, conectando diretores, nutricionistas e fornecedores na mesma base de dados.</p>
         
         <div style="margin-top: 60px; display: flex; align-items: center; gap: 20px;">
           <i class="fa-solid fa-shield-halved" style="font-size: 2.5rem; color: var(--accent-light);"></i>
-          <div style="font-size: 1.1rem; font-weight: 600;">Governança de Estado. Auditoria em Tempo Real.</div>
+          <div style="font-size: 1.1rem; font-weight: 600;">Plataforma Integrada de Gestão. Rastreabilidade Ponta a Ponta.</div>
         </div>
       </div>
     </div>
@@ -127,8 +127,8 @@
         
         <div style="text-align: center; margin-bottom: 40px;">
           <img src="assets/logo.png" alt="Merenda Check" class="logo-img" style="height: 60px; margin-bottom: 20px;" />
-          <h1 style="font-size: 2rem;">Acesso de Servidor</h1>
-          <p style="color: var(--text-muted); font-size: 1.05rem;">Selecione seu nível de credencial (Gestor de Identidade)</p>
+          <h1 style="font-size: 2rem;">Acesso Administrativo</h1>
+          <p style="color: var(--text-muted); font-size: 1.05rem;">Selecione seu perfil de usuário</p>
         </div>
 
         <div class="badge-role-selector" id="roleSelector">
@@ -148,22 +148,22 @@
 
         <form id="loginForm" onsubmit="handleDemoLogin(event)">
           <div class="form-group">
-            <label class="form-label">Chave de Matrícula (ID Funcional)</label>
+            <label class="form-label">Identificação de Usuário (Matrícula ou CPF)</label>
             <input type="text" class="form-control" placeholder="Ex: 99.888.11" autocomplete="off" />
           </div>
 
           <div class="form-group" style="margin-bottom: 40px;">
-            <label class="form-label">Chave Biométrica (Token 2FA)</label>
+            <label class="form-label">Senha de Acesso (ou Token SMS)</label>
             <input type="password" class="form-control" placeholder="••••••••" />
           </div>
 
-          <button type="submit" class="btn btn-primary" style="width: 100%; padding: 20px; font-size: 1.2rem;">
-            Autenticar <i class="fa-solid fa-fingerprint" style="margin-left: 10px;"></i>
+          <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+            Entrar <i class="fa-solid fa-arrow-right" style="margin-left: 10px;"></i>
           </button>
         </form>
         
         <p style="text-align: center; margin-top: 30px; font-size: 0.95rem; color: var(--text-muted);">
-          <i class="fa-solid fa-lock"></i> Conexão Simétrica Validada
+          <i class="fa-solid fa-lock"></i> Conexão Criptografada (SSL de Ponta a Ponta)
         </p>
       </div>
     </div>
@@ -189,11 +189,11 @@
       
       const btn = e.target.querySelector('button');
       const originalHtml = btn.innerHTML;
-      btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Desencriptando...';
+      btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Autenticando...';
       btn.style.opacity = '0.7';
 
       setTimeout(() => {
-        App.showToast('Autenticação Aprovada', 'Log de acesso gravado na malha.', 'success');
+        App.showToast('Autenticação Aprovada', 'Redirecionando para o painel de controle.', 'success');
         
         setTimeout(() => {
           window.location.href = selectedRoute;

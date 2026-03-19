@@ -5,42 +5,11 @@
 
 const App = {
   init() {
-    this.initTheme();
     this.createToastContainer();
     this.setupNetworkMock();
   },
 
-  // --- THEME MANAGEMENT ---
-  initTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'dark'; // Defaulting to dark for wow factor
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    this.updateThemeIcon(savedTheme);
 
-    const toggleBtn = document.getElementById('themeToggle');
-    if(toggleBtn) {
-      toggleBtn.addEventListener('click', () => this.toggleTheme());
-    }
-  },
-
-  toggleTheme() {
-    const html = document.documentElement;
-    const isDark = html.getAttribute('data-theme') === 'dark';
-    const newTheme = isDark ? 'light' : 'dark';
-    
-    html.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    this.updateThemeIcon(newTheme);
-
-    // Dispatch event so charts can update
-    window.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: newTheme } }));
-  },
-
-  updateThemeIcon(theme) {
-    const icon = document.querySelector('#themeToggle i');
-    if(icon) {
-      icon.className = theme === 'dark' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-    }
-  },
 
   // --- TOAST NOTIFICATIONS ---
   createToastContainer() {
@@ -141,15 +110,5 @@ const App = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Add Theme Toggle button globally if not present
-  if(!document.getElementById('themeToggle')) {
-    const btn = document.createElement('button');
-    btn.id = 'themeToggle';
-    btn.className = 'theme-toggle-btn';
-    btn.title = "Alternar Tema Escuro/Claro";
-    btn.innerHTML = '<i></i>';
-    document.body.appendChild(btn);
-  }
-
   App.init();
 });

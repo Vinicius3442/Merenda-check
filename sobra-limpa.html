@@ -44,8 +44,8 @@
         
         <div class="header-dash animate-fade-in">
           <div>
-            <h1>Medição de Desperdício Tátil</h1>
-            <p style="color: var(--text-muted); font-size: 1.1rem;">Preencha a tara pesada da sobra das panelas (Sobra Limpa).</p>
+            <h1>Registro de Sobra Limpa</h1>
+            <p style="color: var(--text-muted); font-size: 1.1rem;">Preencha o peso da sobra das panelas (alimento pronto não servido).</p>
           </div>
         </div>
 
@@ -66,17 +66,17 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">Motivo (Parametrização IA)</label>
+            <label class="form-label">Motivo do Desperdício</label>
             <select class="form-control">
-              <option value="super">Superestimativa Baseada na Frequência Real (Baixa Adesão)</option>
-              <option value="sabor">Rejeição Organoléptica (Sabor/Aparência)</option>
-              <option value="validade">Vencimento Súbito Pós-Despacho</option>
+              <option value="super">Estimativa Incorreta de Alunos Presentes</option>
+              <option value="sabor">Rejeição por Sabor ou Aparência</option>
+              <option value="validade">Alimento Preparado Inadequadamente</option>
             </select>
           </div>
 
           <div style="margin-top: 40px;">
-            <button class="btn btn-primary" style="width: 100%; padding: 18px; font-size: 1.1rem; background: var(--alert-red); box-shadow: var(--alert-red-glow);" data-action="mock-submit" data-redirect="operador.html" data-success-title="Anomalia Catalogada" data-success-msg="O desperdício penaliza a eficiência da escola no Ranking Seduc.">
-              <i class="fa-solid fa-triangle-exclamation"></i> Registrar Perda
+            <button class="btn btn-primary btn-lg" style="width: 100%; background: var(--alert-red); box-shadow: var(--alert-red-glow);" data-action="mock-submit" data-redirect="operador.html" data-success-title="Desperdício Registrado" data-success-msg="A secretaria foi notificada para ajustar o planejamento contínuo.">
+              <i class="fa-solid fa-triangle-exclamation"></i> Concluir Registro
             </button>
           </div>
           

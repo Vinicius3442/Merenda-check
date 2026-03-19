@@ -12,115 +12,122 @@
   <link rel="stylesheet" href="assets/css/global.css" />
 
   <style>
-    .menu { display: flex; flex-direction: column; gap: 8px; flex: 1; }
-    .menu-item { padding: 14px 16px; border-radius: 12px; color: var(--text-muted); text-decoration: none; font-weight: 500; transition: all var(--transition-fast); display: flex; align-items: center; gap: 12px; }
-    .menu-item:hover { background: var(--border-subtle); color: var(--text-main); }
-    .menu-item.active { background: rgba(5, 150, 105, 0.1); color: var(--primary); border: 1px solid rgba(5, 150, 105, 0.2); }
-    .menu-item.danger { color: var(--alert-red); margin-top: auto; }
-    .menu-item.danger:hover { background: var(--alert-red-glow); color: var(--alert-red); }
+    .tablet-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 40px; background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+      box-shadow: var(--glass-shadow);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .user-profile-tablet { display: flex; align-items: center; gap: 15px; text-decoration: none; color: var(--text-main); }
+    .avatar { width: 50px; height: 50px; background: linear-gradient(135deg, var(--alert-blue), #2563eb); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #fff; font-size: 1.2rem; }
 
-    .user-profile { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-subtle); display: flex; align-items: center; gap: 12px; text-decoration: none; }
-    .avatar { width: 44px; height: 44px; background: linear-gradient(135deg, var(--alert-blue), #2563eb); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #fff; font-size: 1.1rem; }
+    .tablet-main { padding: 40px 5%; max-width: 1400px; margin: 0 auto; width: 100%; }
 
-    .header-dash { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 20px;}
-    .header-dash h1 { font-size: 2.2rem; margin-bottom: 8px; }
+    .tablet-nav { display: flex; gap: 15px; margin-bottom: 40px; }
+    .nav-pill { padding: 12px 24px; border-radius: 50px; background: var(--bg-surface); border: 1px solid var(--border-subtle); color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 1.1rem; transition: 0.3s; }
+    .nav-pill:hover { background: var(--bg-surface-elevated); color: var(--text-main); }
+    .nav-pill.active { background: rgba(12, 166, 80, 0.1); color: var(--primary); border-color: var(--primary); }
+
+    .header-dash { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 20px;}
+    .header-dash h1 { font-size: 2.5rem; margin-bottom: 8px; }
 
     .action-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-bottom: 40px;}
     
     .action-card {
-      padding: 30px; border-radius: 20px; text-decoration: none; color: var(--text-main);
+      padding: 40px; border-radius: 24px; text-decoration: none; color: var(--text-main);
       display: flex; flex-direction: column; transition: transform var(--transition-smooth), border-color var(--transition-smooth);
-      position: relative; overflow: hidden;
+      position: relative; overflow: hidden; background: var(--bg-surface); border: 2px solid var(--border-subtle);
+      box-shadow: var(--glass-shadow);
     }
     .action-card .icon-wrapper {
-      width: 80px; height: 80px; border-radius: 20px; display: flex; align-items: center; justify-content: center;
-      font-size: 2.5rem; margin-bottom: 24px; transition: transform 0.3s;
+      width: 90px; height: 90px; border-radius: 24px; display: flex; align-items: center; justify-content: center;
+      font-size: 3rem; margin-bottom: 30px; transition: transform 0.3s;
     }
-    .action-card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: var(--glass-shadow); }
+    .action-card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: var(--shadow-hover); }
     .action-card:hover .icon-wrapper { transform: scale(1.1); }
     
-    .card-receive { border: 1px solid var(--alert-green); }
+    .card-receive { border-color: rgba(16, 185, 129, 0.3); }
     .card-receive .icon-wrapper { background: rgba(16, 185, 129, 0.1); color: var(--alert-green); }
     
-    .card-dispatch { border: 1px solid var(--alert-yellow); }
+    .card-dispatch { border-color: rgba(245, 158, 11, 0.3); }
     .card-dispatch .icon-wrapper { background: rgba(245, 158, 11, 0.1); color: var(--alert-yellow); }
 
-    .card-meal { border: 1px solid var(--primary); }
-    .card-meal .icon-wrapper { background: rgba(5, 150, 105, 0.1); color: var(--primary); }
+    .card-meal { border-color: rgba(12, 166, 80, 0.3); }
+    .card-meal .icon-wrapper { background: rgba(12, 166, 80, 0.1); color: var(--primary); }
     
-    .card-waste { border: 1px solid var(--alert-red); }
+    .card-waste { border-color: rgba(239, 68, 68, 0.3); }
     .card-waste .icon-wrapper { background: rgba(239, 68, 68, 0.1); color: var(--alert-red); }
 
-    .card-desc { color: var(--text-muted); font-size: 1rem; flex: 1; }
+    .card-desc { color: var(--text-muted); font-size: 1.15rem; flex: 1; line-height: 1.6; }
     
-    .pulse-badge { position: absolute; top: 20px; right: 20px; background: rgba(239, 68, 68, 0.1); color: var(--alert-red); padding: 4px 12px; border-radius: 50px; font-size: 0.8rem; font-weight: bold; border: 1px solid rgba(239, 68, 68, 0.3); animation: pulseGlow 1.5s infinite; }
+    .pulse-badge { position: absolute; top: 24px; right: 24px; background: rgba(239, 68, 68, 0.1); color: var(--alert-red); padding: 8px 16px; border-radius: 50px; font-size: 0.9rem; font-weight: bold; border: 1px solid rgba(239, 68, 68, 0.3); animation: pulseGlow 1.5s infinite; }
   </style>
 </head>
 <body>
 
   <div class="bg-mesh"></div>
 
-  <div class="app-container">
-    <aside class="app-sidebar">
-      <a href="index.html" class="logo" style="margin-bottom: 40px; display: block;">
-        <img src="assets/logo.png" alt="Merenda Check" class="logo-img" />
-      </a>
-      
-      <nav class="menu">
-        <a href="operador.html" class="menu-item active"><i class="fa-solid fa-hand-holding-hand"></i> Atividades</a>
-        <a href="gestor-estoque.html" class="menu-item"><i class="fa-solid fa-boxes-stacked"></i> Consultar Despensa</a>
-        
-        <a href="login.html" class="menu-item danger"><i class="fa-solid fa-power-off"></i> Encerrar Sessão</a>
-      </nav>
-
-      <a href="perfil.html" class="user-profile">
+  <header class="tablet-header">
+    <a href="index.html" class="logo">
+      <img src="assets/logo.png" alt="Merenda Check" class="logo-img" />
+    </a>
+    
+    <div style="display: flex; gap: 30px; align-items: center;">
+      <a href="perfil.html" class="user-profile-tablet">
         <div class="avatar">JM</div>
-        <div>
-          <h4 style="font-size: 1rem; margin: 0; color: var(--text-main); font-weight: 700;">João Maria</h4>
-          <span style="font-size: 0.85rem; color: var(--text-muted);">Nutricionista/Chefe</span>
+        <div style="text-align: right;">
+          <h4 style="font-size: 1.1rem; margin: 0; font-weight: 700;">João Maria</h4>
+          <span style="font-size: 0.9rem; color: var(--text-muted);">Nutricionista Escolar</span>
         </div>
       </a>
-    </aside>
+      <a href="login.html" class="btn btn-danger" style="padding: 10px 20px; font-size: 1rem;"><i class="fa-solid fa-power-off"></i> Sair</a>
+    </div>
+  </header>
 
-    <main class="app-main">
-      <div class="header-dash animate-fade-in">
-        <div>
-          <h1>Operação Local</h1>
-          <p style="color: var(--text-muted); font-size: 1.1rem;">Ações de linha de frente: Almoxarifado e Refeitório.</p>
-        </div>
+  <main class="tablet-main">
+    
+    <div class="tablet-nav">
+      <a href="operador.html" class="nav-pill active"><i class="fa-solid fa-hand-holding-hand" style="margin-right: 8px;"></i> Ações Rápidas</a>
+      <a href="gestor-estoque.html" class="nav-pill"><i class="fa-solid fa-boxes-stacked" style="margin-right: 8px;"></i> Consultar Despensa</a>
+    </div>
+
+    <div class="header-dash animate-fade-in">
+      <div>
+        <h1>Painel de Operações</h1>
+        <p style="color: var(--text-muted); font-size: 1.2rem;">Painel de acesso rápido para rotinas de almoxarifado e refeitório.</p>
       </div>
+    </div>
 
       <div class="action-grid animate-slide-up delay-100">
         
-        <a href="entrada.html" class="action-card glass-panel card-receive">
-          <div class="icon-wrapper"><i class="fa-solid fa-truck-ramp-box"></i></div>
-          <h3 class="brand-font" style="font-size: 1.5rem; margin-bottom: 12px;">Receber Caminhão (Entrada)</h3>
-          <p class="card-desc">Escaneie o QR Code do fornecedor para confirmar via Smart Contract que os insumos chegaram conformes.</p>
-        </a>
+      <a href="entrada.html" class="action-card card-receive animate-slide-up delay-100">
+        <div class="icon-wrapper"><i class="fa-solid fa-truck-ramp-box"></i></div>
+        <h3 class="brand-font" style="font-size: 1.8rem; margin-bottom: 12px;">Receber Insumos</h3>
+        <p class="card-desc">Ative a câmera para escanear o QR Code da nota fiscal e validar a entrega contra o sistema central.</p>
+      </a>
 
-        <a href="baixa-insumo.html" class="action-card glass-panel card-dispatch">
-          <div class="pulse-badge"><i class="fa-solid fa-clock"></i> FIFO Obrigatório</div>
-          <div class="icon-wrapper"><i class="fa-solid fa-fire-burner"></i></div>
-          <h3 class="brand-font" style="font-size: 1.5rem; margin-bottom: 12px;">Retirar para Cozinha</h3>
-          <p class="card-desc">Despache carne, arroz e demais insumos seguindo a fila lógica para preparo do dia.</p>
-        </a>
+      <a href="baixa-insumo.html" class="action-card card-dispatch animate-slide-up delay-200">
+        <div class="pulse-badge"><i class="fa-solid fa-clock"></i> Controle de Validade</div>
+        <div class="icon-wrapper"><i class="fa-solid fa-fire-burner"></i></div>
+        <h3 class="brand-font" style="font-size: 1.8rem; margin-bottom: 12px;">Retirar para Cozinha</h3>
+        <p class="card-desc">Dê baixa nos insumos que serão utilizados no preparo. O sistema garantirá a utilização dos lotes mais antigos primeiro.</p>
+      </a>
 
-        <a href="registrar-refeicao.html" class="action-card glass-panel card-meal">
-          <div class="icon-wrapper"><i class="fa-solid fa-utensils"></i></div>
-          <h3 class="brand-font" style="font-size: 1.5rem; margin-bottom: 12px;">Apontar Almoço Servido</h3>
-          <p class="card-desc">Informe a contagem volumosa caso a integração biométrica da catraca oscile.</p>
-        </a>
+      <a href="registrar-refeicao.html" class="action-card card-meal animate-slide-up delay-300">
+        <div class="icon-wrapper"><i class="fa-solid fa-utensils"></i></div>
+        <h3 class="brand-font" style="font-size: 1.8rem; margin-bottom: 12px;">Apontar Almoço Servido</h3>
+        <p class="card-desc">Registro manual de refeições distribuídas para ser utilizado como contingência ao sistema de acesso da catraca.</p>
+      </a>
 
-        <a href="sobra-limpa.html" class="action-card glass-panel card-waste">
-          <div class="icon-wrapper"><i class="fa-solid fa-scale-unbalanced"></i></div>
-          <h3 class="brand-font" style="font-size: 1.5rem; margin-bottom: 12px;">Pesar Sobra Limpa (Panela)</h3>
-          <p class="card-desc">O volume restante não servido cruzado com os algoritmos preditivos que alertam a secretaria.</p>
-        </a>
+      <a href="sobra-limpa.html" class="action-card card-waste animate-slide-up delay-400">
+        <div class="icon-wrapper"><i class="fa-solid fa-scale-unbalanced"></i></div>
+        <h3 class="brand-font" style="font-size: 1.8rem; margin-bottom: 12px;">Pesar Sobra Limpa</h3>
+        <p class="card-desc">Registre o alimento preparado e não servido para alimentar os dados sobre desperdício escolar.</p>
+      </a>
 
-      </div>
-
-    </main>
-  </div>
+    </div>
+  </main>
 
   <script src="assets/js/main.js"></script>
 </body>

@@ -1,51 +1,5 @@
 :root {
-  /* Core Colors - Green Logo Theme */
-  --primary: #0ca650;
-  --primary-dark: #077938;
-  --primary-light: #25d371;
-  
-  --accent: #0f8f4a;
-  --accent-light: #3ae285;
-  
-  /* Backgrounds */
-  --bg-base: #f8f9fa; /* Warm off-white */
-  --bg-surface: #ffffff;
-  --bg-surface-elevated: #ffffff;
-  
-  /* Text */
-  --text-main: #1a1a1a;
-  --text-muted: #666666;
-  --text-inverse: #ffffff;
-  
-  /* Borders & Effects */
-  --border-subtle: #e0e0e0;
-  --glass-border: rgba(0, 0, 0, 0.05);
-  --glass-bg: rgba(255, 255, 255, 0.95);
-  
-  /* Premium Shadows */
-  --glass-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.12);
-  --neon-glow: 0 4px 15px rgba(12, 166, 80, 0.3); /* Green Glow */
-  
-  /* Status Colors */
-  --alert-red: #e11d48;
-  --alert-red-glow: 0 4px 15px rgba(225, 29, 72, 0.2);
-  --alert-yellow: #f59e0b;
-  --alert-yellow-glow: 0 4px 15px rgba(245, 158, 11, 0.2);
-  --alert-green: #10b981;
-  --alert-blue: #3b82f6;
-  
-  /* Forms */
-  --input-bg: #f8fafc;
-  --input-border: #cbd5e1;
-  
-  --transition-fast: 0.2s ease;
-  --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-[data-theme="dark"] {
-  /* In dark mode, we keep the green identity but on dark backgrounds */
-  --primary: #25d371;
+   --primary: #25d371;
   --primary-dark: #0ca650;
   --primary-light: #60f59e;
   
@@ -83,6 +37,7 @@
   --input-border: rgba(255, 255, 255, 0.15);
 }
 
+
 * {
   margin: 0; padding: 0; box-sizing: border-box;
 }
@@ -115,6 +70,7 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 .text-gradient {
   background: linear-gradient(135deg, var(--accent), var(--accent-light));
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
 }
@@ -122,6 +78,7 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 .text-gradient-blue {
   background: linear-gradient(135deg, var(--primary), var(--primary-light));
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
 }
@@ -152,16 +109,36 @@ h1, h2, h3, h4, h5, h6, .brand-font {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  padding: 16px 32px; /* Much larger hits */
-  border-radius: 50px; /* Pill shape like Wonderfly */
+  padding: 12px 24px;
+  border-radius: 12px;
   font-family: inherit;
   font-weight: 600;
-  font-size: 1.05rem; /* Larger font */
+  font-size: 1rem;
   cursor: pointer;
   transition: all var(--transition-fast);
   text-decoration: none;
   border: 1px solid transparent;
   outline: none;
+}
+
+.btn-lg {
+  padding: 18px 36px;
+  font-size: 1.15rem;
+  border-radius: 14px;
+}
+
+.btn-light {
+  background: var(--bg-surface);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--glass-shadow);
+}
+.btn-light:hover {
+  background: var(--bg-surface-elevated);
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
 }
 
 .btn-primary {
@@ -350,32 +327,6 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 .toast-content h4 { margin: 0 0 6px 0; font-size: 1.1rem; color: var(--text-main); font-weight: 700; }
 .toast-content p { margin: 0; font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
 
-/* Theme Toggle Button */
-.theme-toggle-btn {
-  position: fixed;
-  bottom: 40px;
-  left: 40px;
-  z-index: 9000;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: var(--bg-surface);
-  border: 2px solid var(--glass-border);
-  color: var(--primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  cursor: pointer;
-  box-shadow: var(--shadow-hover);
-  transition: all var(--transition-fast);
-}
-
-.theme-toggle-btn:hover {
-  transform: scale(1.1) rotate(15deg);
-  border-color: var(--accent);
-  color: var(--accent);
-}
 
 /* Base Layout wrappers */
 .app-container {

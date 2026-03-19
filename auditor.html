@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Centro de Comando Auditor | Merenda Check</title>
+  <title>Painel de Auditoria | Merenda Check</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -59,7 +59,7 @@
       </a>
       
       <nav class="menu">
-        <a href="auditor.html" class="menu-item active"><i class="fa-solid fa-satellite-dish"></i> Malha Municipal</a>
+        <a href="auditor.html" class="menu-item active"><i class="fa-solid fa-satellite-dish"></i> Rede Municipal</a>
         <a href="auditor-escolas.html" class="menu-item"><i class="fa-solid fa-school"></i> Unidades (Escolas)</a>
         <a href="auditor-rastreabilidade.html" class="menu-item"><i class="fa-solid fa-code-branch"></i> Investigação de Lote</a>
         
@@ -78,11 +78,11 @@
     <main class="app-main">
       <div class="header-dash animate-fade-in">
         <div>
-          <h1 style="display: flex; align-items: center; gap: 12px;"><i class="fa-solid fa-shield-halved" style="color: var(--primary);"></i> Command Center</h1>
-          <p style="color: var(--text-muted); font-size: 1.1rem;">Visão macrométrica do desperdício e conformidade na rede pública (24 un.).</p>
+          <h1 style="display: flex; align-items: center; gap: 12px;"><i class="fa-solid fa-shield-halved" style="color: var(--primary);"></i> Painel Central de Auditoria</h1>
+          <p style="color: var(--text-muted); font-size: 1.1rem;">Visão macrométrica de abastecimento e conformidade na rede pública (24 un.).</p>
         </div>
         <div class="date-badge">
-          <i class="fa-solid fa-tower-broadcast text-gradient"></i> Servidor Oráculo Online
+          <i class="fa-solid fa-tower-broadcast text-gradient"></i> Conectado em Tempo Real
         </div>
       </div>
 
@@ -108,7 +108,7 @@
       <div class="map-container animate-slide-up delay-100">
         
         <div class="glass-panel" style="padding: 24px;">
-          <h3 class="brand-font" style="margin-bottom: 20px;"><i class="fa-regular fa-map" style="margin-right: 10px;"></i> Distribuição Geográfica de Anomalias</h3>
+          <h3 class="brand-font" style="margin-bottom: 20px;"><i class="fa-regular fa-map" style="margin-right: 10px;"></i> Localização de Ocorrências</h3>
           
           <div class="map-mock auditor-map">
             <!-- Simulated Pins -->
@@ -126,8 +126,8 @@
             <canvas id="stockChart"></canvas>
           </div>
           <div style="margin-top: 20px;">
-            <button class="btn btn-secondary w-100" style="width: 100%;" data-action="mock-submit" data-success-msg="Relatório extraoficial emitido.">
-              Exportar Amostra Analítica
+            <button class="btn btn-secondary w-100" style="width: 100%;" data-action="mock-submit" data-success-msg="Relatório gerado com sucesso.">
+              Exportar Relatório Analítico
             </button>
           </div>
         </div>
@@ -147,8 +147,8 @@
               <tr>
                 <th>Severidade</th>
                 <th>Unidade Escolar</th>
-                <th>Objeto da Investigação (Hash)</th>
-                <th>Motivo Detectado pela IA</th>
+                <th>Lote Afetado</th>
+                <th>Motivo Detectado</th>
                 <th>Ação Recomendada</th>
               </tr>
             </thead>
@@ -158,9 +158,9 @@
                 <td><span class="badge badge-danger">Crítico</span></td>
                 <td style="font-weight: 600;">CEI Pequeninos</td>
                 <td style="font-family: monospace; color: var(--text-muted);">#411-A (Frango)</td>
-                <td>Catraca: 120 alunos. Baixa Cozinha: 45kg (Espera: ~12kg)</td>
+                <td>Catraca: 120 alunos. Baixa Cozinha: 45kg (Espera-se: ~12kg)</td>
                 <td>
-                  <a href="auditor-rastreabilidade.html" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;"><i class="fa-solid fa-crosshairs"></i> Rastrear Ponto</a>
+                  <a href="auditor-rastreabilidade.html" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;"><i class="fa-solid fa-crosshairs"></i> Averiguar</a>
                 </td>
               </tr>
               <!-- Alert 2 -->

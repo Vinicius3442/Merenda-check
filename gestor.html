@@ -101,9 +101,9 @@
         <!-- Left Column: Prediction Graph -->
         <div class="card glass-panel">
           <div class="card-title">
-            <i class="fa-solid fa-brain text-gradient"></i> IA Preditiva: Frequência vs Consumo
+            <i class="fa-solid fa-brain text-gradient"></i> Previsão de Demanda vs Consumo Real
           </div>
-          <p style="font-size: 1rem; color: var(--text-muted); margin-bottom: 24px;">Comparativo entre alunos esperados (Catraca) e consumo térmico aferido. Anomalias alertam auditoria em D+1.</p>
+          <p style="font-size: 1rem; color: var(--text-muted); margin-bottom: 24px;">Comparativo entre frequência prevista na catraca e o volume aferido nas cozinhas escolares.</p>
           
           <div class="chart-container">
              <canvas id="predictiveChart"></canvas>
@@ -111,11 +111,11 @@
 
           <div class="form-group" style="margin-top: 30px; display: flex; gap: 15px; align-items: flex-end; flex-direction: row;">
             <div style="flex: 1;">
-              <label class="form-label" style="display: block; margin-bottom: 8px;">Forçar Ajuste Frequência (Nº Catraca)</label>
+              <label class="form-label" style="display: block; margin-bottom: 8px;">Ajustar Frequência Manualmente</label>
               <input type="number" id="inputAlunos" class="form-control" placeholder="Ex: 350" style="width: 100%;" />
             </div>
-            <button class="btn btn-primary" data-action="mock-submit" data-success-title="Sincronizado" data-success-msg="A malha foi re-calibrada via Smart Contract.">
-              <i class="fa-solid fa-share-nodes"></i> Assinar
+            <button class="btn btn-primary" data-action="mock-submit" data-success-title="Sincronizado" data-success-msg="Base de previsão atualizada com sucesso.">
+              <i class="fa-solid fa-share-nodes"></i> Salvar
             </button>
           </div>
         </div>
@@ -144,7 +144,7 @@
       <!-- Bottom Full Width: Mini table -->
       <div class="card glass-panel animate-slide-up delay-200">
         <div class="card-title" style="justify-content: space-between; margin-bottom: 20px;">
-          <span><i class="fa-solid fa-bolt text-gradient"></i> Eventos Recentes de Blockchain</span>
+          <span><i class="fa-solid fa-bolt text-gradient"></i> Histórico de Movimentações</span>
           <a href="gestor-estoque.html" class="btn btn-secondary">Ver Estoque Completo <i class="fa-solid fa-arrow-right"></i></a>
         </div>
 
@@ -165,21 +165,21 @@
                 <td style="font-family: monospace; color: var(--text-muted);">0x8A...F91</td>
                 <td>Carne Moída (15kg)</td>
                 <td>16/03 - 11:30</td>
-                <td><span class="badge badge-success">Assinado Validado</span></td>
+                <td><span class="badge badge-success">Aprovado</span></td>
               </tr>
               <tr>
                 <td style="font-weight: 500;"><i class="fa-solid fa-arrow-up" style="color: var(--alert-green); margin-right: 8px;"></i> Entrada Almoxarifado</td>
                 <td style="font-family: monospace; color: var(--text-muted);">0x4B...A12</td>
                 <td>Arroz Agulhinha (120kg)</td>
                 <td>16/03 - 08:15</td>
-                <td><span class="badge badge-success">Assinado Validado</span></td>
+                <td><span class="badge badge-success">Aprovado</span></td>
               </tr>
               <tr>
-                <td style="font-weight: 500;"><i class="fa-solid fa-xmark" style="color: var(--alert-red); margin-right: 8px;"></i> Recusa (Violação FIFO)</td>
+                <td style="font-weight: 500;"><i class="fa-solid fa-xmark" style="color: var(--alert-red); margin-right: 8px;"></i> Recusa (Violação Validade)</td>
                 <td style="font-family: monospace; color: var(--text-muted);">0x1C...D34</td>
                 <td>Polpa Fruta (-5kg)</td>
                 <td>15/03 - 10:20</td>
-                <td><span class="badge badge-danger">Repudiado SC</span></td>
+                <td><span class="badge badge-danger">Rejeitado</span></td>
               </tr>
             </tbody>
           </table>

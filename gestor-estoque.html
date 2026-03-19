@@ -70,7 +70,7 @@
           <p style="color: var(--text-muted); font-size: 1.1rem;">Lista restrita baseada na assinatura da EMEF João Silva.</p>
         </div>
         <div>
-          <button class="btn btn-secondary" data-action="mock-submit" data-success-msg="Relatório de Inventário Criptográfico PDF Gerado">
+          <button class="btn btn-secondary" data-action="mock-submit" data-success-msg="Relatório em PDF Gerado">
             <i class="fa-solid fa-file-pdf"></i> Exportar Audit-PDF
           </button>
         </div>
@@ -86,11 +86,11 @@
           <table class="data-table">
             <thead>
               <tr>
-                <th>Hash Sig / Lote</th>
+                <th>Código / Lote</th>
                 <th>Insumo</th>
                 <th>Volume Atual</th>
                 <th>Validade / SLA</th>
-                <th>Status do Smart Contract</th>
+                <th>Status do Lote</th>
                 <th>Ações</th>
               </tr>
             </thead>
@@ -101,7 +101,7 @@
                 <td style="font-weight: 600;">Carne Moída Bovina</td>
                 <td>15 kg</td>
                 <td style="color: var(--alert-red);"><i class="fa-solid fa-hourglass-end"></i> Vence em 3 Dias</td>
-                <td><span class="badge" style="background: rgba(239,68,68,0.1); color: var(--alert-red); border: 1px solid rgba(239,68,68,0.2); animation: pulseGlow 2s infinite;"><i class="fa-solid fa-unlock"></i> Trava FIFO Exclusiva</span></td>
+                <td><span class="badge" style="background: rgba(239,68,68,0.1); color: var(--alert-red); border: 1px solid rgba(239,68,68,0.2); animation: pulseGlow 2s infinite;"><i class="fa-solid fa-unlock"></i> Prioridade Máxima</span></td>
                 <td>
                   <button class="btn btn-primary" style="padding: 8px 12px; font-size: 0.85rem;" onclick="window.location.href='baixa-insumo.html'"><i class="fa-solid fa-minus"></i> Baixar Agora</button>
                 </td>
@@ -112,9 +112,9 @@
                 <td style="font-weight: 600;">Carne Moída Bovina</td>
                 <td>50 kg</td>
                 <td>Vence em 45 Dias</td>
-                <td><span class="badge badge-neutral"><i class="fa-solid fa-lock"></i> Bloqueado (Aguardar #4920)</span></td>
+                <td><span class="badge badge-neutral"><i class="fa-solid fa-lock"></i> Bloqueado (Data Posterior)</span></td>
                 <td>
-                  <button class="btn btn-secondary" style="padding: 8px 12px; font-size: 0.85rem;" disabled title="Smart Contract repudia baíxa pela regra FIFO"><i class="fa-solid fa-ban"></i> Restrito</button>
+                  <button class="btn btn-secondary" style="padding: 8px 12px; font-size: 0.85rem;" disabled title="Bloqueado pela regra FIFO"><i class="fa-solid fa-ban"></i> Restrito</button>
                 </td>
               </tr>
               <!-- Normal -->
@@ -133,10 +133,10 @@
                 <td style="font-family: monospace; color: var(--text-muted);">#4755-Z <br> <span style="font-size: 0.7rem;">0x5E...0D3</span></td>
                 <td style="font-weight: 600; text-decoration: line-through; color: var(--text-muted);">Polpa de Morango</td>
                 <td>0 kg</td>
-                <td><i class="fa-solid fa-check-double text-gradient"></i> Consumido na Integra</td>
-                <td><span class="badge badge-neutral"><i class="fa-solid fa-archive"></i> Arquivado (Ledger)</span></td>
+                <td><i class="fa-solid fa-check-double text-gradient"></i> Consumido na Íntegra</td>
+                <td><span class="badge badge-neutral"><i class="fa-solid fa-archive"></i> Arquivado</span></td>
                 <td>
-                  <button class="btn btn-secondary" style="padding: 8px 12px; font-size: 0.85rem;" data-action="mock-submit" data-success-msg="Hash da trilha copiado para área de transferência."><i class="fa-solid fa-link"></i> Trace</button>
+                  <button class="btn btn-secondary" style="padding: 8px 12px; font-size: 0.85rem;" data-action="mock-submit" data-success-msg="Código copiado para área de transferência."><i class="fa-solid fa-link"></i> Rastrear</button>
                 </td>
               </tr>
             </tbody>

@@ -19,13 +19,13 @@
     
     .large-input-group { position: relative; display: flex; align-items: center; }
     .large-input {
-      font-size: 3rem; text-align: right; font-weight: 800; padding: 20px 80px 20px 20px; font-family: 'Outfit';
+      font-size: 3rem; text-align: right; font-weight: 800; padding: 20px 110px 20px 20px; font-family: 'Outfit';
       background: var(--input-bg); border: 2px dashed var(--input-border); flex: 1;
     }
     .large-input:focus { border-style: solid; box-shadow: 0 0 0 5px rgba(239, 68, 68, 0.1); border-color: var(--alert-red); outline: none; }
     
     .unit-label {
-      position: absolute; right: 20px; font-size: 1.5rem; font-weight: 800; color: var(--text-muted); font-family: 'Outfit'; pointer-events: none;
+      position: absolute; right: 30px; font-size: 1.5rem; font-weight: 800; color: var(--text-muted); font-family: 'Outfit'; pointer-events: none;
     }
   </style>
 
@@ -133,7 +133,8 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 }
 .glass-panel:hover {
   box-shadow: var(--shadow-hover);
-  transform: translateY(-4px);
+  transform: translateY(-6px);
+  border-color: rgba(37, 211, 113, 0.3);
 }
 
 /* Buttons */
@@ -152,6 +153,11 @@ h1, h2, h3, h4, h5, h6, .brand-font {
   text-decoration: none;
   border: 1px solid transparent;
   outline: none;
+}
+
+.btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
 }
 
 .btn-lg {
@@ -182,9 +188,10 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 }
 
 .btn-primary:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--neon-glow);
+  transform: translateY(-5px);
+  box-shadow: 0 0 25px rgba(37, 211, 113, 0.6);
   color: #ffffff;
+  filter: brightness(1.1);
 }
 
 .btn-secondary {
@@ -423,6 +430,29 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 
 
 </style>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+
+/* ENFORCED GLOBAL BUTTON HOVER */
+.btn, .role-btn { transition: all 0.3s ease !important; }
+.btn:hover, .role-btn:hover { 
+    transform: translateY(-4px) !important; 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important; 
+    filter: brightness(1.1) !important;
+}
+
+</style>
+<style>
+
+/* ENFORCED GLOBAL CARD HOVER */
+.card, .glass-panel, .kpi-card, .cta-box { transition: all 0.3s ease !important; }
+.card:hover, .glass-panel:hover, .kpi-card:hover, .cta-box:hover { 
+    transform: translateY(-6px) !important; 
+    box-shadow: 0 15px 35px rgba(0,0,0,0.3) !important; 
+    border-color: rgba(37, 211, 113, 0.4) !important;
+}
+
+</style>
 </head>
 <body>
 
@@ -478,6 +508,9 @@ h1, h2, h3, h4, h5, h6, .brand-font {
         </div>
 
       </div>
+          <footer style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border-subtle); text-align: center; color: var(--text-muted); font-size: 0.9rem;">
+        &copy; 2026 Merenda Check. Todos os direitos reservados.
+      </footer>
     </main>
   </div>
 

@@ -162,7 +162,8 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 }
 .glass-panel:hover {
   box-shadow: var(--shadow-hover);
-  transform: translateY(-4px);
+  transform: translateY(-6px);
+  border-color: rgba(37, 211, 113, 0.3);
 }
 
 /* Buttons */
@@ -181,6 +182,11 @@ h1, h2, h3, h4, h5, h6, .brand-font {
   text-decoration: none;
   border: 1px solid transparent;
   outline: none;
+}
+
+.btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
 }
 
 .btn-lg {
@@ -211,9 +217,10 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 }
 
 .btn-primary:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--neon-glow);
+  transform: translateY(-5px);
+  box-shadow: 0 0 25px rgba(37, 211, 113, 0.6);
   color: #ffffff;
+  filter: brightness(1.1);
 }
 
 .btn-secondary {
@@ -452,6 +459,29 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 
 
 </style>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+
+/* ENFORCED GLOBAL BUTTON HOVER */
+.btn, .role-btn { transition: all 0.3s ease !important; }
+.btn:hover, .role-btn:hover { 
+    transform: translateY(-4px) !important; 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important; 
+    filter: brightness(1.1) !important;
+}
+
+</style>
+<style>
+
+/* ENFORCED GLOBAL CARD HOVER */
+.card, .glass-panel, .kpi-card, .cta-box { transition: all 0.3s ease !important; }
+.card:hover, .glass-panel:hover, .kpi-card:hover, .cta-box:hover { 
+    transform: translateY(-6px) !important; 
+    box-shadow: 0 15px 35px rgba(0,0,0,0.3) !important; 
+    border-color: rgba(37, 211, 113, 0.4) !important;
+}
+
+</style>
 </head>
 <body>
 
@@ -516,8 +546,8 @@ h1, h2, h3, h4, h5, h6, .brand-font {
         </div>
 
         <!-- Right Column: Micro Stats -->
-        <div class="card glass-panel" style="display: flex; flex-direction: column; justify-content: center; gap: 40px;">
-          <div class="card-title" style="margin: 0;"><i class="fa-solid fa-box-open text-gradient"></i> Resumo Vital</div>
+        <div class="card glass-panel" style="display: flex; flex-direction: column; justify-content: center; gap: 40px; text-align: center; align-items: center;">
+          <div class="card-title" style="margin: 0; justify-content: center; width: 100%;"><i class="fa-solid fa-box-open text-gradient"></i> Resumo Vital</div>
           
           <div class="stat-mini">
             <span>Alertas de FIFO (Expiração)</span>
@@ -581,6 +611,9 @@ h1, h2, h3, h4, h5, h6, .brand-font {
         </div>
       </div>
 
+          <footer style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border-subtle); text-align: center; color: var(--text-muted); font-size: 0.9rem;">
+        &copy; 2026 Merenda Check. Todos os direitos reservados.
+      </footer>
     </main>
   </div>
 
@@ -588,6 +621,8 @@ h1, h2, h3, h4, h5, h6, .brand-font {
   <script>
     // Chart.js implementation for the gesture dashboard
     document.addEventListener('DOMContentLoaded', () => {
+      document.fonts.ready.then(() => {
+      Chart.defaults.font.family = "'Poppins', sans-serif";
       const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
       
       const getColors = () => {
@@ -641,7 +676,7 @@ h1, h2, h3, h4, h5, h6, .brand-font {
           plugins: {
             legend: { 
               position: 'top', 
-              labels: { color: c.text, font: { family: 'Inter', size: 13 } } 
+              labels: { color: c.text, font: { family: "'Poppins', sans-serif", size: 13 } } 
             },
             tooltip: {
               backgroundColor: 'rgba(0,0,0,0.8)', padding: 12, titleFont: { family: 'Outfit', size: 14 }, bodyFont: { size: 13 }
@@ -665,6 +700,7 @@ h1, h2, h3, h4, h5, h6, .brand-font {
         predictiveChart.options.scales.y.ticks.color = c.muted;
         predictiveChart.options.scales.x.ticks.color = c.muted;
         predictiveChart.update();
+      });
       });
     });
   </script>

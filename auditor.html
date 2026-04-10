@@ -32,7 +32,7 @@
     .date-badge { background: var(--bg-surface-elevated); padding: 10px 20px; border-radius: 50px; font-size: 0.95rem; font-weight: 600; border: 1px solid var(--border-subtle); }
 
     .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
-    .kpi-card { padding: 24px; border-radius: 16px; position: relative; overflow: hidden; }
+    .kpi-card { padding: 24px; border-radius: 16px; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
     .kpi-card h4 { color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;}
     .kpi-val { font-size: 2.5rem; font-weight: 800; font-family: 'Outfit'; line-height: 1; }
     
@@ -44,7 +44,7 @@
     .map-pin.pin-danger { background: var(--alert-red); box-shadow: var(--alert-red-glow); animation: pulseGlow 1.5s infinite; }
     .map-pin.pin-warn { background: var(--alert-yellow); box-shadow: var(--alert-yellow-glow); }
 
-    .chart-container-donut { position: relative; height: 250px; width: 100%; display: flex; align-items: center; justify-content: center;}
+    .chart-container-donut { position: relative; height: 320px; width: 100%; display: flex; align-items: center; justify-content: center;}
 
   </style>
 
@@ -152,7 +152,8 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 }
 .glass-panel:hover {
   box-shadow: var(--shadow-hover);
-  transform: translateY(-4px);
+  transform: translateY(-6px);
+  border-color: rgba(37, 211, 113, 0.3);
 }
 
 /* Buttons */
@@ -171,6 +172,11 @@ h1, h2, h3, h4, h5, h6, .brand-font {
   text-decoration: none;
   border: 1px solid transparent;
   outline: none;
+}
+
+.btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
 }
 
 .btn-lg {
@@ -201,9 +207,10 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 }
 
 .btn-primary:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--neon-glow);
+  transform: translateY(-5px);
+  box-shadow: 0 0 25px rgba(37, 211, 113, 0.6);
   color: #ffffff;
+  filter: brightness(1.1);
 }
 
 .btn-secondary {
@@ -442,6 +449,29 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 
 
 </style>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+
+/* ENFORCED GLOBAL BUTTON HOVER */
+.btn, .role-btn { transition: all 0.3s ease !important; }
+.btn:hover, .role-btn:hover { 
+    transform: translateY(-4px) !important; 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important; 
+    filter: brightness(1.1) !important;
+}
+
+</style>
+<style>
+
+/* ENFORCED GLOBAL CARD HOVER */
+.card, .glass-panel, .kpi-card, .cta-box { transition: all 0.3s ease !important; }
+.card:hover, .glass-panel:hover, .kpi-card:hover, .cta-box:hover { 
+    transform: translateY(-6px) !important; 
+    box-shadow: 0 15px 35px rgba(0,0,0,0.3) !important; 
+    border-color: rgba(37, 211, 113, 0.4) !important;
+}
+
+</style>
 </head>
 <body data-theme="dark"> <!-- Forced dark for War Room -->
 
@@ -573,12 +603,17 @@ h1, h2, h3, h4, h5, h6, .brand-font {
         </div>
       </div>
 
+          <footer style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border-subtle); text-align: center; color: var(--text-muted); font-size: 0.9rem;">
+        &copy; 2026 Merenda Check. Todos os direitos reservados.
+      </footer>
     </main>
   </div>
 
   <script src="assets/js/main.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      document.fonts.ready.then(() => {
+      Chart.defaults.font.family = "'Poppins', sans-serif";
       const getColors = () => {
         const style = getComputedStyle(document.body);
         return {
@@ -602,15 +637,16 @@ h1, h2, h3, h4, h5, h6, .brand-font {
             backgroundColor: [c.primary, c.blue, c.warn, c.danger],
             borderWidth: 2,
             borderColor: c.bg,
-            hoverOffset: 10
+            hoverOffset: 4
           }]
         },
         options: {
+          layout: { padding: { bottom: 20 } },
           responsive: true,
           maintainAspectRatio: false,
           cutout: '75%',
           plugins: {
-            legend: { position: 'bottom', labels: { color: getComputedStyle(document.body).getPropertyValue('--text-main').trim(), font: { family: 'Inter', size: 12 }, padding: 20 } },
+            legend: { position: 'bottom', labels: { color: getComputedStyle(document.body).getPropertyValue('--text-main').trim(), font: { family: "'Poppins', sans-serif", size: 13 }, padding: 15 } },
             tooltip: { backgroundColor: 'rgba(0,0,0,0.8)', padding: 12, titleFont: { family: 'Outfit', size: 14 } }
           }
         }
@@ -622,6 +658,7 @@ h1, h2, h3, h4, h5, h6, .brand-font {
         stockChart.data.datasets[0].borderColor = c.bg;
         stockChart.options.plugins.legend.labels.color = getComputedStyle(document.body).getPropertyValue('--text-main').trim();
         stockChart.update();
+      });
       });
     });
   </script>

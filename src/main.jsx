@@ -5,6 +5,7 @@ import { ToastProvider } from './contexts/ToastContext';
 import App from './App';
 import './styles/global.css';
 import './styles/dashboard.css';
+import './styles/print.css';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

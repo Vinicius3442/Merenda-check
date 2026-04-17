@@ -25,6 +25,24 @@ import AuditorEscolas from './pages/auditor/AuditorEscolas';
 import Rastreabilidade from './pages/auditor/Rastreabilidade';
 import InvestigarAlerta from './pages/auditor/InvestigarAlerta';
 
+// Nutrição
+import NutricaoDashboard from './pages/nutricao/NutricaoDashboard';
+import GestaoCardapios from './pages/nutricao/GestaoCardapios';
+import FichaTecnica from './pages/nutricao/FichaTecnica';
+
+// Licitação
+import EmpenhosSaldo from './pages/licitacao/EmpenhosSaldo';
+import Fornecedores from './pages/licitacao/Fornecedores';
+
+// Admin
+import GestaoUsuarios from './pages/admin/GestaoUsuarios';
+import AuditTrailTI from './pages/admin/AuditTrailTI';
+
+// Public & Kiosk
+import PortalTransparencia from './pages/public/PortalTransparencia';
+import Ouvidoria from './pages/public/Ouvidoria';
+import KioskRefeitorio from './pages/kiosk/KioskRefeitorio';
+
 function ProtectedRoute({ children }) {
   const { isAuthenticated } = useAuth();
   return isAuthenticated ? children : <Navigate to="/login" replace />;
@@ -59,6 +77,24 @@ export default function App() {
         <Route path="/auditor/escolas" element={<ProtectedRoute><AuditorEscolas /></ProtectedRoute>} />
         <Route path="/auditor/rastrear" element={<ProtectedRoute><Rastreabilidade /></ProtectedRoute>} />
         <Route path="/auditor/investigar" element={<ProtectedRoute><InvestigarAlerta /></ProtectedRoute>} />
+
+        {/* Nutrição */}
+        <Route path="/nutricao" element={<ProtectedRoute><NutricaoDashboard /></ProtectedRoute>} />
+        <Route path="/nutricao/cardapios" element={<ProtectedRoute><GestaoCardapios /></ProtectedRoute>} />
+        <Route path="/nutricao/fichas" element={<ProtectedRoute><FichaTecnica /></ProtectedRoute>} />
+
+        {/* Licitação */}
+        <Route path="/licitacao" element={<ProtectedRoute><EmpenhosSaldo /></ProtectedRoute>} />
+        <Route path="/licitacao/fornecedores" element={<ProtectedRoute><Fornecedores /></ProtectedRoute>} />
+
+        {/* Admin */}
+        <Route path="/admin" element={<ProtectedRoute><GestaoUsuarios /></ProtectedRoute>} />
+        <Route path="/admin/audit-ti" element={<ProtectedRoute><AuditTrailTI /></ProtectedRoute>} />
+
+        {/* Telas Públicas (Sem login) */}
+        <Route path="/transparencia" element={<PortalTransparencia />} />
+        <Route path="/ouvidoria" element={<Ouvidoria />} />
+        <Route path="/kiosk" element={<KioskRefeitorio />} />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />

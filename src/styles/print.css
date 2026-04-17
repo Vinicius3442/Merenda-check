@@ -1,0 +1,80 @@
+/* ============================================
+   PRINT MODE (Auditor PDF/Print friendly)
+   ============================================ */
+@media print {
+  /* Force white background and black text on everything */
+  body, .app-main, .glass-panel, .card, .kpi-card, .timeline-content, .table-wrapper {
+    background: #ffffff !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    border: 1px solid #e2e8f0 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* Hide navigation, sidebar, unnecessary UI */
+  .app-sidebar,
+  .btn,
+  .header-dash p,
+  .controls-bar,
+  form,
+  .search-bar-full {
+    display: none !important;
+  }
+
+  /* Reset layout to use full width */
+  .app-container {
+    padding: 0 !important;
+    display: block !important;
+  }
+
+  .app-main {
+    margin-left: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Flatten layout */
+  .kpi-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+
+  /* Timeline print friendly */
+  .timeline::before {
+    background: #cbd5e1 !important;
+  }
+
+  .timeline-dot {
+    background: #ffffff !important;
+    border: 2px solid #64748b !important;
+  }
+
+  .timeline-dot.dot-success { border-color: #10b981 !important; }
+  .timeline-dot.dot-danger { border-color: #f43f5e !important; }
+  .timeline-dot.dot-warning { border-color: #f59e0b !important; }
+
+  /* Ensure text is completely readable */
+  h1, h2, h3, h4, strong {
+    color: #0f172a !important;
+  }
+
+  .text-muted {
+    color: #475569 !important;
+  }
+
+  /* Badges */
+  .badge {
+    border: 1px solid currentColor !important;
+    background: transparent !important;
+  }
+
+  /* Table styling */
+  table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+  }
+
+  th, td {
+    border-bottom: 1px solid #cbd5e1 !important;
+    padding: 8px !important;
+  }
+}

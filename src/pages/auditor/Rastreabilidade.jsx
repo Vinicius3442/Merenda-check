@@ -65,10 +65,10 @@ export default function Rastreabilidade() {
       <div className="header-dash animate-fade-in">
         <div>
           <h1 style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <i className="fa-solid fa-code-branch" style={{ color: 'var(--primary)' }}></i> Trilha Seca (Blockchain Ledgers)
+            <i className="fa-solid fa-code-branch" style={{ color: 'var(--primary)' }}></i> Trilha de Auditoria Consolidada
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>
-            Todo grama adquirido pelo órgão público possui um hash inalterável na linha do tempo.
+            Todo apontamento possui registro inalterável e encadeado na linha do tempo.
           </p>
         </div>
       </div>
@@ -103,8 +103,8 @@ export default function Rastreabilidade() {
       <div className="animate-slide-up" style={{ marginBottom: 20, display: 'flex', alignItems: 'center', gap: 12 }}>
         <div style={{ flex: 1, height: 1, background: 'var(--border-subtle)' }}></div>
         <span style={{ fontFamily: 'Outfit', fontWeight: 700, color: 'var(--primary)', fontSize: '0.9rem', whiteSpace: 'nowrap' }}>
-          <i className="fa-solid fa-fingerprint" style={{ marginRight: 6 }}></i>
-          Oráculo: {selectedOption?.label}
+          <i className="fa-solid fa-database" style={{ marginRight: 6 }}></i>
+          Fonte de Veracidade: {selectedOption?.label}
         </span>
         <div style={{ flex: 1, height: 1, background: 'var(--border-subtle)' }}></div>
       </div>

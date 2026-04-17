@@ -45,7 +45,14 @@ export default function AuditorEscolas() {
             </div>
 
             <div className="school-status-bar">
-              <span style={{ color: 'var(--text-muted)' }}>Integridade da Malha</span>
+              <span style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                Integridade da Malha
+                <i 
+                  className="fa-solid fa-circle-info" 
+                  title="Baseado na divergência entre apontamento de Catracas vs. Estoque físico e validades."
+                  style={{ cursor: 'help', fontSize: '0.85rem' }}
+                ></i>
+              </span>
               <span className="health-text">{escola.health}%</span>
             </div>
             <div className="progress-track">
@@ -64,7 +71,7 @@ export default function AuditorEscolas() {
                     className="btn btn-primary"
                     style={{ flex: 1, padding: 10, fontSize: '0.8rem' }}
                   >
-                    Ler Blackbox
+                    Dossiê de Integridade
                   </Link>
                   <button
                     className="btn btn-secondary"
@@ -97,7 +104,7 @@ export default function AuditorEscolas() {
                   onClick={() => navigate(`/auditor/rastrear?escola=${escola.timelineKey}&nome=${encodeURIComponent(escola.nome)}`)}
                   disabled={loading}
                 >
-                  <i className="fa-regular fa-eye"></i> Visualizar Oráculo (Log Completo)
+                  <i className="fa-regular fa-eye"></i> Fonte de Veracidade (Validação)
                 </button>
               )}
             </div>

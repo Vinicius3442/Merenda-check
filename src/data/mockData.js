@@ -41,7 +41,8 @@ export const mockTimelines = {
       date: '10/03/2026 - 06:15:22',
       meta: [
         { icon: 'fa-weight-scale', text: 'Peso Inicial: 15.000 kg' },
-        { icon: 'fa-signature', text: 'Sig: 0x98A.B21' },
+        { icon: 'fa-signature', text: 'Assinado Digitalmente por: AgroSul Alimentos SA - CNPJ: 10.432.***/0001' },
+        { icon: 'fa-lock', text: 'Hash: 0x98A...B21', color: 'var(--text-muted)' },
       ],
     },
     {
@@ -63,6 +64,8 @@ export const mockTimelines = {
       date: '12/03/2026 - 08:12:05',
       meta: [
         { icon: 'fa-weight-scale', text: 'Recebido Aferido: 100 kg' },
+        { icon: 'fa-paperclip', text: 'Anexo: Foto QR Code e Estado da Carga', color: 'var(--alert-blue)' },
+        { icon: 'fa-signature', text: 'Assinado Digitalmente por: João M. (Nutricionista) - CPF: ***.452.***-01' },
         { icon: 'fa-lock', text: 'Contrato Sincronizado', color: 'var(--primary)' },
       ],
     },
@@ -90,7 +93,8 @@ export const mockTimelines = {
       date: '05/04/2026 - 07:00:00',
       meta: [
         { icon: 'fa-weight-scale', text: 'Peso Inicial: 80 kg (leite, queijo, iogurte)' },
-        { icon: 'fa-signature', text: 'Sig: 0x44C.F82' },
+        { icon: 'fa-signature', text: 'Assinado Digitalmente por: LaticíniosBom Sabor - CNPJ: 44.***.***/0001' },
+        { icon: 'fa-lock', text: 'Hash: 0x44C...F82', color: 'var(--text-muted)' },
       ],
     },
     {
@@ -127,7 +131,8 @@ export const mockTimelines = {
       date: '01/04/2026 - 07:30:00',
       meta: [
         { icon: 'fa-weight-scale', text: 'Peso Inicial: 250 kg (arroz, feijão, macarrão)' },
-        { icon: 'fa-signature', text: 'Sig: 0x1B7.C93' },
+        { icon: 'fa-paperclip', text: 'Anexo: Guia de Romaneio Assinada (PDF)', color: 'var(--alert-blue)' },
+        { icon: 'fa-signature', text: 'Assinado Digitalmente por: CerealBrasil - CNPJ: 11.***.***/0001' },
       ],
     },
     {
@@ -167,10 +172,10 @@ export const mockKpisAuditor = [
 ];
 
 export const mockKpisGestor = [
-  { value: '89%', label: 'Taxa de Aproveitamento', icon: 'fa-chart-simple', color: 'var(--alert-green)' },
-  { value: '2.4 kg', label: 'Sobra Limpa (Hoje)', icon: 'fa-scale-unbalanced', color: 'var(--alert-yellow)' },
-  { value: '412', label: 'Refeições Servidas', icon: 'fa-utensils', color: 'var(--primary)' },
-  { value: '14', label: 'Itens em Estoque', icon: 'fa-boxes-stacked', color: 'var(--alert-blue)' },
+  { value: '89%',   label: 'Taxa de Aproveitamento', icon: 'fa-chart-simple',    color: 'var(--alert-green)' },
+  { value: '2,4 kg', label: 'Resto-Ingesta (Hoje)',  icon: 'fa-scale-unbalanced', color: 'var(--alert-yellow)', trend: '+15% vs média', trendColor: 'var(--alert-red)' },
+  { value: '412',   label: 'Refeições Servidas',    icon: 'fa-utensils',         color: 'var(--primary)' },
+  { value: '14',    label: 'Itens em Estoque',       icon: 'fa-boxes-stacked',    color: 'var(--alert-blue)' },
 ];
 
 export const mockAlertasAuditor = [

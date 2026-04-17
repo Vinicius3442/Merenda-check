@@ -81,18 +81,19 @@ export default function InvestigarAlerta() {
         </div>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <button
-            className="btn btn-danger"
-            onClick={() => mockSubmit({ successTitle: 'Auto de Infração Lavrado', successMsg: `Notificação extrajudicial enviada para ${escolaNome}. Prazo de resposta: 48h.` })}
+            className="btn btn-secondary"
+            onClick={() => mockSubmit({ successTitle: 'Relatório Gerado', successMsg: 'Documento PDF exportado e arquivado para o SEI.' })}
             disabled={loading}
           >
-            {loading ? <i className="fa-solid fa-circle-notch fa-spin"></i> : <i className="fa-solid fa-gavel"></i>} Lavrar Auto de Infração
+            <i className="fa-solid fa-file-pdf"></i> Exportar Extrato (PDF)
           </button>
-          <Link
-            to={`/auditor/rastrear?escola=${escolaKey}&nome=${encodeURIComponent(escolaNome)}`}
-            className="btn btn-secondary"
+          <button
+            className="btn btn-danger"
+            onClick={() => mockSubmit({ successTitle: 'Processo Iniciado', successMsg: `Processo Administrativo aberto contra ${escolaNome}.` })}
+            disabled={loading}
           >
-            <i className="fa-solid fa-code-branch"></i> Ver Trilha Blockchain
-          </Link>
+            {loading ? <i className="fa-solid fa-circle-notch fa-spin"></i> : <i className="fa-solid fa-folder-open"></i>} Iniciar Processo Administrativo
+          </button>
         </div>
       </div>
 
@@ -127,13 +128,12 @@ export default function InvestigarAlerta() {
 
       {/* Actions footer */}
       <div className="glass-panel" style={{ padding: 24, marginTop: 24, display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-        <button
+        <Link
+          to={`/auditor/rastrear?escola=${escolaKey}&nome=${encodeURIComponent(escolaNome)}`}
           className="btn btn-secondary"
-          onClick={() => mockSubmit({ successTitle: 'Relatório Gerado', successMsg: 'Documento PDF exportado da Ledger e arquivado na prefeitura.' })}
-          disabled={loading}
         >
-          <i className="fa-solid fa-file-pdf"></i> Exportar Relatório PDF
-        </button>
+          <i className="fa-solid fa-code-branch"></i> Fonte de Veracidade (Log Completo)
+        </Link>
         <button
           className="btn btn-secondary"
           onClick={() => mockSubmit({ successTitle: 'Gestor Notificado', successMsg: `E-mail e SMS enviados para o responsável de ${escolaNome}.` })}

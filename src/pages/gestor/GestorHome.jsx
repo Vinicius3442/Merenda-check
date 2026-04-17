@@ -20,6 +20,17 @@ export default function GestorHome() {
             <div className="kpi-icon"><i className={`fa-solid ${kpi.icon}`}></i></div>
             <div className="kpi-value" style={{ color: kpi.color }}>{kpi.value}</div>
             <div className="kpi-label">{kpi.label}</div>
+            {/* Contexto: bom ou ruim? */}
+            {kpi.trend && (
+              <div style={{
+                marginTop: 6, fontSize: '0.75rem', fontWeight: 700,
+                color: kpi.trendColor || kpi.color,
+                display: 'flex', alignItems: 'center', gap: 4,
+              }}>
+                <i className="fa-solid fa-arrow-trend-up" style={{ fontSize: '0.7rem' }}></i>
+                {kpi.trend}
+              </div>
+            )}
           </div>
         ))}
       </div>

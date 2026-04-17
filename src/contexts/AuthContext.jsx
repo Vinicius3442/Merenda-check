@@ -6,6 +6,9 @@ const USERS = {
   operador: { name: 'Maria Silva', role: 'Nutricionista / Operador', initials: 'MS' },
   gestor: { name: 'Carlos Roberto', role: 'Diretor Escolar', initials: 'CR' },
   auditor: { name: 'Dra. Ana Gomes', role: 'Auditora Chefe', initials: 'AG' },
+  nutricao: { name: 'Dra. Fernanda L.', role: 'Nutricionista Chefe PNAE', initials: 'FL' },
+  licitacao: { name: 'Roberto Braga', role: 'Setor de Contratos / Compras', initials: 'RB' },
+  admin: { name: 'SysAdmin', role: 'Sec. de Educação (TI)', initials: 'TI' },
 };
 
 export function AuthProvider({ children }) {

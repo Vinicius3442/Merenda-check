@@ -23,6 +23,7 @@ import Relatorios from './pages/gestor/Relatorios';
 import AuditorHome from './pages/auditor/AuditorHome';
 import AuditorEscolas from './pages/auditor/AuditorEscolas';
 import Rastreabilidade from './pages/auditor/Rastreabilidade';
+import InvestigarAlerta from './pages/auditor/InvestigarAlerta';
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated } = useAuth();
@@ -57,6 +58,7 @@ export default function App() {
         <Route path="/auditor" element={<ProtectedRoute><AuditorHome /></ProtectedRoute>} />
         <Route path="/auditor/escolas" element={<ProtectedRoute><AuditorEscolas /></ProtectedRoute>} />
         <Route path="/auditor/rastrear" element={<ProtectedRoute><Rastreabilidade /></ProtectedRoute>} />
+        <Route path="/auditor/investigar" element={<ProtectedRoute><InvestigarAlerta /></ProtectedRoute>} />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />

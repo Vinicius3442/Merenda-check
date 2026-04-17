@@ -62,7 +62,6 @@ export default function ProfilePage() {
             <label className="form-label">Idioma</label>
             <select className="form-control" defaultValue="pt-BR">
               <option value="pt-BR">Português (Brasil)</option>
-              <option value="en">English</option>
             </select>
           </div>
         </div>

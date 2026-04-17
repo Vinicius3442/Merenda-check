@@ -33,9 +33,18 @@ export default function SobraLimpa() {
               </div>
 
               <div className="form-group" style={{ marginBottom: 40 }}>
-                <div className="large-input-group">
-                  <input type="number" step="0.1" className="form-control large-input" placeholder="0.0" />
-                  <span className="unit-label">kg</span>
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                  <input
+                    type="number"
+                    step="0.1"
+                    className="form-control large-input"
+                    placeholder="0.0"
+                    style={{ textAlign: 'center', paddingRight: '80px', width: '100%' }}
+                  />
+                  <span style={{
+                    position: 'absolute', right: 24, fontSize: '1.5rem',
+                    fontWeight: 800, color: 'var(--text-muted)', fontFamily: 'Outfit', pointerEvents: 'none',
+                  }}>kg</span>
                 </div>
               </div>
 

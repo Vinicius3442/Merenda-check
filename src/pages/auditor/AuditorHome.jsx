@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import { mockKpisAuditor, mockAlertasAuditor } from '../../data/mockData';
 
@@ -63,9 +64,13 @@ export default function AuditorHome() {
                   <td style={{ color: 'var(--text-muted)' }}>{a.desc}</td>
                   <td>{a.data}</td>
                   <td>
-                    <button className="btn btn-secondary" style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
-                      <i className="fa-solid fa-eye"></i> {a.acao}
-                    </button>
+                    <Link
+                      to={`/auditor/investigar?escola=${a.timelineKey}&nome=${encodeURIComponent(a.escola)}&tipo=${encodeURIComponent(a.tipo)}`}
+                      className="btn btn-primary"
+                      style={{ padding: '8px 12px', fontSize: '0.85rem' }}
+                    >
+                      <i className="fa-solid fa-magnifying-glass"></i> {a.acao}
+                    </Link>
                   </td>
                 </tr>
               ))}

@@ -31,9 +31,9 @@ export default function Relatorios() {
           <p style={{ color: 'var(--text-muted)', marginBottom: 30, flex: 1 }}>
             Comparativo mensal gerado pela IA indicando melhorias na calibração de compra x catracas do mês passado.
           </p>
-          <div style={{ display: 'flex', gap: 10 }}>
-            <input type="month" className="form-control" style={{ flex: 1 }} />
-            <button className="btn btn-secondary" onClick={() => mockSubmit({ successMsg: 'Gerando PDF...' })} disabled={loading}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <input type="month" className="form-control" style={{ width: '100%' }} />
+            <button className="btn btn-secondary" style={{ width: '100%', justifyContent: 'center' }} onClick={() => mockSubmit({ successMsg: 'Gerando PDF...' })} disabled={loading}>
               <i className="fa-solid fa-magnifying-glass-chart"></i> Consultar
             </button>
           </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 export default function LogisticsMap() {
   const [hovered, setHovered] = useState(null);
@@ -18,6 +18,8 @@ export default function LogisticsMap() {
     danger: 'var(--alert-red)'
   };
 
+  const radarSize = 350;
+
   return (
     <div className="glass-panel" style={{ padding: 24, position: 'relative', overflow: 'hidden' }}>
       <h3 style={{ fontFamily: 'Outfit', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -28,29 +30,65 @@ export default function LogisticsMap() {
       {/* Container do Mapa Artístico */}
       <div style={{ 
         width: '100%', 
-        height: 350, 
+        height: radarSize, 
         background: 'radial-gradient(circle at center, rgba(30,41,59,0.8) 0%, rgba(15,23,42,1) 100%)',
         borderRadius: 16,
         position: 'relative',
         border: '1px solid rgba(255,255,255,0.05)',
         backgroundImage: 'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)',
         backgroundSize: '20px 20px',
-        boxShadow: 'inset 0 0 50px rgba(0,0,0,0.5)'
+        boxShadow: 'inset 0 0 50px rgba(0,0,0,0.5)',
+        overflow: 'hidden',
       }}>
         
-        {/* Efeito de Radar Giratório */}
+        {/* Efeito de Radar Giratório — posicionado no centro, girando ao redor do próprio centro */}
         <div style={{
-          position: 'absolute', top: '50%', left: '50%', width: '100%', height: '100%',
-          background: 'conic-gradient(from 0deg, transparent 70%, rgba(16,185,129,0.2) 100%)',
-          borderRadius: '50%', transformOrigin: '0 0',
-          animation: 'radarSpin 4s linear infinite',
-          zIndex: 1, pointerEvents: 'none'
+          position: 'absolute',
+          top: 0, left: 0, width: '100%', height: '100%',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          pointerEvents: 'none', zIndex: 1,
+        }}>
+          <div style={{
+            width: '140%',
+            height: '140%',
+            background: 'conic-gradient(from 0deg, transparent 0%, transparent 70%, rgba(16,185,129,0.15) 85%, rgba(16,185,129,0.3) 100%)',
+            borderRadius: '50%',
+            animation: 'radarSpin 4s linear infinite',
+          }}></div>
+        </div>
+
+        {/* Cruz central */}
+        <div style={{
+          position: 'absolute', top: '50%', left: 0, right: 0, height: 1,
+          background: 'rgba(16,185,129,0.08)', pointerEvents: 'none', zIndex: 0,
+        }}></div>
+        <div style={{
+          position: 'absolute', left: '50%', top: 0, bottom: 0, width: 1,
+          background: 'rgba(16,185,129,0.08)', pointerEvents: 'none', zIndex: 0,
         }}></div>
 
-        {/* Círculos do radar */}
-        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '20%', height: '40%', border: '1px dashed rgba(16,185,129,0.1)', borderRadius: '50%' }}></div>
-        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '40%', height: '80%', border: '1px dashed rgba(16,185,129,0.1)', borderRadius: '50%' }}></div>
-        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '60%', height: '120%', border: '1px dashed rgba(16,185,129,0.1)', borderRadius: '50%' }}></div>
+        {/* Círculos concêntricos do radar — proporcionais e circulares */}
+        {[28, 50, 75].map((size) => (
+          <div key={size} style={{
+            position: 'absolute',
+            top: '50%', left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: `${size}%`,
+            paddingBottom: `${size}%`,
+            border: '1px dashed rgba(16,185,129,0.12)',
+            borderRadius: '50%',
+            pointerEvents: 'none',
+          }}></div>
+        ))}
+
+        {/* Ponto central */}
+        <div style={{
+          position: 'absolute', top: '50%', left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 6, height: 6, borderRadius: '50%',
+          background: 'var(--primary)', boxShadow: '0 0 10px var(--primary)',
+          zIndex: 2,
+        }}></div>
 
         {/* Pontos (Escolas) */}
         {schools.map(school => (
@@ -73,7 +111,9 @@ export default function LogisticsMap() {
               borderRadius: '50%',
               background: statusColors[school.status],
               boxShadow: `0 0 15px ${statusColors[school.status]}`,
-              border: '2px solid var(--bg-surface)'
+              border: '2px solid var(--bg-surface)',
+              position: 'relative',
+              zIndex: 2,
             }}></div>
             
             {/* Pulso de onda para dar movimento */}
@@ -81,14 +121,15 @@ export default function LogisticsMap() {
               position: 'absolute', top: -3, left: -3, width: 20, height: 20,
               borderRadius: '50%',
               border: `1px solid ${statusColors[school.status]}`,
-              animation: 'ping 2s cubic-bezier(0, 0, 0.2, 1) infinite',
+              animation: 'radarPing 2s cubic-bezier(0, 0, 0.2, 1) infinite',
+              zIndex: 1,
             }}></div>
 
             {/* Tooltip flutuante e artística */}
             {hovered === school.id && (
               <div style={{
                 position: 'absolute', bottom: 25, left: '50%', transform: 'translateX(-50%)',
-                background: 'rgba(15,23,42,0.9)', backdropFilter: 'blur(10px)',
+                background: 'rgba(15,23,42,0.95)', backdropFilter: 'blur(10px)',
                 border: `1px solid ${statusColors[school.status]}50`,
                 padding: '10px 14px', borderRadius: 10,
                 width: 180, pointerEvents: 'none',
@@ -114,6 +155,10 @@ export default function LogisticsMap() {
         @keyframes radarSpin {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
+        }
+        @keyframes radarPing {
+          0% { transform: scale(1); opacity: 0.8; }
+          75%, 100% { transform: scale(2.5); opacity: 0; }
         }
       `}</style>
     </div>

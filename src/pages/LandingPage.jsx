@@ -45,7 +45,7 @@ export default function LandingPage() {
             <Link to="/login" className="btn btn-primary btn-lg">
               <i className="fa-solid fa-bolt"></i> Começar Agora
             </Link>
-            <a href="#como-funciona" className="btn btn-light btn-lg">
+            <a href="#demonstracao" className="btn btn-light btn-lg">
               <i className="fa-solid fa-play"></i> Ver Demonstração
             </a>
           </div>
@@ -63,6 +63,34 @@ export default function LandingPage() {
               style={{ width: '100%', borderRadius: '32px', boxShadow: '0 40px 80px rgba(0,0,0,0.7)', border: '2px solid rgba(255,255,255,0.1)' }} 
             />
           </div>
+        </div>
+      </section>
+
+      {/* Demonstração em Vídeo */}
+      <section className="demo-section" id="demonstracao" style={{ padding: '80px 20px', textAlign: 'center' }}>
+        <h2 className="section-title animate-fade-in">
+          Veja em <span className="text-gradient">Ação</span>
+        </h2>
+        <p className="section-subtitle animate-fade-in" style={{ marginBottom: '40px' }}>
+          Assista ao nosso sistema transformando a gestão da merenda na prática.
+        </p>
+        <div className="video-container animate-slide-up delay-100" style={{ 
+          maxWidth: '1000px', 
+          margin: '0 auto', 
+          borderRadius: '24px', 
+          overflow: 'hidden', 
+          boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+          border: '1px solid var(--glass-border)',
+          background: 'var(--bg-surface)'
+        }}>
+          <video 
+            src="/demo.mp4" 
+            controls 
+            style={{ width: '100%', display: 'block', maxHeight: '600px', objectFit: 'cover' }}
+            poster="/merenda.jpeg"
+          >
+            Seu navegador não suporta a tag de vídeo.
+          </video>
         </div>
       </section>
 

@@ -10,8 +10,7 @@ export default function GestaoUsuarios() {
 
   return (
     <DashboardLayout>
-      <div className="wizard-container">
-        <div className="header-dash animate-fade-in">
+      <div className="header-dash animate-fade-in">
         <div>
           <h1 style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <i className="fa-solid fa-users-gear" style={{ color: 'var(--primary)' }}></i>
@@ -26,7 +25,9 @@ export default function GestaoUsuarios() {
         </div>
       </div>
 
-      <div className="table-wrapper animate-slide-up">
+      {/* min-width:0 + overflow:hidden garante que a tabela não vaze para fora do layout */}
+      <div style={{ minWidth: 0, overflow: 'hidden' }}>
+        <div className="table-wrapper animate-slide-up">
           <table className="data-table">
             <thead>
               <tr>

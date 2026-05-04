@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // ─── Contexto por rota ────────────────────────────────────────────────────────
 const ROUTE_CONTEXTS = {
@@ -92,20 +91,54 @@ Regras:
 - Se não souber algo específico, oriente o usuário a contatar o suporte
 - Use o tom de um assistente governamental amigável`;
 
-// ─── Inicializa Gemini ────────────────────────────────────────────────────────
-function getGeminiChat(routeContext) {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-  if (!apiKey) return null;
-  try {
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({
-      model: 'gemini-2.0-flash',
-      systemInstruction: SYSTEM_PROMPT.replace('{CONTEXT}', routeContext),
-    });
-    return model.startChat({ history: [] });
-  } catch {
-    return null;
+
+// ─── Chama API REST do Gemini diretamente ─────────────────────────────────────
+async function callGemini(apiKey, systemPrompt, history, userMessage) {
+  // Modelos disponíveis nesta chave (em ordem de preferência)
+  const MODELS = ['gemini-2.0-flash-lite', 'gemini-2.0-flash'];
+
+  // Monta corpo da requisição (todos os modelos 2.0+ suportam system_instruction)
+  const buildContents = () => ({
+    system_instruction: { parts: [{ text: systemPrompt }] },
+    contents: [
+      ...history,
+      { role: 'user', parts: [{ text: userMessage }] },
+    ],
+  });
+
+  let lastErr;
+  for (const model of MODELS) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+    const body = buildContents();
+
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...body,
+          generationConfig: { maxOutputTokens: 512, temperature: 0.7 },
+        }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        console.warn(`[Checky] ${model} error ${res.status}:`, errData?.error?.message);
+        lastErr = new Error(errData?.error?.message || `HTTP ${res.status}`);
+        lastErr.status = res.status;
+        // Para 429, aguarda 1s antes de tentar próximo modelo
+        if (res.status === 429) await new Promise(r => setTimeout(r, 1000));
+        continue;
+      }
+
+      const data = await res.json();
+      const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      if (reply) return reply;
+    } catch (err) {
+      lastErr = err;
+    }
   }
+  throw lastErr || new Error('All models failed');
 }
 
 // ─── Componente ───────────────────────────────────────────────────────────────
@@ -118,7 +151,7 @@ export default function Mascot() {
   const [isTyping, setIsTyping] = useState(false);
   const [hasApiKey] = useState(!!import.meta.env.VITE_GEMINI_API_KEY);
 
-  const chatRef = useRef(null);       // instância do chat Gemini
+  const historyRef = useRef([]);     // histórico REST: [{role, parts:[{text}]}]
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   const location = useLocation();
@@ -146,8 +179,8 @@ export default function Mascot() {
       id: Date.now(),
     }]);
 
-    // Nova sessão de chat com contexto da rota
-    chatRef.current = getGeminiChat(ctx.context);
+    // Resetar histórico ao mudar de rota
+    historyRef.current = [];
 
     return () => clearTimeout(timer);
   }, [location.pathname]);
@@ -177,6 +210,8 @@ export default function Mascot() {
     const text = input.trim();
     if (!text || isTyping) return;
 
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+
     setInput('');
     setMessages(prev => [...prev, { role: 'user', text, id: Date.now() }]);
     setIsTyping(true);
@@ -193,21 +228,30 @@ export default function Mascot() {
       return;
     }
 
-    if (!chatRef.current) {
-      const ctx = getRouteContext();
-      chatRef.current = getGeminiChat(ctx.context);
-    }
+    const ctx = getRouteContext();
+    const systemPrompt = SYSTEM_PROMPT.replace('{CONTEXT}', ctx.context);
 
     try {
-      const result = await chatRef.current.sendMessage(text);
-      const reply = result.response.text();
+      const reply = await callGemini(apiKey, systemPrompt, historyRef.current, text);
+
+      // Atualiza histórico para manter contexto da conversa
+      historyRef.current = [
+        ...historyRef.current,
+        { role: 'user', parts: [{ text }] },
+        { role: 'model', parts: [{ text: reply }] },
+      ];
+
       setMessages(prev => [...prev, { role: 'assistant', text: reply, id: Date.now() }]);
     } catch (err) {
-      setMessages(prev => [...prev, {
-        role: 'assistant',
-        text: '😔 Ops! Não consegui responder agora. Tente novamente em instantes.',
-        id: Date.now(),
-      }]);
+      console.error('[Checky] Gemini error:', err);
+      const is429 = err?.status === 429 || err?.message?.includes('429');
+      const is400 = err?.status === 400 || err?.message?.includes('400');
+      const errMsg = is429
+        ? '⏳ Muitas requisições. Aguarde alguns segundos e tente de novo!'
+        : is400
+        ? '⚠️ Chave de API inválida ou sem permissão. Verifique o arquivo `.env` e reinicie o servidor.'
+        : '😔 Não consegui responder agora. Tente novamente em instantes.';
+      setMessages(prev => [...prev, { role: 'assistant', text: errMsg, id: Date.now() }]);
     } finally {
       setIsTyping(false);
     }

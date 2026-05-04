@@ -53,11 +53,11 @@ export default function OperadorHome() {
   return (
     <DashboardLayout>
       <div className="header-dash animate-fade-in" style={{ 
-        display: 'flex', alignItems: 'center', gap: 20, marginBottom: 30,
+        display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: 20, marginBottom: 30,
         background: 'linear-gradient(90deg, rgba(16,185,129,0.1), transparent)',
         padding: '24px 32px', borderRadius: '24px', border: '1px solid rgba(16,185,129,0.15)'
       }}>
-        <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(16,185,129,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', color: 'var(--primary)' }}>
+        <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(16,185,129,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', color: 'var(--primary)', flexShrink: 0 }}>
           <i className="fa-solid fa-user-gear"></i>
         </div>
         <div>

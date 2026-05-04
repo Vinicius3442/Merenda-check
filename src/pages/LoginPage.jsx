@@ -37,7 +37,7 @@ export default function LoginPage() {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--bg-base)' }}>
-      {/* Lado Esquerdo - Imagem / Arte */}
+      {/* Lado Esquerdo - Imagem em Tela Cheia */}
       <div 
         style={{ 
           flex: '1.2', 
@@ -46,31 +46,44 @@ export default function LoginPage() {
           flexDirection: 'column', 
           justifyContent: 'center', 
           alignItems: 'center',
-          overflow: 'hidden',
-          background: 'radial-gradient(circle at 30% 50%, rgba(16,185,129,0.15) 0%, rgba(15,23,42,1) 80%)'
+          overflow: 'hidden'
         }}
         className="login-art-panel"
       >
-        <div style={{ position: 'absolute', top: 40, left: 40, zIndex: 10 }}>
+        {/* Imagem de Fundo (Cover) */}
+        <img 
+          src="/alimentos.jpg" // Se mudou o nome do arquivo, atualize aqui
+          alt="Merenda Check Arte" 
+          style={{ 
+            position: 'absolute', 
+            top: 0, 
+            left: 0, 
+            width: '100%', 
+            height: '100%', 
+            objectFit: 'cover', 
+            zIndex: 1 
+          }} 
+        />
+        
+        {/* Camada escura por cima da imagem para dar leitura ao texto */}
+        <div style={{ 
+          position: 'absolute', 
+          top: 0, left: 0, width: '100%', height: '100%', 
+          background: 'linear-gradient(to right, rgba(15,23,42,0.85) 0%, rgba(15,23,42,0.4) 100%)', 
+          zIndex: 2 
+        }}></div>
+
+        <div style={{ position: 'absolute', top: 40, left: 40, zIndex: 3 }}>
           <Link to="/">
             <img src="/logo.png" alt="Merenda Check" style={{ height: 40 }} />
           </Link>
         </div>
-
-        <div style={{ position: 'relative', width: '80%', maxWidth: '600px', display: 'flex', justifyContent: 'center' }}>
-          <img 
-            src="/hero_illustration.png" 
-            alt="Merenda Check Arte" 
-            style={{ width: '100%', maxHeight: '55vh', objectFit: 'contain', filter: 'drop-shadow(0 30px 60px rgba(0,0,0,0.6))', zIndex: 2, animation: 'float3D 8s ease-in-out infinite' }} 
-          />
-          <div style={{ position: 'absolute', top: '50%', left: '50%', width: '120%', height: '120%', transform: 'translate(-50%, -50%)', background: 'radial-gradient(circle, rgba(16,185,129,0.2) 0%, transparent 70%)', zIndex: 1 }}></div>
-        </div>
         
-        <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', marginTop: 40 }}>
-          <h2 style={{ fontSize: '2.8rem', fontFamily: 'Outfit', color: '#fff', marginBottom: 16, letterSpacing: '-0.02em' }}>
+        <div style={{ position: 'relative', zIndex: 3, textAlign: 'center', padding: '0 20px' }}>
+          <h2 style={{ fontSize: '2.8rem', fontFamily: 'Outfit', color: '#fff', marginBottom: 16, letterSpacing: '-0.02em', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
             Transparência que alimenta.
           </h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '1.15rem', maxWidth: 500, margin: '0 auto', lineHeight: 1.6 }}>
+          <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '1.15rem', maxWidth: 500, margin: '0 auto', lineHeight: 1.6, textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}>
             Acesso seguro à plataforma de gestão escolar e rastreabilidade alimentar.
           </p>
         </div>

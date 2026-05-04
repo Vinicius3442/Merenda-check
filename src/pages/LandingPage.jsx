@@ -58,21 +58,10 @@ export default function LandingPage() {
             <div style={{ position: 'absolute', top: '10%', left: '10%', right: '10%', bottom: '10%', background: 'var(--primary)', filter: 'blur(80px)', opacity: 0.4, zIndex: -1 }}></div>
             
             <img 
-              src="/hero_illustration.png" 
+              src="/merenda.jpeg" 
               alt="Merenda Check 3D Concept" 
               style={{ width: '100%', borderRadius: '32px', boxShadow: '0 40px 80px rgba(0,0,0,0.7)', border: '2px solid rgba(255,255,255,0.1)' }} 
             />
-
-            {/* Elemento flutuante decorativo */}
-            <div className="mockup-floating-element floating-1" style={{ padding: '12px 20px', borderRadius: 50, border: '1px solid var(--primary)', background: 'rgba(15,23,42,0.8)', bottom: '-20px', right: '-30px' }}>
-              <div style={{ fontSize: '1.2rem' }}>🍏</div>
-              <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--primary)' }}>Logística Inteligente</div>
-            </div>
-            
-            <div className="mockup-floating-element floating-2" style={{ padding: '12px 20px', borderRadius: 50, border: '1px solid var(--alert-blue)', background: 'rgba(15,23,42,0.8)', top: '-20px', left: '-30px' }}>
-              <div style={{ fontSize: '1.2rem' }}>🚚</div>
-              <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--alert-blue)' }}>Rastreamento 100%</div>
-            </div>
           </div>
         </div>
       </section>

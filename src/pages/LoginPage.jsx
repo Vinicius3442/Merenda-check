@@ -74,10 +74,6 @@ export default function LoginPage() {
             Acesso seguro à plataforma de gestão escolar e rastreabilidade alimentar.
           </p>
         </div>
-
-        {/* Efeitos de fundo */}
-        <div style={{ position: 'absolute', top: '10%', left: '10%', width: '300px', height: '300px', background: 'var(--primary)', filter: 'blur(120px)', opacity: 0.2, zIndex: 0 }}></div>
-        <div style={{ position: 'absolute', bottom: '10%', right: '10%', width: '400px', height: '400px', background: 'var(--alert-blue)', filter: 'blur(150px)', opacity: 0.15, zIndex: 0 }}></div>
       </div>
 
       {/* Lado Direito - Formulário */}

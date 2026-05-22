@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom';
 import DashboardLayout from '../../components/layout/DashboardLayout';
+import LogisticsMap from '../../components/ui/LogisticsMap';
 
 const entregas = [
-  { rota: 'R-14 Norte',  escola: 'EMEF João Silva',       horario: '09:30', status: 'Em Trânsito',  cor: 'var(--primary)',       bg: 'rgba(16,185,129,0.12)' },
-  { rota: 'R-15 Leste',  escola: 'CEI Pequeninos',        horario: '11:00', status: 'Carregando',   cor: 'var(--alert-yellow)',  bg: 'rgba(251,191,36,0.12)' },
-  { rota: 'R-08 Sul',    escola: 'EMEI Girassol',         horario: '13:30', status: 'Pendente',     cor: 'var(--alert-blue)',    bg: 'rgba(96,165,250,0.12)' },
-  { rota: 'R-22 Centro', escola: 'EMEF Oswaldo Cruz',     horario: '15:00', status: 'Entregue',     cor: 'var(--alert-green)',   bg: 'rgba(52,211,153,0.12)' },
+  { rota: 'R-14 Norte', escola: 'EMEF João Silva', horario: '09:30', status: 'Em Trânsito', cor: 'var(--primary)', bg: 'rgba(16,185,129,0.12)' },
+  { rota: 'R-15 Leste', escola: 'CEI Pequeninos', horario: '11:00', status: 'Carregando', cor: 'var(--alert-yellow)', bg: 'rgba(251,191,36,0.12)' },
+  { rota: 'R-08 Sul', escola: 'EMEI Girassol', horario: '13:30', status: 'Pendente', cor: 'var(--alert-blue)', bg: 'rgba(96,165,250,0.12)' },
+  { rota: 'R-22 Centro', escola: 'EMEF Oswaldo Cruz', horario: '15:00', status: 'Entregue', cor: 'var(--alert-green)', bg: 'rgba(52,211,153,0.12)' },
 ];
 
 export default function TransportadoraHome() {
@@ -15,12 +16,21 @@ export default function TransportadoraHome() {
       <header className="page-header">
         <div>
           <h1 className="page-title">Visão Geral da Logística</h1>
-          <p className="page-subtitle">Acompanhamento de frotas e entregas de insumos.</p>
+          <p className="page-subtitle">Acompanhamento de frotas e entregas de insumos com GPS ativo e anomalias de trajeto.</p>
         </div>
         <Link to="/transportadora/emitir-lote" className="btn btn-primary">
           <i className="fa-solid fa-qrcode"></i> Emitir Lote Blockchain
         </Link>
       </header>
+
+      {/* Rastreamento com Mapa Leaflet Interativo */}
+      <div className="glass-panel" style={{ padding: 20, marginBottom: 36 }}>
+        <h2 style={{ fontSize: '1.15rem', fontFamily: 'Outfit, sans-serif', margin: '0 0 16px 0', display: 'flex', alignItems: 'center', gap: 10 }}>
+          <i className="fa-solid fa-satellite" style={{ color: 'var(--primary)' }}></i>
+          Painel de Rastreamento de Rotas (GPS Ativo)
+        </h2>
+        <LogisticsMap />
+      </div>
 
       {/* KPI Cards */}
       <div className="kpi-grid" style={{ marginBottom: 36 }}>
@@ -53,19 +63,28 @@ export default function TransportadoraHome() {
       </div>
 
       {/* Próximas Entregas */}
-      <div className="glass-panel" style={{ padding: '28px 32px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-          <h2 style={{ fontSize: '1.15rem', fontFamily: 'Outfit, sans-serif', margin: 0 }}>
-            <i className="fa-solid fa-route" style={{ color: 'var(--primary)', marginRight: 10 }}></i>
-            Próximas Entregas
-          </h2>
-          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', background: 'var(--bg-surface-elevated)', padding: '4px 12px', borderRadius: 20 }}>
-            Atualizado agora
+      <div className="table-card">
+        {/* Card Header */}
+        <div style={{
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          padding: '18px 24px', borderBottom: '1px solid rgba(255,255,255,0.06)', flexWrap: 'wrap', gap: 12,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <i className="fa-solid fa-route" style={{ color: 'var(--primary)' }}></i>
+            <span style={{ fontFamily: 'Outfit', fontWeight: 700, fontSize: '1rem', color: 'var(--text-main)' }}>Próximas Entregas</span>
+          </div>
+          <span style={{
+            fontSize: '0.78rem', color: 'var(--alert-green)', background: 'rgba(52,211,153,0.1)',
+            border: '1px solid rgba(52,211,153,0.2)', padding: '3px 12px', borderRadius: 20, fontWeight: 700,
+            display: 'flex', alignItems: 'center', gap: 6,
+          }}>
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--alert-green)', display: 'inline-block' }}></span>
+            GPS Ativo — Atualizado agora
           </span>
         </div>
 
-        <div className="table-wrapper" style={{ borderRadius: 14, border: '1px solid var(--border-subtle)' }}>
-          <table className="data-table">
+        <div style={{ overflowX: 'auto' }}>
+          <table className="data-table" style={{ minWidth: 520 }}>
             <thead>
               <tr>
                 <th>Rota</th>
@@ -77,17 +96,18 @@ export default function TransportadoraHome() {
             <tbody>
               {entregas.map((e) => (
                 <tr key={e.rota}>
-                  <td style={{ fontFamily: 'monospace', color: 'var(--text-muted)', fontWeight: 600 }}>{e.rota}</td>
-                  <td style={{ fontWeight: 600 }}>{e.escola}</td>
                   <td>
-                    <i className="fa-regular fa-clock" style={{ marginRight: 6, color: 'var(--text-muted)' }}></i>
-                    {e.horario}
+                    <span style={{ fontFamily: 'monospace', fontWeight: 700, color: 'var(--primary)', fontSize: '0.85rem' }}>{e.rota}</span>
+                  </td>
+                  <td style={{ fontWeight: 600, color: '#f1f5f9' }}>{e.escola}</td>
+                  <td style={{ color: '#94a3b8' }}>
+                    <i className="fa-regular fa-clock" style={{ marginRight: 6 }}></i>{e.horario}
                   </td>
                   <td>
                     <span style={{
-                      padding: '5px 14px', background: e.bg, color: e.cor,
-                      borderRadius: 20, fontSize: '0.8rem', fontWeight: 700,
-                      border: `1px solid ${e.cor}30`,
+                      padding: '4px 14px', background: e.bg, color: e.cor,
+                      borderRadius: 20, fontSize: '0.78rem', fontWeight: 700,
+                      border: `1px solid ${e.cor}30`, display: 'inline-block',
                     }}>
                       {e.status}
                     </span>
@@ -96,6 +116,14 @@ export default function TransportadoraHome() {
               ))}
             </tbody>
           </table>
+        </div>
+
+        <div style={{
+          padding: '11px 24px', borderTop: '1px solid rgba(255,255,255,0.06)',
+          fontSize: '0.78rem', color: 'var(--text-muted)', display: 'flex', justifyContent: 'space-between'
+        }}>
+          <span><i className="fa-solid fa-circle-info" style={{ marginRight: 6 }}></i>{entregas.length} rotas programadas hoje</span>
+          <span style={{ color: 'var(--alert-green)' }}><i className="fa-solid fa-satellite" style={{ marginRight: 6 }}></i>Rastreio Satelital Ativo</span>
         </div>
       </div>
     </DashboardLayout>

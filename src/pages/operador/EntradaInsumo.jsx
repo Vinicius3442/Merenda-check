@@ -1,10 +1,44 @@
+import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import BgMesh from '../../components/ui/BgMesh';
 import Footer from '../../components/ui/Footer';
-import { useMockSubmit } from '../../hooks/useMockSubmit';
+import { useEstoque } from '../../hooks/useEstoque';
+import { useToast } from '../../contexts/ToastContext';
 
 export default function EntradaInsumo() {
-  const { loading, mockSubmit } = useMockSubmit();
+  const { inserirLote } = useEstoque();
+  const { addToast } = useToast();
+
+  const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState({
+    fornecedor: 'AgroSul Alimentos SA',
+    nome: 'Carne Moída Bovina - Int. Nacional',
+    volume_kg: '100',
+    validade: '2026-06-15',
+    observacao: '',
+    lote: `#${Math.floor(Math.random() * 9000 + 1000)}-${String.fromCharCode(65 + Math.floor(Math.random() * 26))}`,
+  });
+
+  const handleChange = (e) => {
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    const result = await inserirLote({
+      nome: form.nome,
+      lote: form.lote,
+      volume_kg: parseFloat(form.volume_kg),
+      validade: form.validade,
+    });
+    setLoading(false);
+
+    if (result.ok) {
+      addToast({ type: 'success', title: 'Entrada Processada', message: 'Estoque sincronizado com sucesso.' });
+    } else {
+      addToast({ type: 'error', title: 'Erro ao Registrar', message: result.error || 'Tente novamente.' });
+    }
+  };
 
   return (
     <>
@@ -34,36 +68,36 @@ export default function EntradaInsumo() {
               }}>
                 <i className="fa-solid fa-qrcode" style={{ fontSize: '3rem' }}></i>
                 <span style={{ fontWeight: 700, fontFamily: 'Outfit' }}>Toque para Escanear QR Code</span>
-                <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>(simulação)</span>
+                <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Lote pré-preenchido: {form.lote}</span>
               </div>
 
               <div className="form-group">
                 <label className="form-label">Fornecedor</label>
-                <input type="text" className="form-control" defaultValue="AgroSul Alimentos SA" readOnly />
+                <input name="fornecedor" type="text" className="form-control" value={form.fornecedor} onChange={handleChange} />
               </div>
               <div className="form-group">
                 <label className="form-label">Produto / Insumo</label>
-                <input type="text" className="form-control" defaultValue="Carne Moída Bovina - Int. Nacional" readOnly />
+                <input name="nome" type="text" className="form-control" value={form.nome} onChange={handleChange} />
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
                 <div className="form-group">
                   <label className="form-label">Peso Conferido (kg)</label>
-                  <input type="number" className="form-control" defaultValue="100" />
+                  <input name="volume_kg" type="number" className="form-control" value={form.volume_kg} onChange={handleChange} />
                 </div>
                 <div className="form-group">
                   <label className="form-label">Data de Validade</label>
-                  <input type="date" className="form-control" defaultValue="2026-06-15" />
+                  <input name="validade" type="date" className="form-control" value={form.validade} onChange={handleChange} />
                 </div>
               </div>
               <div className="form-group">
                 <label className="form-label">Observação (Opcional)</label>
-                <textarea className="form-control" rows="3" placeholder="Anomalias na embalagem, temperatura, etc."></textarea>
+                <textarea name="observacao" className="form-control" rows="3" placeholder="Anomalias na embalagem, temperatura, etc." value={form.observacao} onChange={handleChange}></textarea>
               </div>
 
               <div style={{ marginTop: 30, textAlign: 'right' }}>
                 <button
                   className="btn btn-primary btn-lg"
-                  onClick={() => mockSubmit({ successTitle: 'Entrada Processada', successMsg: 'Estoque do almoxarifado sincronizado com a Ledger.' })}
+                  onClick={handleSubmit}
                   disabled={loading}
                 >
                   {loading ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Processando...</> : <><i className="fa-solid fa-check"></i> Confirmar Entrada</>}

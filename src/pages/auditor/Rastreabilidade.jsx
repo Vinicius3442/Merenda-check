@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import DashboardLayout from '../../components/layout/DashboardLayout';
-import { mockTimelines, mockEscolas } from '../../data/mockData';
+import { mockTimelines } from '../../data/mockData';
 
 function TimelineItem({ item }) {
   return (
     <div className="timeline-item">
       <div className={`timeline-dot ${item.dot}`}><i className={`fa-solid ${item.icon}`}></i></div>
-      <div className="timeline-content" style={{ borderLeftColor: item.borderColor, ...(item.extraGlow ? { boxShadow: 'var(--alert-red-glow)' } : {}) }}>
+      <div className={`timeline-content ${item.extraGlow ? 'extra-glow-item' : ''}`} style={{ borderLeftColor: item.borderColor }}>
         <div className="t-header">
           <div>
             <div className={`t-title ${item.titleClass}`} style={item.titleColor ? { color: item.titleColor } : {}}>
@@ -42,6 +42,7 @@ function TimelineItem({ item }) {
 export default function Rastreabilidade() {
   const [searchParams] = useSearchParams();
   const presetEscola = searchParams.get('escola');
+  const presetLote = searchParams.get('lote');
   const presetNome = searchParams.get('nome');
 
   const escolaOptions = [
@@ -50,15 +51,51 @@ export default function Rastreabilidade() {
     { key: 'emef-joao-silva', label: 'EMEF João Silva', badge: 'badge-success', badgeText: 'Conforme' },
   ];
 
-  const [selectedKey, setSelectedKey] = useState(presetEscola || 'cei-pequeninos');
+  // Se houver uma escola associada no query string, carregar ela. Caso contrário, cei-pequeninos.
+  const [selectedKey, setSelectedKey] = useState('cei-pequeninos');
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    if (presetEscola) setSelectedKey(presetEscola);
-  }, [presetEscola]);
+    if (presetEscola) {
+      setSelectedKey(presetEscola);
+    } else if (presetLote) {
+      // Mapear lote específico para uma escola fictícia para garantir que a timeline mostre dados
+      if (presetLote.includes('5103-B')) {
+        setSelectedKey('emei-margarida');
+      } else if (presetLote.includes('4801-X')) {
+        setSelectedKey('emef-joao-silva');
+      } else {
+        setSelectedKey('cei-pequeninos');
+      }
+    }
+  }, [presetEscola, presetLote]);
 
-  const timeline = mockTimelines[selectedKey] || [];
+  useEffect(() => {
+    if (presetLote) {
+      setSearchQuery(presetLote);
+    }
+  }, [presetLote]);
+
+  const rawTimeline = mockTimelines[selectedKey] || [];
   const selectedOption = escolaOptions.find(e => e.key === selectedKey);
+
+  // Filtrar e marcar trilha com glow extra
+  const filteredTimeline = rawTimeline.filter(item => {
+    const q = searchQuery.toLowerCase();
+    if (!q) return true;
+    return (
+      item.title.toLowerCase().includes(q) ||
+      (item.subtitle && item.subtitle.toLowerCase().includes(q)) ||
+      (item.description && item.description.toLowerCase().includes(q)) ||
+      item.meta.some(m => m.text.toLowerCase().includes(q))
+    );
+  }).map(item => {
+    const isMatchingLote = presetLote && JSON.stringify(item).toLowerCase().includes(presetLote.toLowerCase());
+    return {
+      ...item,
+      extraGlow: isMatchingLote || item.extraGlow,
+    };
+  });
 
   return (
     <DashboardLayout>
@@ -122,13 +159,13 @@ export default function Rastreabilidade() {
 
       {/* Timeline */}
       <div className="timeline animate-slide-up delay-100">
-        {timeline.map((item) => (
+        {filteredTimeline.map((item) => (
           <TimelineItem key={item.id} item={item} />
         ))}
-        {timeline.length === 0 && (
+        {filteredTimeline.length === 0 && (
           <div style={{ textAlign: 'center', padding: 60, color: 'var(--text-muted)' }}>
-            <i className="fa-solid fa-circle-check" style={{ fontSize: '3rem', color: 'var(--alert-green)', marginBottom: 16 }}></i>
-            <h3 style={{ fontFamily: 'Outfit' }}>Nenhum evento registrado</h3>
+            <i className="fa-solid fa-circle-xmark" style={{ fontSize: '3rem', color: 'var(--alert-red)', marginBottom: 16 }}></i>
+            <h3 style={{ fontFamily: 'Outfit' }}>Nenhum evento corresponde aos filtros</h3>
           </div>
         )}
       </div>

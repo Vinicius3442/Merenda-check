@@ -53,7 +53,26 @@ import Ouvidoria from './pages/public/Ouvidoria';
 import KioskRefeitorio from './pages/kiosk/KioskRefeitorio';
 
 function ProtectedRoute({ children }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
+  
+  if (loading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        minHeight: '100vh',
+        background: 'var(--bg-base)',
+        flexDirection: 'column',
+        gap: 16,
+        color: 'var(--text-muted)'
+      }}>
+        <i className="fa-solid fa-circle-notch fa-spin" style={{ fontSize: '2rem', color: 'var(--primary)' }}></i>
+        <span style={{ fontFamily: 'Outfit', fontSize: '1rem' }}>Verificando sessão...</span>
+      </div>
+    );
+  }
+  
   return isAuthenticated ? children : <Navigate to="/login" replace />;
 }
 

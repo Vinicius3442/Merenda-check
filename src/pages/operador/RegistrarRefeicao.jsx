@@ -1,10 +1,32 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import BgMesh from '../../components/ui/BgMesh';
 import Footer from '../../components/ui/Footer';
-import { useMockSubmit } from '../../hooks/useMockSubmit';
+import { useRefeicoes } from '../../hooks/useRefeicoes';
+import { useToast } from '../../contexts/ToastContext';
 
 export default function RegistrarRefeicao() {
-  const { loading, mockSubmit } = useMockSubmit();
+  const { registrarRefeicao } = useRefeicoes();
+  const { addToast } = useToast();
+  const [loading, setLoading] = useState(false);
+  const [quantidade, setQuantidade] = useState('');
+
+  const handleSubmit = async () => {
+    if (!quantidade || parseInt(quantidade) <= 0) {
+      addToast({ type: 'error', title: 'Campo Obrigatório', message: 'Informe a quantidade de refeições servidas.' });
+      return;
+    }
+    setLoading(true);
+    const result = await registrarRefeicao({ total_servidos: parseInt(quantidade) });
+    setLoading(false);
+
+    if (result.ok) {
+      addToast({ type: 'success', title: 'Sistema Sincronizado', message: 'Base de dados do refeitório atualizada com sucesso.' });
+      setQuantidade('');
+    } else {
+      addToast({ type: 'error', title: 'Erro ao Registrar', message: result.error || 'Tente novamente.' });
+    }
+  };
 
   return (
     <>
@@ -33,7 +55,14 @@ export default function RegistrarRefeicao() {
               </div>
 
               <div className="form-group" style={{ marginBottom: 40 }}>
-                <input type="number" className="form-control large-input" placeholder="000" />
+                <input
+                  type="number"
+                  className="form-control large-input"
+                  placeholder="000"
+                  value={quantidade}
+                  onChange={(e) => setQuantidade(e.target.value)}
+                  min="0"
+                />
               </div>
 
               <div className="form-group">
@@ -45,7 +74,7 @@ export default function RegistrarRefeicao() {
                 <button
                   className="btn btn-primary"
                   style={{ width: '100%', padding: 18, fontSize: '1.1rem' }}
-                  onClick={() => mockSubmit({ successTitle: 'Sistema Sincronizado', successMsg: 'Base de dados do refeitório atualizada com sucesso.' })}
+                  onClick={handleSubmit}
                   disabled={loading}
                 >
                   {loading ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Processando...</> : <><i className="fa-solid fa-cloud-arrow-up"></i> Confirmar Quantidade</>}

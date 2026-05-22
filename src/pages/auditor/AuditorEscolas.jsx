@@ -1,10 +1,11 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import { useMockSubmit } from '../../hooks/useMockSubmit';
-import { mockEscolas } from '../../data/mockData';
+import { useEscolas } from '../../hooks/useEscolas';
 
 export default function AuditorEscolas() {
-  const { loading, mockSubmit } = useMockSubmit();
+  const { loading: loadingSubmit, mockSubmit } = useMockSubmit();
+  const { escolas, loading } = useEscolas();
   const navigate = useNavigate();
 
   return (
@@ -33,84 +34,95 @@ export default function AuditorEscolas() {
         </select>
       </div>
 
-      <div className="school-grid animate-slide-up delay-100">
-        {mockEscolas.map((escola) => (
-          <div key={escola.id} className={`glass-panel school-card ${escola.healthClass}`} style={escola.health < 70 ? { borderWidth: 2 } : {}}>
-            <div className="school-header">
-              <div>
-                <div className="school-name">{escola.nome}</div>
-                <div className="school-director"><i className="fa-solid fa-id-badge"></i> {escola.diretora}</div>
+      {loading ? (
+        <div style={{ padding: 60, textAlign: 'center', color: 'var(--text-muted)' }}>
+          <i className="fa-solid fa-circle-notch fa-spin" style={{ fontSize: '2rem', marginBottom: 16 }}></i>
+          <p>Carregando escolas...</p>
+        </div>
+      ) : (
+        <div className="school-grid animate-slide-up delay-100">
+          {escolas.map((escola) => (
+            <div key={escola.id} className={`glass-panel school-card ${escola.healthClass}`} style={escola.health < 70 ? { borderWidth: 2 } : {}}>
+              <div className="school-header">
+                <div>
+                  <div className="school-name">{escola.nome}</div>
+                  <div className="school-director"><i className="fa-solid fa-id-badge"></i> {escola.diretora}</div>
+                </div>
+                <span className={`badge ${escola.badgeClass}`}>{escola.badgeText}</span>
               </div>
-              <span className={`badge ${escola.badgeClass}`}>{escola.badgeText}</span>
-            </div>
 
-            <div className="school-status-bar">
-              <span style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 6 }}>
-                Integridade da Malha
-                <i 
-                  className="fa-solid fa-circle-info" 
-                  title="Baseado na divergência entre apontamento de Catracas vs. Estoque físico e validades."
-                  style={{ cursor: 'help', fontSize: '0.85rem' }}
-                ></i>
-              </span>
-              <span className="health-text">{escola.health}%</span>
-            </div>
-            <div className="progress-track">
-              <div className="progress-fill" style={{ width: `${escola.health}%` }}></div>
-            </div>
+              <div className="school-status-bar">
+                <span style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  Integridade da Malha
+                  <i className="fa-solid fa-circle-info" title="Baseado na divergência entre apontamento de Catracas vs. Estoque físico e validades." style={{ cursor: 'help', fontSize: '0.85rem' }}></i>
+                </span>
+                <span className="health-text">{escola.health}%</span>
+              </div>
+              <div className="progress-track">
+                <div className="progress-fill" style={{ width: `${escola.health}%` }}></div>
+              </div>
 
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 20, lineHeight: 1.4 }}>
-              <i className={`fa-solid ${escola.alertIcon}`} style={{ color: escola.alertColor }}></i> {escola.alerta}
-            </p>
+              {escola.alertas && escola.alertas.length > 0 ? (
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 20, lineHeight: 1.4 }}>
+                  <i className={`fa-solid ${escola.alertIcon}`} style={{ color: escola.alertColor }}></i>{' '}
+                  {escola.alertas[0].descricao}
+                </p>
+              ) : (
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 20, lineHeight: 1.4 }}>
+                  <i className={`fa-solid ${escola.alertIcon}`} style={{ color: escola.alertColor }}></i>{' '}
+                  {escola.health >= 90 ? 'Operação em conformidade contratual.' : 'Verificar pendências no estoque.'}
+                </p>
+              )}
 
-            <div className="card-actions">
-              {escola.health < 70 ? (
-                <>
-                  <Link
-                    to={`/auditor/investigar?escola=${escola.timelineKey}&nome=${encodeURIComponent(escola.nome)}&tipo=Anomalia+Crítica`}
-                    className="btn btn-primary"
-                    style={{ flex: 1, padding: 10, fontSize: '0.8rem' }}
-                  >
-                    Dossiê de Integridade
-                  </Link>
+              <div className="card-actions">
+                {escola.health < 70 ? (
+                  <>
+                    <button
+                      className="btn btn-primary"
+                      style={{ flex: 1, padding: 10, fontSize: '0.8rem' }}
+                      onClick={() => navigate(`/auditor/investigar?escola=${escola.id}&nome=${encodeURIComponent(escola.nome)}&tipo=Anomalia+Crítica`)}
+                    >
+                      Dossiê de Integridade
+                    </button>
+                    <button
+                      className="btn btn-secondary"
+                      style={{ flex: 1, padding: 10, fontSize: '0.8rem' }}
+                      onClick={() => mockSubmit({
+                        successTitle: 'Auditoria Expedida',
+                        successMsg: `Aviso extrajudicial enviado para a gestão de ${escola.nome} via portaria eletrônica.`,
+                      })}
+                      disabled={loadingSubmit}
+                    >
+                      Notificar Gestor
+                    </button>
+                  </>
+                ) : escola.health < 95 ? (
                   <button
                     className="btn btn-secondary"
-                    style={{ flex: 1, padding: 10, fontSize: '0.8rem' }}
+                    style={{ width: '100%', padding: 10, fontSize: '0.8rem' }}
                     onClick={() => mockSubmit({
-                      successTitle: 'Auditoria Expedida',
-                      successMsg: `Aviso extrajudicial enviado para a gestão de ${escola.nome} via portaria eletrônica.`,
+                      successTitle: 'Remanejamento Sugerido pela IA',
+                      successMsg: `Excesso detectado na ${escola.nome} — remanejamento sugerido para unidade próxima.`,
                     })}
-                    disabled={loading}
+                    disabled={loadingSubmit}
                   >
-                    Notificar Gestor
+                    <i className="fa-solid fa-truck-arrow-right"></i> Sugerir Remanejamento IA
                   </button>
-                </>
-              ) : escola.health < 95 ? (
-                <button
-                  className="btn btn-secondary"
-                  style={{ width: '100%', padding: 10, fontSize: '0.8rem' }}
-                  onClick={() => mockSubmit({
-                    successTitle: 'Remanejamento Sugerido pela IA',
-                    successMsg: `Excesso de laticínios da ${escola.nome} redirecionado para ${escola.remanejamentoDest || 'CEI Pequeninos'}.`,
-                  })}
-                  disabled={loading}
-                >
-                  <i className="fa-solid fa-truck-arrow-right"></i> Sugerir Remanejamento IA
-                </button>
-              ) : (
-                <button
-                  className="btn btn-secondary"
-                  style={{ width: '100%', padding: 10, fontSize: '0.8rem' }}
-                  onClick={() => navigate(`/auditor/rastrear?escola=${escola.timelineKey}&nome=${encodeURIComponent(escola.nome)}`)}
-                  disabled={loading}
-                >
-                  <i className="fa-regular fa-eye"></i> Fonte de Veracidade (Validação)
-                </button>
-              )}
+                ) : (
+                  <button
+                    className="btn btn-secondary"
+                    style={{ width: '100%', padding: 10, fontSize: '0.8rem' }}
+                    onClick={() => navigate(`/auditor/rastrear?escola=${escola.id}&nome=${encodeURIComponent(escola.nome)}`)}
+                    disabled={loadingSubmit}
+                  >
+                    <i className="fa-regular fa-eye"></i> Fonte de Veracidade (Validação)
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </DashboardLayout>
   );
 }

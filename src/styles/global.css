@@ -357,19 +357,27 @@ a {
 }
 
 .card,
-.glass-panel,
 .kpi-card,
 .cta-box {
   transition: all 0.25s ease !important;
 }
 
 .card:hover,
-.glass-panel:hover,
 .kpi-card:hover,
 .cta-box:hover {
   transform: translateY(-3px) !important;
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35) !important;
   border-color: rgba(16, 185, 129, 0.3) !important;
+}
+
+/* glass-panel hover — subtle, no large translateY jump */
+.glass-panel {
+  transition: border-color 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+.glass-panel:hover {
+  border-color: rgba(16, 185, 129, 0.22) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3) !important;
 }
 
 /* ---- Forms ---- */
@@ -442,50 +450,113 @@ a {
 }
 
 /* ---- Table System ---- */
+
+/* Standalone table card — use when the table IS the card */
+.table-card {
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.75), rgba(15, 23, 42, 0.88));
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.table-card:hover {
+  border-color: rgba(16, 185, 129, 0.2);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(16, 185, 129, 0.06);
+}
+
+/* Wrapper — use inside an existing glass-panel */
 .table-wrapper {
   overflow-x: auto;
-  border-radius: 20px;
-  border: 1px solid var(--border-subtle);
-  background: var(--bg-surface);
-  box-shadow: var(--glass-shadow);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(10, 18, 35, 0.4);
+  -webkit-overflow-scrolling: touch;
 }
 
 .data-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   text-align: left;
+  min-width: 480px;
+}
+
+/* First header row — clip to container radius */
+.data-table thead tr:first-child th:first-child {
+  border-top-left-radius: 12px;
+}
+.data-table thead tr:first-child th:last-child {
+  border-top-right-radius: 12px;
 }
 
 .data-table th {
-  padding: 20px 24px;
-  font-size: 0.9rem;
+  padding: 14px 20px;
+  font-size: 0.75rem;
   font-weight: 700;
-  color: var(--text-muted);
+  color: #64748b;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-bottom: 2px solid var(--border-subtle);
-  background: var(--bg-surface-elevated);
+  letter-spacing: 0.09em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(10, 18, 35, 0.55);
   white-space: nowrap;
+  font-family: 'Outfit', sans-serif;
+  user-select: none;
 }
 
 .data-table td {
-  padding: 20px 24px;
-  font-size: 1rem;
-  color: var(--text-main);
-  border-bottom: 1px solid var(--border-subtle);
+  padding: 16px 20px;
+  font-size: 0.9rem;
+  color: #cbd5e1;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   vertical-align: middle;
+  line-height: 1.4;
 }
 
 .data-table tbody tr {
-  transition: background-color var(--transition-fast);
+  transition: background 0.18s ease;
+}
+
+.data-table tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.012);
 }
 
 .data-table tbody tr:hover {
-  background-color: var(--bg-base);
+  background: rgba(16, 185, 129, 0.06) !important;
+}
+
+.data-table tbody tr:hover td {
+  color: #f1f5f9;
 }
 
 .data-table tbody tr:last-child td {
   border-bottom: none;
+}
+
+/* Section header used above a table inside a glass-panel */
+.table-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 0;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.table-section-header h3,
+.table-section-header h2 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 /* ---- Toast System ---- */
@@ -593,7 +664,6 @@ a {
   background: radial-gradient(circle, rgba(37, 211, 113, 0.1) 0%, transparent 70%);
 }
 
-/* ---- Footer ---- */
 .app-footer {
   margin-top: 40px;
   padding-top: 20px;
@@ -602,3 +672,133 @@ a {
   color: var(--text-muted);
   font-size: 0.9rem;
 }
+
+/* ---- Responsividade Global ---- */
+@media (max-width: 768px) {
+  .app-footer {
+    font-size: 0.8rem;
+    padding-top: 12px;
+    margin-top: 24px;
+  }
+
+  /* Toasts posicionados corretamente */
+  .toast-container {
+    bottom: 16px;
+    right: 16px;
+    left: 16px;
+  }
+
+  /* Garantir que o body não tenha scroll horizontal */
+  body {
+    overflow-x: hidden;
+  }
+}
+
+/* ---- Viewport meta fix ---- */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ============================================
+   CARDÁPIOS, RELATÓRIOS E CONFORMIDADE RESPONSIVOS
+   ============================================ */
+
+.cardapio-grid-layout {
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.meal-slot-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+  align-items: center;
+}
+
+@media (max-width: 1024px) {
+  .cardapio-grid-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .meal-slot-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  .meal-slot-grid > div:last-child {
+    border-left: none !important;
+    padding-left: 0 !important;
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 8px;
+    text-align: left;
+  }
+}
+
+/* Extra Glow para Rastreabilidade Focada */
+.extra-glow-item {
+  animation: pulseGlow 2.5s infinite;
+  border: 1px solid var(--alert-red) !important;
+}
+
+/* Table Wrapper Responsivo para Relatórios */
+.table-responsive-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 20px;
+}
+
+.table-responsive-wrapper table {
+  min-width: 600px;
+}
+
+/* Classes Responsivas de Grid para Evitar Textos Apertados */
+.responsive-two-cols {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .responsive-two-cols {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.responsive-macro-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 2fr;
+  gap: 30px;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .responsive-macro-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px;
+  }
+}
+
+/* Utilities for Layout and Squeezing Fixes */
+.text-nowrap {
+  white-space: nowrap !important;
+}
+
+.responsive-form-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+@media (max-width: 768px) {
+  .responsive-form-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+

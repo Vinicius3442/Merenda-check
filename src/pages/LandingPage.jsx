@@ -45,9 +45,58 @@ export default function LandingPage() {
             <Link to="/login" className="btn btn-primary btn-lg">
               <i className="fa-solid fa-bolt"></i> Começar Agora
             </Link>
-            <a href="#demonstracao" className="btn btn-light btn-lg">
-              <i className="fa-solid fa-play"></i> Ver Demonstração
-            </a>
+            <button
+              className="btn btn-light btn-lg"
+              onClick={() => {
+                const conteudo = `MERENDA CHECK — Plataforma GovTech de Rastreabilidade Alimentar
+================================================================
+
+Sobre o Sistema
+---------------
+O Merenda Check é uma solução de transparência pública para gestão e
+rastreabilidade da merenda escolar, em conformidade com o PNAE
+(Programa Nacional de Alimentação Escolar).
+
+Funcionalidades Principais
+---------------------------
+✔ Recepção de insumos via QR Code com auditoria imediata
+✔ Controle de estoque com algoritmo FIFO automático
+✔ Registro de refeições servidas por escola
+✔ Controle de Resto-Ingesta e combate ao desperdício
+✔ Relatórios automáticos para prestação de contas
+✔ Rastreabilidade blockchain por lote
+✔ Dashboard preditivo com Inteligência Artificial
+✔ Portal de transparência pública
+
+Perfis de Usuário
+------------------
+- Operador de Escola — Controla o dia a dia da cozinha
+- Gestor Escolar    — Supervisiona estoque e relatórios
+- Nutricionista     — Gerencia cardápios conforme PNAE
+- Auditor Municipal — Monitora toda a rede escolar
+- Setor de Compras  — Controla contratos e fornecedores
+- Transportadora    — Emite lotes blockchain de entrega
+- SysAdmin          — Administra usuários e audit trail
+
+Contato
+--------
+Site:  merendacheck.gov.br
+Email: contato@merendacheck.gov.br
+
+© 2026 Merenda Check. Todos os direitos reservados.
+Feito com ❤ para a educação pública brasileira.
+`;
+                const blob = new Blob([conteudo], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'MerendaCheck-Brochura.txt';
+                a.click();
+                URL.revokeObjectURL(url);
+              }}
+            >
+              <i className="fa-solid fa-download"></i> Baixar Brochura
+            </button>
           </div>
         </div>
 

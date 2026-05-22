@@ -92,53 +92,40 @@ Regras:
 - Use o tom de um assistente governamental amigável`;
 
 
-// ─── Chama API REST do Gemini diretamente ─────────────────────────────────────
-async function callGemini(apiKey, systemPrompt, history, userMessage) {
-  // Modelos disponíveis nesta chave (em ordem de preferência)
-  const MODELS = ['gemini-2.0-flash-lite', 'gemini-2.0-flash'];
+// ─── Chama API REST da OpenAI diretamente ─────────────────────────────────────
+async function callChatGPT(apiKey, systemPrompt, history, userMessage) {
+  const url = 'https://api.openai.com/v1/chat/completions';
 
-  // Monta corpo da requisição (todos os modelos 2.0+ suportam system_instruction)
-  const buildContents = () => ({
-    system_instruction: { parts: [{ text: systemPrompt }] },
-    contents: [
-      ...history,
-      { role: 'user', parts: [{ text: userMessage }] },
-    ],
+  const messages = [
+    { role: 'system', content: systemPrompt },
+    ...history,
+    { role: 'user', content: userMessage },
+  ];
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`
+    },
+    body: JSON.stringify({
+      model: 'gpt-4o-mini',
+      messages: messages,
+      max_tokens: 512,
+      temperature: 0.7,
+    }),
   });
 
-  let lastErr;
-  for (const model of MODELS) {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-    const body = buildContents();
-
-    try {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...body,
-          generationConfig: { maxOutputTokens: 512, temperature: 0.7 },
-        }),
-      });
-
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        console.warn(`[Checky] ${model} error ${res.status}:`, errData?.error?.message);
-        lastErr = new Error(errData?.error?.message || `HTTP ${res.status}`);
-        lastErr.status = res.status;
-        // Para 429, aguarda 1s antes de tentar próximo modelo
-        if (res.status === 429) await new Promise(r => setTimeout(r, 1000));
-        continue;
-      }
-
-      const data = await res.json();
-      const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-      if (reply) return reply;
-    } catch (err) {
-      lastErr = err;
-    }
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    console.warn(`[Checky] OpenAI error ${res.status}:`, errData?.error?.message);
+    const err = new Error(errData?.error?.message || `HTTP ${res.status}`);
+    err.status = res.status;
+    throw err;
   }
-  throw lastErr || new Error('All models failed');
+
+  const data = await res.json();
+  return data?.choices?.[0]?.message?.content || '';
 }
 
 // ─── Componente ───────────────────────────────────────────────────────────────
@@ -149,7 +136,7 @@ export default function Mascot() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [hasApiKey] = useState(!!import.meta.env.VITE_GEMINI_API_KEY);
+  const [hasApiKey] = useState(!!import.meta.env.VITE_OPENAI_API_KEY);
 
   const historyRef = useRef([]);     // histórico REST: [{role, parts:[{text}]}]
   const messagesEndRef = useRef(null);
@@ -210,7 +197,7 @@ export default function Mascot() {
     const text = input.trim();
     if (!text || isTyping) return;
 
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
 
     setInput('');
     setMessages(prev => [...prev, { role: 'user', text, id: Date.now() }]);
@@ -221,7 +208,7 @@ export default function Mascot() {
         setIsTyping(false);
         setMessages(prev => [...prev, {
           role: 'assistant',
-          text: '⚠️ Chave de API não configurada. Adicione `VITE_GEMINI_API_KEY` no arquivo `.env` da raiz do projeto para ativar o assistente!',
+          text: '⚠️ Chave de API não configurada. Adicione `VITE_OPENAI_API_KEY` no arquivo `.env` da raiz do projeto para ativar o assistente!',
           id: Date.now(),
         }]);
       }, 800);
@@ -232,18 +219,18 @@ export default function Mascot() {
     const systemPrompt = SYSTEM_PROMPT.replace('{CONTEXT}', ctx.context);
 
     try {
-      const reply = await callGemini(apiKey, systemPrompt, historyRef.current, text);
+      const reply = await callChatGPT(apiKey, systemPrompt, historyRef.current, text);
 
       // Atualiza histórico para manter contexto da conversa
       historyRef.current = [
         ...historyRef.current,
-        { role: 'user', parts: [{ text }] },
-        { role: 'model', parts: [{ text: reply }] },
+        { role: 'user', content: text },
+        { role: 'assistant', content: reply },
       ];
 
       setMessages(prev => [...prev, { role: 'assistant', text: reply, id: Date.now() }]);
     } catch (err) {
-      console.error('[Checky] Gemini error:', err);
+      console.error('[Checky] OpenAI error:', err);
       const is429 = err?.status === 429 || err?.message?.includes('429');
       const is400 = err?.status === 400 || err?.message?.includes('400');
       const errMsg = is429

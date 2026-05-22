@@ -6,6 +6,8 @@ export default function LoginPage() {
   const [selected, setSelected] = useState(null);
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [loginError, setLoginError] = useState(null);
 
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -28,11 +30,18 @@ export default function LoginPage() {
     setSenha('demo1234');
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     if (!selected) return;
-    login(selected);
-    navigate(`/${selected}`);
+    setLoginLoading(true);
+    setLoginError(null);
+    const result = await login(email, senha);
+    setLoginLoading(false);
+    if (result.ok) {
+      navigate(`/${result.role}`);
+    } else {
+      setLoginError(result.error || 'Erro ao autenticar. Verifique suas credenciais.');
+    }
   };
 
   return (
@@ -117,7 +126,7 @@ export default function LoginPage() {
           </div>
 
           {/* Seleção de Perfil */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 14, marginBottom: 40 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 10, marginBottom: 32 }}>
             {roles.map((role) => {
               const isSelected = selected === role.key;
               return (
@@ -126,9 +135,10 @@ export default function LoginPage() {
                   type="button"
                   onClick={() => handleRoleSelect(role.key)}
                   className={`role-btn ${isSelected ? 'selected' : ''}`}
+                  style={{ flexDirection: 'column', gap: 6, padding: '10px 8px', textAlign: 'center' }}
                 >
-                  <i className={`fa-solid ${role.icon}`} style={{ fontSize: '1.2rem', color: isSelected ? role.color : 'inherit', width: 24, textAlign: 'center' }}></i>
-                  <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>{role.title}</span>
+                  <i className={`fa-solid ${role.icon}`} style={{ fontSize: '1.1rem', color: isSelected ? role.color : 'inherit' }}></i>
+                  <span style={{ fontSize: '0.78rem', fontWeight: 600, lineHeight: 1.2 }}>{role.title}</span>
                 </button>
               );
             })}
@@ -174,9 +184,16 @@ export default function LoginPage() {
               </Link>
             </div>
 
+            {loginError && (
+              <div style={{ marginBottom: 16, padding: '12px 16px', borderRadius: 10, background: 'rgba(244,63,94,0.1)', border: '1px solid rgba(244,63,94,0.2)', color: 'var(--alert-red)', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <i className="fa-solid fa-triangle-exclamation"></i>
+                {loginError}
+              </div>
+            )}
+
             <button
               type="submit"
-              disabled={!selected || !email || !senha}
+              disabled={!selected || !email || !senha || loginLoading}
               className="btn btn-primary"
               style={{
                 width: '100%',
@@ -187,16 +204,15 @@ export default function LoginPage() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: 12,
-                opacity: selected ? 1 : 0.5,
+                opacity: (selected && !loginLoading) ? 1 : 0.5,
                 boxShadow: selected ? '0 12px 24px rgba(16,185,129,0.25)' : 'none',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
               }}
             >
-              {selected ? (
-                <>
-                  <i className="fa-solid fa-arrow-right-to-bracket"></i>
-                  Acessar como {selectedRole?.title}
-                </>
+              {loginLoading ? (
+                <><i className="fa-solid fa-circle-notch fa-spin"></i> Autenticando...</>
+              ) : selected ? (
+                <><i className="fa-solid fa-arrow-right-to-bracket"></i> Acessar como {selectedRole?.title}</>
               ) : (
                 'Selecione seu Perfil'
               )}
@@ -246,26 +262,27 @@ export default function LoginPage() {
         .role-btn {
           display: flex;
           align-items: center;
-          gap: 12px;
-          padding: 14px 16px;
-          border-radius: 12px;
+          justify-content: center;
+          gap: 6px;
+          padding: 10px 8px;
+          border-radius: 10px;
           cursor: pointer;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          text-align: left;
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+          text-align: center;
           background: rgba(255, 255, 255, 0.02);
           border: 1px solid rgba(255, 255, 255, 0.05);
           color: var(--text-muted);
         }
         .role-btn:hover {
           background: rgba(255, 255, 255, 0.05);
-          border-color: rgba(255, 255, 255, 0.1);
+          border-color: rgba(255, 255, 255, 0.12);
           transform: translateY(-2px);
         }
         .role-btn.selected {
           background: rgba(16, 185, 129, 0.1);
           border-color: var(--primary);
           color: var(--primary);
-          box-shadow: 0 8px 20px rgba(16, 185, 129, 0.15);
+          box-shadow: 0 6px 16px rgba(16, 185, 129, 0.15);
         }
         @media (max-width: 1024px) {
           .login-art-panel { display: none !important; }

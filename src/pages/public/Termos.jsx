@@ -1,14 +1,14 @@
 import { Link } from 'react-router-dom';
 import BgMesh from '../../components/ui/BgMesh';
-import Footer from '../../components/ui/Footer';
+import PublicFooter from '../../components/ui/PublicFooter';
+import '../../styles/landing.css';
 
 export default function Termos() {
   return (
     <>
       <BgMesh />
-      <div className="app-container">
-        <header className="landing-header animate-fade-in" style={{ background: 'var(--bg-surface)', padding: '15px 40px', borderBottom: '1px solid var(--border-subtle)' }}>
-          <Link to="/" className="landing-logo">
+      <header className="landing-header animate-fade-in" style={{ borderBottom: '1px solid var(--border-subtle)', background: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(12px)' }}>
+        <Link to="/" className="landing-logo">
             <img src="/logo.png" alt="Merenda Check" className="logo-img" />
           </Link>
           <nav className="landing-nav">
@@ -17,10 +17,10 @@ export default function Termos() {
           <Link to="/login" className="btn btn-primary" style={{ borderRadius: 50, padding: '10px 24px' }}>
             Acessar
           </Link>
-        </header>
-        
-        <main className="app-main" style={{ paddingTop: 60, paddingBottom: 60, maxWidth: 800, margin: '0 auto' }}>
-          <div className="glass-panel animate-slide-up" style={{ padding: 40 }}>
+      </header>
+      
+      <main style={{ paddingTop: 120, paddingBottom: 60, maxWidth: 800, margin: '0 auto', minHeight: '80vh', paddingLeft: 20, paddingRight: 20 }}>
+        <div className="glass-panel animate-slide-up" style={{ padding: '40px 30px' }}>
             <h1 style={{ fontSize: '2rem', marginBottom: 30 }}>Termos de Uso</h1>
             
             <div style={{ fontSize: '1rem', lineHeight: 1.8, color: 'var(--text-main)' }}>
@@ -48,10 +48,9 @@ export default function Termos() {
                 A inserção deliberada de dados falsos, bem como a fraude no registro de catraca e recebimento de mercadorias, sujeitará o infrator às sanções administrativas, civis e penais cabíveis de acordo com a legislação aplicável aos servidores públicos e fornecedores licitados.
               </p>
             </div>
-          </div>
-        </main>
-        <Footer />
-      </div>
+        </div>
+      </main>
+      <PublicFooter />
     </>
   );
 }

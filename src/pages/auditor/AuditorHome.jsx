@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import DashboardLayout from '../../components/layout/DashboardLayout';
-import { mockKpisAuditor, mockAlertasAuditor } from '../../data/mockData';
+import { useDashboardStats } from '../../hooks/useDashboardStats';
+import { useAlertas } from '../../hooks/useAlertas';
 
 // Coordenadas geográficas reais em São Paulo
 const COORDS = {
@@ -14,6 +15,8 @@ const COORDS = {
 };
 
 export default function AuditorHome() {
+  const { kpis } = useDashboardStats('auditor');
+  const { alertas } = useAlertas();
   const mapContainer = useRef(null);
   const mapInstance = useRef(null);
   const [anomalyActive, setAnomalyActive] = useState(false);
@@ -169,7 +172,7 @@ export default function AuditorHome() {
   }, [anomalyActive]);
 
   // KPIs dinâmicos para alertar o auditor
-  const kpisDinamicos = mockKpisAuditor.map(kpi => {
+  const kpisDinamicos = (kpis || []).map(kpi => {
     if (kpi.label === 'Alertas FIFO' && anomalyActive) {
       return { ...kpi, value: '4', color: 'var(--alert-red)' };
     }
@@ -177,7 +180,7 @@ export default function AuditorHome() {
   });
 
   // Inserir anomalia na tabela de alertas de AuditorHome
-  const alertasExibidos = [...mockAlertasAuditor];
+  const alertasExibidos = [...alertas];
   if (anomalyActive) {
     // Insere o alerta crítico de desvio na primeira posição da lista
     alertasExibidos.unshift({

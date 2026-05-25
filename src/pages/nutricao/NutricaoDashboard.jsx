@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import { useMockSubmit } from '../../hooks/useMockSubmit';
 import { useToast } from '../../contexts/ToastContext';
+import { useEstoque } from '../../hooks/useEstoque';
+import { useRefeicoes } from '../../hooks/useRefeicoes';
 
 // ── Download de relatório FNDE ────────────────────────────────────────────────
 function gerarRelatorioFNDE() {
@@ -70,13 +72,19 @@ const ACOES_NUTRICAO = [
 export default function NutricaoDashboard() {
   const { loading, mockSubmit } = useMockSubmit();
   const { showToast } = useToast();
+  const { estoque } = useEstoque();
+  const { refeicoes } = useRefeicoes();
   const [downloadingFnde, setDownloadingFnde] = useState(false);
+
+  const totalEstoqueKg = estoque.reduce((acc, item) => acc + (parseFloat(item.volume_kg) || 0), 0).toFixed(1);
+  const totalRefeicoes = refeicoes.reduce((acc, r) => acc + (parseInt(r.total_servidos) || 0), 0);
+  const mediaSobras = refeicoes.length > 0 ? (refeicoes.reduce((acc, r) => acc + (parseFloat(r.resto_kg) || 0), 0) / refeicoes.length).toFixed(1) : 0;
 
   const metaKpis = [
     { label: 'Cardápios Planejados', value: '12 / 12', icon: 'fa-calendar-check', color: 'var(--alert-green)' },
-    { label: 'Custo FNDE Mensal',    value: 'R$ 1.2M',  icon: 'fa-sack-dollar',   color: 'var(--alert-yellow)' },
-    { label: 'Fichas Técnicas',      value: '45',        icon: 'fa-clipboard-list', color: 'var(--alert-blue)' },
-    { label: 'Conformidade',         value: '98%',       icon: 'fa-apple-whole',   color: 'var(--primary)' },
+    { label: 'Estoque Total',        value: `${totalEstoqueKg} kg`,  icon: 'fa-box-open',   color: 'var(--alert-yellow)' },
+    { label: 'Refeições Servidas',   value: `${totalRefeicoes}`,        icon: 'fa-utensils', color: 'var(--alert-blue)' },
+    { label: 'Média de Sobras',      value: `${mediaSobras} kg`,       icon: 'fa-scale-unbalanced',   color: 'var(--primary)' },
   ];
 
   const handleFndeDownload = () => {

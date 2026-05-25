@@ -5,6 +5,10 @@ import 'package:provider/provider.dart';
 import 'providers/auth_provider.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/operador/operador_home_screen.dart';
+import 'screens/operador/entrada_insumo_screen.dart';
+import 'screens/operador/baixa_insumo_screen.dart';
+import 'screens/operador/registrar_refeicao_screen.dart';
+import 'screens/operador/sobra_limpa_screen.dart';
 
 final router = GoRouter(
   initialLocation: '/login',
@@ -30,6 +34,22 @@ final router = GoRouter(
     GoRoute(
       path: '/operador',
       builder: (context, state) => const OperadorHomeScreen(),
+    ),
+    GoRoute(
+      path: '/operador/entrada',
+      builder: (context, state) => const EntradaInsumoScreen(),
+    ),
+    GoRoute(
+      path: '/operador/baixa',
+      builder: (context, state) => const BaixaInsumoScreen(),
+    ),
+    GoRoute(
+      path: '/operador/refeicao',
+      builder: (context, state) => const RegistrarRefeicaoScreen(),
+    ),
+    GoRoute(
+      path: '/operador/sobra',
+      builder: (context, state) => const SobraLimpaScreen(),
     ),
   ],
 );

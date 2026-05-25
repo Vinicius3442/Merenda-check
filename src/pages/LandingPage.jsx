@@ -237,44 +237,13 @@ Feito com ❤ para a educação pública brasileira.
 
       {/* Rodapé Institucional */}
       <footer className="landing-footer">
-        <div className="landing-footer-inner">
+        <div className="landing-footer-inner" style={{ gridTemplateColumns: '1fr' }}>
           {/* Coluna 1: Marca */}
-          <div>
+          <div style={{ textAlign: 'center' }}>
             <img src="/logo.png" alt="Merenda Check" className="logo-img" style={{ marginBottom: 16 }} />
             <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: 1.7, marginBottom: 16 }}>
               Plataforma inteligente de auditoria e rastreabilidade alimentar.
             </p>
-            <div style={{ display: 'flex', gap: 12 }}>
-              <a href="#" style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><i className="fa-brands fa-linkedin-in"></i></a>
-              <a href="#" style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><i className="fa-brands fa-twitter"></i></a>
-            </div>
-          </div>
-
-          {/* Coluna 2: Produto */}
-          <div className="footer-col">
-            <h5>Produto</h5>
-            <Link to="/login">Login</Link>
-            <a href="#como-funciona">Recursos</a>
-            <a href="#modulos">Perfis de Usuário</a>
-            <a href="#">Casos de Sucesso</a>
-          </div>
-
-          {/* Coluna 3: Empresa */}
-          <div className="footer-col">
-            <h5>Empresa</h5>
-            <a href="#">Sobre Nós</a>
-            <a href="#">Contato</a>
-            <a href="#">Trabalhe Conosco</a>
-            <a href="#">Imprensa</a>
-          </div>
-
-          {/* Coluna 4: Legal */}
-          <div className="footer-col">
-            <h5>Legal</h5>
-            <a href="https://www.gov.br/lgpd" target="_blank" rel="noreferrer">LGPD</a>
-            <a href="#">Termos de Uso</a>
-            <a href="#">Política de Privacidade</a>
-            <a href="#">Compliance</a>
           </div>
         </div>
 

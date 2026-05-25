@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import DashboardLayout from '../../components/layout/DashboardLayout';
-import { mockTimelines } from '../../data/mockData';
+import { useRastreabilidade } from '../../hooks/useRastreabilidade';
 
 function TimelineItem({ item }) {
   return (
@@ -76,7 +76,7 @@ export default function Rastreabilidade() {
     }
   }, [presetLote]);
 
-  const rawTimeline = mockTimelines[selectedKey] || [];
+  const { timeline: rawTimeline, loading } = useRastreabilidade(selectedKey);
   const selectedOption = escolaOptions.find(e => e.key === selectedKey);
 
   // Filtrar e marcar trilha com glow extra

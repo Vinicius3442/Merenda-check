@@ -3,7 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import DashboardLayout from '../../components/layout/DashboardLayout';
-import { mockTimelines } from '../../data/mockData';
+import { useRastreabilidade } from '../../hooks/useRastreabilidade';
 import { useMockSubmit } from '../../hooks/useMockSubmit';
 
 // Coordenadas geográficas reais em São Paulo
@@ -172,7 +172,7 @@ export default function InvestigarAlerta() {
     };
   }, [escolaKey, anomalyActive]);
 
-  const timeline = mockTimelines[escolaKey] || [];
+  const { timeline, loading: timelineLoading } = useRastreabilidade(escolaKey);
   
   // Injetar evento de anomalia logística se ativo
   const displayTimeline = [...timeline];

@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import PredictiveChart from '../../components/charts/PredictiveChart';
 import LogisticsMap from '../../components/ui/LogisticsMap';
-import { mockKpisGestor, mockChartData } from '../../data/mockData';
+import { useDashboardStats } from '../../hooks/useDashboardStats';
+import { useAuth } from '../../contexts/AuthContext';
 import { useMockSubmit } from '../../hooks/useMockSubmit';
 
 const ACOES_GESTOR = [
@@ -38,7 +39,9 @@ const ACOES_GESTOR = [
 ];
 
 export default function GestorHome() {
-  const { loading, mockSubmit } = useMockSubmit();
+  const { user } = useAuth();
+  const { loading: submitting, mockSubmit } = useMockSubmit();
+  const { kpis, chartData, loading } = useDashboardStats('gestor', user?.escola_id);
   const [toastMsg, setToastMsg] = useState('');
 
   // Trigger default system alert upon loading to alert user of the 3-day critical expiry
@@ -92,16 +95,16 @@ export default function GestorHome() {
         <button
           className="btn btn-primary"
           onClick={() => mockSubmit({ successTitle: 'Sincronizado', successMsg: 'Dados atualizados com sucesso.' })}
-          disabled={loading}
+          disabled={submitting || loading}
         >
-          {loading
+          {submitting || loading
             ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Sincronizando...</>
             : <><i className="fa-solid fa-arrows-rotate"></i> Atualizar Dados</>}
         </button>
       </div>
 
       <div className="kpi-grid animate-slide-up">
-        {mockKpisGestor.map((kpi, i) => (
+        {kpis.map((kpi, i) => (
           <div key={i} className="kpi-card">
             <div className="kpi-icon"><i className={`fa-solid ${kpi.icon}`}></i></div>
             <div className="kpi-value" style={{ color: kpi.color }}>{kpi.value}</div>
@@ -268,7 +271,7 @@ export default function GestorHome() {
             </h3>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Modelo calibrado com catracas faciais e cardápio planejado.</p>
           </div>
-          <PredictiveChart labels={mockChartData.labels} real={mockChartData.real} predito={mockChartData.predito} />
+          <PredictiveChart labels={chartData.labels} real={chartData.real} predito={chartData.predito} />
         </div>
 
         <div className="animate-slide-up delay-300">

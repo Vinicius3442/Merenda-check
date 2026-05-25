@@ -40,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       _selectedRole = key;
       _emailController.text = '$key@merendacheck.gov.br';
-      _senhaController.text = 'demo1234';
+      _senhaController.text = 'Merenda@2026';
     });
   }
 
@@ -52,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     final auth = context.read<AuthProvider>();
-    final success = await auth.login(_selectedRole!);
+    final success = await auth.login(_emailController.text.trim(), _senhaController.text);
 
     if (mounted) {
       setState(() {

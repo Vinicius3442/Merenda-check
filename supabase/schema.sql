@@ -1,10 +1,3 @@
--- ============================================================
--- MERENDA CHECK — Schema SQL COMPLETO para Supabase
--- Versão 2.0 — Cobre TODAS as funcionalidades do protótipo
--- Execute no Supabase SQL Editor (Project > SQL Editor > New Query)
--- ============================================================
-
--- Habilitar extensão UUID
 create extension if not exists "uuid-ossp";
 
 -- ============================================================
@@ -23,12 +16,7 @@ create table if not exists public.escolas (
 );
 
 alter table public.escolas enable row level security;
-create policy "Leitura de escolas" on public.escolas
-  for select using (auth.role() = 'authenticated');
-create policy "Gestão de escolas" on public.escolas
-  for all using (
-    exists (select 1 from public.usuarios u where u.auth_id = auth.uid() and u.role in ('admin','gestor','auditor'))
-  );
+-- Políticas de RLS da tabela escolas movidas para depois da tabela usuarios (evita erro 42P01)
 
 -- ============================================================
 -- 2. TABELA: usuarios (perfis RBAC vinculados ao Auth)
@@ -62,6 +50,14 @@ create policy "Leitura pública de usuários" on public.usuarios
   for select using (auth.role() = 'authenticated');
 create policy "Admin gerencia usuários" on public.usuarios
   for all using (public.is_admin());
+
+-- Políticas da tabela escolas dependem da tabela usuarios
+create policy "Leitura de escolas" on public.escolas
+  for select using (auth.role() = 'authenticated');
+create policy "Gestão de escolas" on public.escolas
+  for all using (
+    exists (select 1 from public.usuarios u where u.auth_id = auth.uid() and u.role in ('admin','gestor','auditor'))
+  );
 
 -- ============================================================
 -- 3. TABELA: fornecedores

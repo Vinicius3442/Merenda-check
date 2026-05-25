@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../../providers/auth_provider.dart';
 import '../../utils/theme.dart';
+import '../../widgets/mascot_chat.dart';
 
 class OperadorHomeScreen extends StatelessWidget {
   const OperadorHomeScreen({super.key});
@@ -11,19 +12,21 @@ class OperadorHomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = context.watch<AuthProvider>().user;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Visão do Operador'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              context.read<AuthProvider>().logout();
-              context.go('/login');
-            },
-          )
-        ],
-      ),
+    return MascotChatOverlay(
+      routeContext: 'O usuário está na área do Operador de Escola.',
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Visão do Operador'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.logout),
+              onPressed: () {
+                context.read<AuthProvider>().logout();
+                context.go('/login');
+              },
+            )
+          ],
+        ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -51,11 +54,7 @@ class OperadorHomeScreen extends StatelessWidget {
               title: 'Entrada de Insumos',
               icon: Icons.inventory_2_outlined,
               color: Colors.blue,
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Módulo em desenvolvimento')),
-                );
-              },
+              onTap: () => context.push('/operador/entrada'),
             ),
             const SizedBox(height: 16),
             _buildActionCard(
@@ -63,11 +62,7 @@ class OperadorHomeScreen extends StatelessWidget {
               title: 'Baixa de Insumo (FIFO)',
               icon: Icons.outbox_outlined,
               color: Colors.orange,
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Módulo em desenvolvimento')),
-                );
-              },
+              onTap: () => context.push('/operador/baixa'),
             ),
             const SizedBox(height: 16),
             _buildActionCard(
@@ -75,11 +70,7 @@ class OperadorHomeScreen extends StatelessWidget {
               title: 'Registrar Refeição',
               icon: Icons.restaurant_outlined,
               color: AppTheme.primaryColor,
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Módulo em desenvolvimento')),
-                );
-              },
+              onTap: () => context.push('/operador/refeicao'),
             ),
             const SizedBox(height: 16),
             _buildActionCard(
@@ -87,16 +78,12 @@ class OperadorHomeScreen extends StatelessWidget {
               title: 'Sobra Limpa',
               icon: Icons.delete_outline,
               color: Colors.red,
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Módulo em desenvolvimento')),
-                );
-              },
+              onTap: () => context.push('/operador/sobra'),
             ),
           ],
         ),
       ),
-    );
+    ));
   }
 
   Widget _buildActionCard(BuildContext context, {required String title, required IconData icon, required Color color, required VoidCallback onTap}) {

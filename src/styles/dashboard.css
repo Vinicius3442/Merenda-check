@@ -55,7 +55,7 @@
   max-width: 1600px;
   margin: 0 auto;
   min-width: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* Sidebar Menu */

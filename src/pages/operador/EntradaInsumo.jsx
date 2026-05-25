@@ -7,7 +7,7 @@ import { useToast } from '../../contexts/ToastContext';
 
 export default function EntradaInsumo() {
   const { inserirLote } = useEstoque();
-  const { addToast } = useToast();
+  const { showToast } = useToast();
 
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
@@ -34,9 +34,9 @@ export default function EntradaInsumo() {
     setLoading(false);
 
     if (result.ok) {
-      addToast({ type: 'success', title: 'Entrada Processada', message: 'Estoque sincronizado com sucesso.' });
+      showToast('Entrada Processada', 'Estoque sincronizado com sucesso.', 'success');
     } else {
-      addToast({ type: 'error', title: 'Erro ao Registrar', message: result.error || 'Tente novamente.' });
+      showToast('Erro ao Registrar', result.error || 'Tente novamente.', 'error');
     }
   };
 

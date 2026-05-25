@@ -1,10 +1,50 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import BgMesh from '../../components/ui/BgMesh';
 import Footer from '../../components/ui/Footer';
-import { useMockSubmit } from '../../hooks/useMockSubmit';
+import { useAuth } from '../../contexts/AuthContext';
+import { useMovimentacoes } from '../../hooks/useMovimentacoes';
+import { useToast } from '../../contexts/ToastContext';
 
 export default function SobraLimpa() {
-  const { loading, mockSubmit } = useMockSubmit();
+  const { user } = useAuth();
+  const { registrarSobra } = useMovimentacoes(user?.escola_id);
+  const { showToast } = useToast();
+  const navigate = useNavigate();
+
+  const [pesoSobra, setPesoSobra] = useState('');
+  const [motivo, setMotivo] = useState('super');
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async () => {
+    const kg = parseFloat(pesoSobra);
+    if (isNaN(kg) || kg < 0) {
+      showToast('Campo Obrigatório', 'Informe o peso aferido na balança.', 'error');
+      return;
+    }
+
+    const motivoTexto = {
+      super: 'Estimativa Incorreta de Alunos Presentes',
+      sabor: 'Rejeição por Sabor ou Aparência',
+      validade: 'Alimento Preparado Inadequadamente',
+    }[motivo] || motivo;
+
+    setSubmitting(true);
+    const res = await registrarSobra({
+      escola_id: user?.escola_id || null,
+      quantidade_kg: kg,
+      observacao: `Sobra Limpa — ${motivoTexto}`,
+      usuario_id: user?.id || null,
+    });
+    setSubmitting(false);
+
+    if (res.ok) {
+      showToast('Desperdício Registrado', 'A secretaria foi notificada para ajustar o planejamento contínuo.', 'success');
+      setTimeout(() => navigate('/operador'), 1500);
+    } else {
+      showToast('Erro ao Registrar', res.error || 'Não foi possível salvar o registro.', 'error');
+    }
+  };
 
   return (
     <>
@@ -37,8 +77,11 @@ export default function SobraLimpa() {
                   <input
                     type="number"
                     step="0.1"
+                    min="0"
                     className="form-control large-input"
                     placeholder="0.0"
+                    value={pesoSobra}
+                    onChange={(e) => setPesoSobra(e.target.value)}
                     style={{ textAlign: 'center', paddingRight: '80px', width: '100%' }}
                   />
                   <span style={{
@@ -50,7 +93,7 @@ export default function SobraLimpa() {
 
               <div className="form-group">
                 <label className="form-label">Motivo do Desperdício</label>
-                <select className="form-control">
+                <select className="form-control" value={motivo} onChange={(e) => setMotivo(e.target.value)}>
                   <option value="super">Estimativa Incorreta de Alunos Presentes</option>
                   <option value="sabor">Rejeição por Sabor ou Aparência</option>
                   <option value="validade">Alimento Preparado Inadequadamente</option>
@@ -61,10 +104,13 @@ export default function SobraLimpa() {
                 <button
                   className="btn btn-primary btn-lg"
                   style={{ width: '100%', background: 'var(--alert-red)', boxShadow: 'var(--alert-red-glow)' }}
-                  onClick={() => mockSubmit({ successTitle: 'Desperdício Registrado', successMsg: 'A secretaria foi notificada para ajustar o planejamento contínuo.' })}
-                  disabled={loading}
+                  onClick={handleSubmit}
+                  disabled={submitting}
                 >
-                  {loading ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Processando...</> : <><i className="fa-solid fa-triangle-exclamation"></i> Concluir Registro</>}
+                  {submitting
+                    ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Processando...</>
+                    : <><i className="fa-solid fa-triangle-exclamation"></i> Concluir Registro</>
+                  }
                 </button>
               </div>
             </div>

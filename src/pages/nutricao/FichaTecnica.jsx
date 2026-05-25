@@ -267,7 +267,7 @@ export default function FichaTecnica() {
                       position: 'absolute', top: '100%', left: 0, right: 0,
                       background: 'var(--bg-base)', border: '1px solid var(--border-subtle)',
                       borderRadius: 8, boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
-                      zIndex: 10, maxHeights: 200, overflowY: 'auto', marginTop: 4
+                      zIndex: 10, maxHeight: 220, overflowY: 'auto', marginTop: 4
                     }}>
                       {insumosFiltrados.map(ins => (
                         <div

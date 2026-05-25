@@ -1,18 +1,20 @@
 import DashboardLayout from '../../components/layout/DashboardLayout';
+import { useContratos } from '../../hooks/useContratos';
 
 export default function EmpenhosSaldo() {
-  const lotesLicitados = [
-    { preg: 'PE 045/25', tipo: 'Proteína Animal', fornecedor: 'AgroSul Alimentos', total: 5000000, executado: 4120000, status: 'yellow' },
-    { preg: 'PE 048/25', tipo: 'Hortifruti', fornecedor: 'Coop. Fazenda Verde', total: 1200000, executado: 300000, status: 'green' },
-    { preg: 'PE 049/25', tipo: 'Estocáveis Secos', fornecedor: 'CerealBrasil', total: 3400000, executado: 3350000, status: 'red' },
-  ];
+  const { contratos, loading } = useContratos();
 
-  const formatCurrency = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+  const formatCurrency = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val || 0);
 
-  const statusColor = {
-    red: 'var(--alert-red)',
-    yellow: 'var(--alert-yellow)',
-    green: 'var(--alert-green)',
+  const totalGeral = contratos.reduce((s, c) => s + Number(c.valor_total || 0), 0);
+  const totalExec  = contratos.reduce((s, c) => s + Number(c.valor_executado || 0), 0);
+  const totalSaldo = totalGeral - totalExec;
+
+  const getStatusColor = (c) => {
+    const pct = c.valor_total > 0 ? (c.valor_executado / c.valor_total) : 0;
+    if (pct >= 0.95) return 'var(--alert-red)';
+    if (pct >= 0.70) return 'var(--alert-yellow)';
+    return 'var(--alert-green)';
   };
 
   return (
@@ -33,17 +35,17 @@ export default function EmpenhosSaldo() {
         <div className="kpi-grid animate-slide-up" style={{ gridTemplateColumns: 'repeat(3, 1fr)', marginBottom: 30 }}>
           <div className="kpi-card">
             <div className="kpi-icon"><i className="fa-solid fa-sack-dollar"></i></div>
-            <div className="kpi-value" style={{ color: 'var(--text-main)' }}>R$ 18.5M</div>
-            <div className="kpi-label">Orçamento Total (Ano)</div>
+            <div className="kpi-value" style={{ color: 'var(--text-main)' }}>{loading ? '...' : formatCurrency(totalGeral)}</div>
+            <div className="kpi-label">Orçamento Total (Contratos)</div>
           </div>
           <div className="kpi-card">
             <div className="kpi-icon"><i className="fa-solid fa-file-invoice"></i></div>
-            <div className="kpi-value" style={{ color: 'var(--alert-green)' }}>R$ 7.7M</div>
+            <div className="kpi-value" style={{ color: 'var(--alert-green)' }}>{loading ? '...' : formatCurrency(totalExec)}</div>
             <div className="kpi-label">Saldo Executado (Liquidado)</div>
           </div>
           <div className="kpi-card">
             <div className="kpi-icon"><i className="fa-solid fa-wallet"></i></div>
-            <div className="kpi-value" style={{ color: 'var(--primary)' }}>R$ 10.8M</div>
+            <div className="kpi-value" style={{ color: 'var(--primary)' }}>{loading ? '...' : formatCurrency(totalSaldo)}</div>
             <div className="kpi-label">Saldo Remanescente (Aberto)</div>
           </div>
         </div>
@@ -65,52 +67,62 @@ export default function EmpenhosSaldo() {
               border: '1px solid rgba(16,185,129,0.2)', borderRadius: 20,
               padding: '3px 12px', fontSize: '0.78rem', fontWeight: 700
             }}>
-              {lotesLicitados.length} contratos registrados
+              {contratos.length} contratos registrados
             </span>
           </div>
 
           <div style={{ overflowX: 'auto' }}>
-            <table className="data-table" style={{ minWidth: 700 }}>
-              <thead>
-                <tr>
-                  <th>Pregão Eletrônico</th>
-                  <th>Categoria</th>
-                  <th>Empresa Licitante</th>
-                  <th>Teto do Contrato</th>
-                  <th>Valor Executado</th>
-                  <th>Execução</th>
-                </tr>
-              </thead>
-              <tbody>
-                {lotesLicitados.map((lote, i) => {
-                  const percent = (lote.executado / lote.total) * 100;
-                  const color = statusColor[lote.status];
-                  return (
-                    <tr key={i}>
-                      <td>
-                        <span style={{ fontFamily: 'monospace', fontWeight: 700, color: '#f1f5f9', fontSize: '0.88rem' }}>
-                          {lote.preg}
-                        </span>
-                      </td>
-                      <td style={{ fontWeight: 600 }}>{lote.tipo}</td>
-                      <td style={{ color: '#94a3b8', fontSize: '0.88rem' }}>{lote.fornecedor}</td>
-                      <td style={{ fontWeight: 600, color: '#f1f5f9' }}>{formatCurrency(lote.total)}</td>
-                      <td style={{ fontWeight: 700, color }}>{formatCurrency(lote.executado)}</td>
-                      <td style={{ minWidth: 160 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                          <div style={{ flex: 1, height: 5, background: 'rgba(255,255,255,0.06)', borderRadius: 3, overflow: 'hidden' }}>
-                            <div style={{ height: '100%', width: `${percent}%`, background: color, borderRadius: 3, transition: 'width 0.6s ease' }}></div>
-                          </div>
-                          <span style={{ fontSize: '0.82rem', color, fontWeight: 700, width: 38, textAlign: 'right' }}>
-                            {percent.toFixed(0)}%
+            {loading ? (
+              <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>
+                <i className="fa-solid fa-circle-notch fa-spin" style={{ fontSize: '2rem' }}></i>
+              </div>
+            ) : (
+              <table className="data-table" style={{ minWidth: 700 }}>
+                <thead>
+                  <tr>
+                    <th>Número do Contrato</th>
+                    <th>Objeto / Categoria</th>
+                    <th>Fornecedor</th>
+                    <th>Teto do Contrato</th>
+                    <th>Valor Executado</th>
+                    <th>Execução</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {contratos.map((c) => {
+                    const pct = c.valor_total > 0 ? Math.min((c.valor_executado / c.valor_total) * 100, 100) : 0;
+                    const cor = getStatusColor(c);
+                    return (
+                      <tr key={c.id}>
+                        <td>
+                          <span style={{ fontFamily: 'monospace', fontWeight: 700, color: '#f1f5f9', fontSize: '0.88rem' }}>
+                            {c.numero}
                           </span>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: 2 }}>{c.modalidade}</div>
+                        </td>
+                        <td style={{ fontWeight: 600 }}>{c.objeto?.slice(0, 40)}{c.objeto?.length > 40 ? '...' : ''}</td>
+                        <td style={{ color: '#94a3b8', fontSize: '0.88rem' }}>{c.fornecedor?.nome || '—'}</td>
+                        <td style={{ fontWeight: 600, color: '#f1f5f9' }}>{formatCurrency(c.valor_total)}</td>
+                        <td style={{ fontWeight: 700, color: cor }}>{formatCurrency(c.valor_executado)}</td>
+                        <td style={{ minWidth: 160 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <div style={{ flex: 1, height: 5, background: 'rgba(255,255,255,0.06)', borderRadius: 3, overflow: 'hidden' }}>
+                              <div style={{ height: '100%', width: `${pct}%`, background: cor, borderRadius: 3, transition: 'width 0.6s ease' }}></div>
+                            </div>
+                            <span style={{ fontSize: '0.82rem', color: cor, fontWeight: 700, width: 38, textAlign: 'right' }}>
+                              {pct.toFixed(0)}%
+                            </span>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                  {contratos.length === 0 && (
+                    <tr><td colSpan={6} style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)' }}>Nenhum contrato encontrado.</td></tr>
+                  )}
+                </tbody>
+              </table>
+            )}
           </div>
 
           {/* Alert Footer */}

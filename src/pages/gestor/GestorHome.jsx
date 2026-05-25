@@ -75,9 +75,9 @@ export default function GestorHome() {
         </div>
       )}
 
-      {/* Orbs decorativos */}
-      <div style={{ position: 'absolute', top: '10%', right: '5%', width: 300, height: 300, background: 'var(--primary)', filter: 'blur(100px)', opacity: 0.1, zIndex: 0, pointerEvents: 'none' }}></div>
-      <div style={{ position: 'absolute', top: '40%', left: '0%', width: 400, height: 400, background: 'var(--alert-blue)', filter: 'blur(120px)', opacity: 0.1, zIndex: 0, pointerEvents: 'none', animation: 'float 10s ease-in-out infinite' }}></div>
+      {/* Orbs decorativos — contidos para não causar overflow */}
+      <div style={{ position: 'fixed', top: '10%', right: '5%', width: 300, height: 300, background: 'var(--primary)', filter: 'blur(100px)', opacity: 0.07, zIndex: 0, pointerEvents: 'none' }}></div>
+      <div style={{ position: 'fixed', top: '40%', left: '5%', width: 400, height: 400, background: 'var(--alert-blue)', filter: 'blur(120px)', opacity: 0.07, zIndex: 0, pointerEvents: 'none', animation: 'float 10s ease-in-out infinite' }}></div>
 
       <div className="header-dash animate-fade-in" style={{ position: 'relative', zIndex: 1 }}>
         <div>

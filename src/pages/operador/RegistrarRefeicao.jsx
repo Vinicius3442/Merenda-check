@@ -7,13 +7,13 @@ import { useToast } from '../../contexts/ToastContext';
 
 export default function RegistrarRefeicao() {
   const { registrarRefeicao } = useRefeicoes();
-  const { addToast } = useToast();
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [quantidade, setQuantidade] = useState('');
 
   const handleSubmit = async () => {
     if (!quantidade || parseInt(quantidade) <= 0) {
-      addToast({ type: 'error', title: 'Campo Obrigatório', message: 'Informe a quantidade de refeições servidas.' });
+      showToast('Campo Obrigatório', 'Informe a quantidade de refeições servidas.', 'error');
       return;
     }
     setLoading(true);
@@ -21,10 +21,10 @@ export default function RegistrarRefeicao() {
     setLoading(false);
 
     if (result.ok) {
-      addToast({ type: 'success', title: 'Sistema Sincronizado', message: 'Base de dados do refeitório atualizada com sucesso.' });
+      showToast('Sistema Sincronizado', 'Base de dados do refeitório atualizada com sucesso.', 'success');
       setQuantidade('');
     } else {
-      addToast({ type: 'error', title: 'Erro ao Registrar', message: result.error || 'Tente novamente.' });
+      showToast('Erro ao Registrar', result.error || 'Tente novamente.', 'error');
     }
   };
 

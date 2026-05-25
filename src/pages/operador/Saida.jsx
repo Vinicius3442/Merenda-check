@@ -1,10 +1,70 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import BgMesh from '../../components/ui/BgMesh';
 import Footer from '../../components/ui/Footer';
-import { useMockSubmit } from '../../hooks/useMockSubmit';
+import { useAuth } from '../../contexts/AuthContext';
+import { useEstoque } from '../../hooks/useEstoque';
+import { useMovimentacoes } from '../../hooks/useMovimentacoes';
+import { useEscolas } from '../../hooks/useEscolas';
+import { useToast } from '../../contexts/ToastContext';
 
 export default function Saida() {
-  const { loading, mockSubmit } = useMockSubmit();
+  const { user } = useAuth();
+  const { estoque } = useEstoque(user?.escola_id);
+  const { escolas } = useEscolas();
+  const { registrarSaida } = useMovimentacoes(user?.escola_id);
+  const { showToast } = useToast();
+  const navigate = useNavigate();
+
+  const [motivo, setMotivo] = useState('transferencia');
+  const [destinatario, setDestinatario] = useState('');
+  const [estoqueId, setEstoqueId] = useState('');
+  const [quantidade, setQuantidade] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  const escolaDestino = escolas.find((e) => e.id === destinatario);
+  const lotesSelecionaveis = estoque.filter((e) => e.status !== 'arquivado' && e.volume_kg > 0);
+  const loteSelecionado = estoque.find((e) => e.id === estoqueId);
+
+  const motivoLabels = {
+    transferencia: 'Transferência entre Escolas (Equilíbrio Inteligente IA)',
+    devolucao:     'Devolução Fornecedor (Defeito Organoléptico)',
+    recolhimento:  'Recolhimento Secretaria Sede',
+  };
+
+  const handleSubmit = async () => {
+    if (!estoqueId) {
+      showToast('Seleção Obrigatória', 'Selecione um insumo para a saída.', 'error');
+      return;
+    }
+    const qt = parseFloat(quantidade);
+    if (isNaN(qt) || qt <= 0) {
+      showToast('Quantidade Inválida', 'Informe uma quantidade válida maior que zero.', 'error');
+      return;
+    }
+    if (qt > (loteSelecionado?.volume_kg || 0)) {
+      showToast('Quantidade Inválida', `Máximo disponível: ${loteSelecionado?.volume_kg} kg.`, 'error');
+      return;
+    }
+
+    setSubmitting(true);
+    const res = await registrarSaida({
+      estoque_id: estoqueId,
+      escola_id: user?.escola_id || null,
+      escola_destino_id: destinatario || null,
+      quantidade_kg: qt,
+      observacao: `${motivoLabels[motivo] || motivo}${escolaDestino ? ` — Destino: ${escolaDestino.nome}` : ''}`,
+      usuario_id: user?.id || null,
+    });
+    setSubmitting(false);
+
+    if (res.ok) {
+      showToast('Manifesto Gerado', 'A guia de remessa eletrônica foi despachada para o motorista.', 'success');
+      setTimeout(() => navigate('/operador'), 1500);
+    } else {
+      showToast('Erro ao Registrar', res.error || 'Não foi possível registrar a saída.', 'error');
+    }
+  };
 
   return (
     <>
@@ -24,53 +84,91 @@ export default function Saida() {
               </div>
             </div>
 
-            <div className="glass-panel invoice-card animate-slide-up">
-              <div className="scanner-mock">
-                <i className="fa-solid fa-barcode" style={{ fontSize: '3rem', marginBottom: 10 }}></i>
-                <h3 className="brand-font" style={{ fontSize: '1.1rem' }}>Escaneie o Recibo da Transportadora</h3>
-              </div>
+            <div className="glass-panel invoice-card animate-slide-up" style={{ padding: 32 }}>
 
               <div className="form-group">
                 <label className="form-label">Motivo de Remanejamento</label>
-                <select className="form-control">
-                  <option disabled>Selecione um evento contratual...</option>
-                  <option defaultValue>Transferência entre Escolas (Equilíbrio Inteligente IA)</option>
-                  <option>Devolução Fornecedor (Defeito Organoléptico)</option>
-                  <option>Recolhimento Secretaria Sede</option>
+                <select className="form-control" value={motivo} onChange={(e) => setMotivo(e.target.value)}>
+                  <option value="transferencia">Transferência entre Escolas (Equilíbrio Inteligente IA)</option>
+                  <option value="devolucao">Devolução Fornecedor (Defeito Organoléptico)</option>
+                  <option value="recolhimento">Recolhimento Secretaria Sede</option>
                 </select>
               </div>
 
-              <div className="form-group" style={{ marginBottom: 30 }}>
-                <label className="form-label">Destinatário</label>
-                <input type="text" className="form-control" placeholder="CNPJ/ID do Órgão de Destino" defaultValue="EMEF Castro Alves (Id: 1049)" />
+              {motivo === 'transferencia' && (
+                <div className="form-group">
+                  <label className="form-label">Escola Destinatária</label>
+                  <select className="form-control" value={destinatario} onChange={(e) => setDestinatario(e.target.value)}>
+                    <option value="">Selecione a escola de destino...</option>
+                    {escolas.map((e) => (
+                      <option key={e.id} value={e.id}>{e.nome}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              <div className="form-group">
+                <label className="form-label">Insumo para Transferência</label>
+                <select className="form-control" value={estoqueId} onChange={(e) => setEstoqueId(e.target.value)}>
+                  <option value="">Selecione o insumo...</option>
+                  {lotesSelecionaveis.map((l) => (
+                    <option key={l.id} value={l.id}>{l.nome} — Lote {l.lote} ({parseFloat(l.volume_kg).toFixed(1)} kg disponíveis)</option>
+                  ))}
+                </select>
               </div>
 
-              <div className="table-wrapper">
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>Insumo Autuado</th>
-                      <th>Hash (Blockchain)</th>
-                      <th>Volume Solicitado</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Carne Moída Bovina</td>
-                      <td style={{ fontFamily: 'monospace' }}>#4920-A</td>
-                      <td>5 kg</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+              {estoqueId && (
+                <div className="form-group" style={{ marginBottom: 30 }}>
+                  <label className="form-label">Quantidade (kg)</label>
+                  <input
+                    type="number"
+                    step="any"
+                    min="0.1"
+                    max={loteSelecionado?.volume_kg}
+                    className="form-control"
+                    placeholder={`Máx. ${parseFloat(loteSelecionado?.volume_kg || 0).toFixed(1)} kg`}
+                    value={quantidade}
+                    onChange={(e) => setQuantidade(e.target.value)}
+                  />
+                </div>
+              )}
 
-              <div style={{ marginTop: 40, textAlign: 'right' }}>
+              {/* Preview do lote selecionado */}
+              {loteSelecionado && (
+                <div className="table-wrapper" style={{ marginBottom: 24 }}>
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th>Insumo Autuado</th>
+                        <th>Hash (Blockchain)</th>
+                        <th>Volume Disponível</th>
+                        <th>Quantidade Transferida</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>{loteSelecionado.nome}</td>
+                        <td style={{ fontFamily: 'monospace' }}>{loteSelecionado.lote}</td>
+                        <td>{parseFloat(loteSelecionado.volume_kg).toFixed(1)} kg</td>
+                        <td style={{ color: quantidade ? 'var(--primary)' : 'var(--text-muted)', fontWeight: 700 }}>
+                          {quantidade ? `${quantidade} kg` : '—'}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              <div style={{ marginTop: 20, textAlign: 'right' }}>
                 <button
                   className="btn btn-primary"
-                  onClick={() => mockSubmit({ successTitle: 'Manifesto Gerado', successMsg: 'A guia de remessa eletrônica foi despachada para o motorista.' })}
-                  disabled={loading}
+                  onClick={handleSubmit}
+                  disabled={submitting}
                 >
-                  {loading ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Processando...</> : <><i className="fa-solid fa-truck-fast"></i> Validar Saída (Guia GNRE)</>}
+                  {submitting
+                    ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Processando...</>
+                    : <><i className="fa-solid fa-truck-fast"></i> Validar Saída (Guia GNRE)</>
+                  }
                 </button>
               </div>
             </div>

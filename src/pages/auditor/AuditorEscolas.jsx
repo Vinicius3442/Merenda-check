@@ -14,7 +14,7 @@ export default function AuditorEscolas() {
         <div>
           <h1 style={{ display: 'flex', alignItems: 'center', gap: 12 }}>Lista de Jurisdição</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>
-            Nível de desperdício em relação às catracas e integridade dos Smart Contracts e estoques locais.
+            Nível de desperdício em relação às catracas e integridade dos Hashes Criptográficos e estoques locais.
           </p>
         </div>
         <div>

@@ -64,7 +64,7 @@ Funcionalidades Principais
 ✔ Registro de refeições servidas por escola
 ✔ Controle de Resto-Ingesta e combate ao desperdício
 ✔ Relatórios automáticos para prestação de contas
-✔ Rastreabilidade blockchain por lote
+✔ Rastreabilidade com Assinatura SHA-256 por lote
 ✔ Dashboard preditivo com Inteligência Artificial
 ✔ Portal de transparência pública
 
@@ -75,7 +75,7 @@ Perfis de Usuário
 - Nutricionista     — Gerencia cardápios conforme PNAE
 - Auditor Municipal — Monitora toda a rede escolar
 - Setor de Compras  — Controla contratos e fornecedores
-- Transportadora    — Emite lotes blockchain de entrega
+- Transportadora    — Emite lotes rastreáveis com Assinatura Digital
 - SysAdmin          — Administra usuários e audit trail
 
 Contato
@@ -237,18 +237,38 @@ Feito com ❤ para a educação pública brasileira.
 
       {/* Rodapé Institucional */}
       <footer className="landing-footer">
-        <div className="landing-footer-inner" style={{ gridTemplateColumns: '1fr' }}>
+        <div className="landing-footer-inner" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 40 }}>
           {/* Coluna 1: Marca */}
-          <div style={{ textAlign: 'center' }}>
+          <div>
             <img src="/logo.png" alt="Merenda Check" className="logo-img" style={{ marginBottom: 16 }} />
             <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: 1.7, marginBottom: 16 }}>
-              Plataforma inteligente de auditoria e rastreabilidade alimentar.
+              Plataforma inteligente de auditoria e rastreabilidade alimentar com tecnologia criptográfica e IA Preditiva.
             </p>
+          </div>
+
+          {/* Coluna 2: Institucional */}
+          <div>
+            <h4 style={{ color: 'var(--text-main)', marginBottom: 16, fontFamily: 'Outfit' }}>Institucional</h4>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <li><Link to="/sobre" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>Sobre o Projeto</Link></li>
+              <li><Link to="/transparencia" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>Portal de Transparência</Link></li>
+              <li><a href="#como-funciona" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>Como Funciona</a></li>
+            </ul>
+          </div>
+
+          {/* Coluna 3: Legal */}
+          <div>
+            <h4 style={{ color: 'var(--text-main)', marginBottom: 16, fontFamily: 'Outfit' }}>Avisos Legais</h4>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <li><Link to="/privacidade" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>Política de Privacidade (LGPD)</Link></li>
+              <li><Link to="/termos" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>Termos de Uso</Link></li>
+              <li><span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}><i className="fa-solid fa-envelope"></i> ouvidoria@merendacheck.gov.br</span></li>
+            </ul>
           </div>
         </div>
 
         <div className="footer-legal">
-          <span>© 2026 Merenda Check. Inovando a Gestão Pública.</span>
+          <span>© 2026 Merenda Check. GovTech de Rastreabilidade Pública.</span>
           <span>Feito com <i className="fa-solid fa-heart" style={{ color: 'var(--alert-red)' }}></i> para a educação.</span>
         </div>
       </footer>

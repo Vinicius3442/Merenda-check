@@ -42,7 +42,7 @@ const MENUS = {
   ],
   transportadora: [
     { to: '/transportadora',              icon: 'fa-house',  label: 'Visão Geral' },
-    { to: '/transportadora/emitir-lote',  icon: 'fa-qrcode', label: 'Emitir Lote Blockchain' },
+    { to: '/transportadora/emitir-lote',  icon: 'fa-qrcode', label: 'Emitir Lote (Criptografado)' },
   ],
 };
 

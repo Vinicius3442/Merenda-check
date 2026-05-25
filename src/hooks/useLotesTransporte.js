@@ -55,8 +55,14 @@ export function useLotesTransporte() {
   }
 
   async function emitirLote({ fornecedor_id, nota_fiscal, placa, motorista, origem, destino_escola, itens }) {
-    // Gerar hash simulado para o "blockchain"
-    const txHash = '0x' + Array.from({ length: 40 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
+    // Gerar Hash Criptográfico Real (SHA-256) para Imutabilidade (Blockchain simulation)
+    const payloadParaHash = JSON.stringify({ fornecedor_id, nota_fiscal, placa, motorista, origem, destino_escola, itens, timestamp: Date.now() });
+    const encoder = new TextEncoder();
+    const data = encoder.encode(payloadParaHash);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const txHash = '0x' + hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    
     const qrData = `merendacheck://lote/${txHash}`;
 
     if (!isSupabaseConfigured) {

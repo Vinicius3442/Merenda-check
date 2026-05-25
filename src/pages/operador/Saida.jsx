@@ -140,7 +140,7 @@ export default function Saida() {
                     <thead>
                       <tr>
                         <th>Insumo Autuado</th>
-                        <th>Hash (Blockchain)</th>
+                        <th>Hash (Assinatura SHA-256)</th>
                         <th>Volume Disponível</th>
                         <th>Quantidade Transferida</th>
                       </tr>

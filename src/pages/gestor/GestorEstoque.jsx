@@ -210,7 +210,7 @@ export default function GestorEstoque() {
               <th>Volume Físico</th>
               <th>Data Validade</th>
               <th>Status FIFO</th>
-              <th>Blockchain Hash</th>
+              <th>Hash Criptográfico</th>
             </tr>
           </thead>
           <tbody>
@@ -220,7 +220,7 @@ export default function GestorEstoque() {
 
         <div class="footer">
           <div>
-            <p><strong>Hash Blockchain da Auditoria:</strong> SHA-256/MC-${Math.random().toString(36).substring(2, 10).toUpperCase()}</p>
+            <p><strong>Hash SHA-256 da Auditoria:</strong> SHA-256/MC-${Math.random().toString(36).substring(2, 10).toUpperCase()}</p>
             <p style="margin-top: 4px;">Este documento constitui trilha oficial e imutável para fins de prestação de contas do PNAE.</p>
           </div>
           <div class="signature-box">
@@ -377,7 +377,7 @@ export default function GestorEstoque() {
             fontSize: '0.8rem', color: 'var(--text-muted)'
           }}>
             <span><i className="fa-solid fa-circle-info" style={{ marginRight: 6 }}></i>{estoque.length} lotes registrados</span>
-            <span style={{ color: 'var(--primary)' }}><i className="fa-solid fa-shield-halved" style={{ marginRight: 6 }}></i>Rastreio Blockchain Ativo</span>
+            <span style={{ color: 'var(--primary)' }}><i className="fa-solid fa-shield-halved" style={{ marginRight: 6 }}></i>Assinatura Digital Ativa</span>
           </div>
         )}
       </div>

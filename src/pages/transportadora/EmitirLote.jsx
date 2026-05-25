@@ -57,7 +57,7 @@ export default function EmitirLote() {
       <header className="page-header">
         <div>
           <h1 className="page-title">Emitir Lote de Transporte</h1>
-          <p className="page-subtitle">Gere o QR Code Blockchain para rastreabilidade de entrega</p>
+          <p className="page-subtitle">Gere o QR Code com Assinatura Criptográfica para rastreabilidade</p>
         </div>
       </header>
 
@@ -142,9 +142,9 @@ export default function EmitirLote() {
               disabled={gerando}
             >
               {gerando ? (
-                <><i className="fa-solid fa-circle-notch fa-spin"></i> Emitindo Smart Contract...</>
+                <><i className="fa-solid fa-circle-notch fa-spin"></i> Gerando Hash SHA-256...</>
               ) : (
-                <><i className="fa-solid fa-link"></i> Emitir Lote no Blockchain</>
+                <><i className="fa-solid fa-link"></i> Assinar Lote Criptograficamente</>
               )}
             </button>
           </form>
@@ -159,7 +159,7 @@ export default function EmitirLote() {
 
           <h2 style={{ marginBottom: 10 }}>Lote Emitido com Sucesso</h2>
           <p style={{ color: 'var(--text-muted)', marginBottom: 30 }}>
-            Smart Contract registrado. O QR Code abaixo acompanha a carga. A merendeira deverá escaneá-lo no ato do recebimento.
+            Hash Criptográfico registrado. O QR Code abaixo acompanha a carga. A merendeira deverá escaneá-lo no ato do recebimento.
           </p>
 
           <div style={{ background: '#fff', padding: 20, display: 'inline-block', borderRadius: 16, marginBottom: 20 }}>

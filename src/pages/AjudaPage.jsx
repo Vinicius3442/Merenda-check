@@ -17,7 +17,7 @@ const FAQ = [
       },
       {
         q: 'O sistema funciona offline?',
-        a: 'Algumas funcionalidades de leitura funcionam offline temporariamente. O registro de lotes e emissão blockchain requerem conexão com a internet.',
+        a: 'Algumas funcionalidades de leitura funcionam offline temporariamente. O registro de lotes e assinatura SHA-256 requerem conexão com a internet.',
       },
     ],
   },
@@ -27,8 +27,8 @@ const FAQ = [
     cor: 'var(--primary)',
     perguntas: [
       {
-        q: 'Como emito um lote blockchain?',
-        a: 'Acesse "Emitir Lote Blockchain" no menu lateral. Preencha os dados do veículo, motorista, fornecedor e itens do lote. O sistema gera automaticamente um QR Code e registra a transação na blockchain.',
+        q: 'Como emito um lote com rastreabilidade?',
+        a: 'Acesse "Emitir Lote Criptografado" no menu lateral. Preencha os dados do veículo, motorista, fornecedor e itens do lote. O sistema gera automaticamente um QR Code e assina a transação com hash SHA-256.',
       },
       {
         q: 'O que fazer se o QR Code não for lido na escola?',
@@ -36,7 +36,7 @@ const FAQ = [
       },
       {
         q: 'Posso cancelar um lote emitido?',
-        a: 'Lotes registrados na blockchain são imutáveis por segurança. Em caso de erro, abra um chamado pelo Ouvidoria ou contate o Administrador para registrar uma nota de correção.',
+        a: 'Lotes assinados são imutáveis por segurança criptográfica. Em caso de erro, abra um chamado pelo Ouvidoria ou contate o Administrador para registrar uma nota de correção.',
       },
     ],
   },

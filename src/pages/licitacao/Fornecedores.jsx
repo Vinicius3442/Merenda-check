@@ -102,7 +102,7 @@ export default function Fornecedores() {
           <div>
             <h4 style={{ margin: '0 0 4px 0', color: 'var(--text-main)' }}>Como funciona a suspensão?</h4>
             <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
-              Ao clicar em "Suspender", a assinatura digital do fornecedor é colocada em uma CRL (Certificate Revocation List). A partir desse instante, se um caminhão dessa empresa for até a escola, a Merendeira não conseguirá dar entrada via QR Code no App, pois o lote será considerado inválido pelo Blockchain.
+              Ao clicar em "Suspender", a assinatura digital do fornecedor é colocada em uma CRL (Certificate Revocation List). A partir desse instante, se um caminhão dessa empresa for até a escola, a Merendeira não conseguirá dar entrada via QR Code no App, pois o lote será considerado inválido pelo sistema criptográfico.
             </p>
           </div>
         </div>

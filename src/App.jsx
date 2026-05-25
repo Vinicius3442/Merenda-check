@@ -8,13 +8,19 @@ import EsqueciSenhaPage from './pages/EsqueciSenhaPage';
 import ProfilePage from './pages/ProfilePage';
 import Mascot from './components/ui/Mascot';
 
-// Operador
+// Personas
 import OperadorHome from './pages/operador/OperadorHome';
+import Saida from './pages/operador/Saida';
 import EntradaInsumo from './pages/operador/EntradaInsumo';
 import BaixaInsumo from './pages/operador/BaixaInsumo';
 import RegistrarRefeicao from './pages/operador/RegistrarRefeicao';
 import SobraLimpa from './pages/operador/SobraLimpa';
-import Saida from './pages/operador/Saida';
+
+// Páginas Públicas
+import SobreNos from './pages/public/SobreNos';
+import Transparencia from './pages/public/Transparencia';
+import Privacidade from './pages/public/Privacidade';
+import Termos from './pages/public/Termos';
 
 // Gestor
 import GestorHome from './pages/gestor/GestorHome';
@@ -83,6 +89,10 @@ export default function App() {
         {/* Public */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/sobre" element={<SobreNos />} />
+        <Route path="/transparencia" element={<Transparencia />} />
+        <Route path="/privacidade" element={<Privacidade />} />
+        <Route path="/termos" element={<Termos />} />
         <Route path="/esqueci-senha" element={<EsqueciSenhaPage />} />
 
         {/* Protected */}

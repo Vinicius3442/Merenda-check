@@ -37,15 +37,15 @@ const ROUTE_CONTEXTS = {
   },
   '/auditor/rastrear': {
     tip: 'Insira o hash de um lote para ver toda a cadeia de custódia! 🔗',
-    context: 'O usuário está na tela de Rastreabilidade de Lotes blockchain.',
+    context: 'O usuário está na tela de Rastreabilidade de Lotes criptografados.',
   },
   '/transportadora': {
-    tip: 'Gerencie entregas e emita lotes blockchain por aqui! 🚚',
-    context: 'O usuário é da Transportadora e pode emitir lotes blockchain com QR Code para entrega nas escolas.',
+    tip: 'Gerencie entregas e emita lotes assinados por aqui! 🚚',
+    context: 'O usuário é da Transportadora e pode emitir lotes com QR Code Criptografado para entrega nas escolas.',
   },
   '/transportadora/emitir-lote': {
     tip: 'Preencha os dados do veículo e do lote para gerar o QR Code! 📄',
-    context: 'O usuário está na tela de Emissão de Lote Blockchain.',
+    context: 'O usuário está na tela de Emissão de Lote Criptografado.',
   },
   '/nutricao': {
     tip: 'Acompanhe os cardápios e fichas técnicas nutricionais! 🥦',
@@ -78,7 +78,7 @@ const SYSTEM_PROMPT = `Você é o Checky, o assistente virtual simpático e inte
 
 Suas responsabilidades:
 - Ajudar usuários a entender e usar as funcionalidades do sistema
-- Responder dúvidas sobre processos (recebimento de lotes, registro de refeições, emissão blockchain, etc.)
+- Responder dúvidas sobre processos (recebimento de lotes, registro de refeições, emissão criptográfica, etc.)
 - Dar dicas contextuais sobre a tela atual do usuário
 - Ser amigável, direto e usar emojis com moderação
 - Responder SEMPRE em português brasileiro

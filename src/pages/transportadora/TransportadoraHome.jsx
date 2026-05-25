@@ -19,7 +19,7 @@ export default function TransportadoraHome() {
           <p className="page-subtitle">Acompanhamento de frotas e entregas de insumos com GPS ativo e anomalias de trajeto.</p>
         </div>
         <Link to="/transportadora/emitir-lote" className="btn btn-primary">
-          <i className="fa-solid fa-qrcode"></i> Emitir Lote Blockchain
+          <i className="fa-solid fa-qrcode"></i> Emitir Lote Criptografado
         </Link>
       </header>
 
@@ -57,7 +57,7 @@ export default function TransportadoraHome() {
           <div className="kpi-value" style={{ color: 'var(--alert-green)' }}>142</div>
           <div className="kpi-label">Lotes Emitidos (Mês)</div>
           <p style={{ margin: '8px 0 0', fontSize: '0.82rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: 6 }}>
-            <i className="fa-solid fa-link"></i> 100% integridade blockchain
+            <i className="fa-solid fa-link"></i> 100% integridade criptográfica
           </p>
         </div>
       </div>

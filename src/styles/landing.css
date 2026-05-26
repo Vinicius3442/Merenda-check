@@ -368,11 +368,13 @@
   border-top: 1px solid rgba(255,255,255,0.1);
   overflow: visible !important;
   margin-top: 30px;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .workflow-card:hover {
-  transform: translateY(-10px);
-  border-top-color: var(--primary);
+  transform: translateY(-10px) !important;
+  border-top-color: var(--primary) !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4) !important;
 }
 
 .workflow-num {
@@ -431,6 +433,13 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.module-card:hover {
+  transform: translateY(-10px) !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4) !important;
 }
 
 .module-icon {

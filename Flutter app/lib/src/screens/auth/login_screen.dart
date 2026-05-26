@@ -59,7 +59,24 @@ class _LoginScreenState extends State<LoginScreen> {
         _isLoading = false;
       });
       if (success) {
-        context.go('/operador');
+        final role = _selectedRole?.toLowerCase() ?? '';
+        if (role.contains('operador')) {
+          context.go('/operador');
+        } else if (role.contains('gestor')) {
+          context.go('/gestor');
+        } else if (role.contains('auditor')) {
+          context.go('/auditor');
+        } else if (role.contains('nutri')) {
+          context.go('/nutricao');
+        } else if (role.contains('licita') || role.contains('compra')) {
+          context.go('/licitacao');
+        } else if (role.contains('transporte') || role.contains('logist')) {
+          context.go('/transportadora');
+        } else if (role.contains('admin') || role.contains('sys')) {
+          context.go('/admin');
+        } else {
+          context.go('/operador');
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

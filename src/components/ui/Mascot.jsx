@@ -92,40 +92,48 @@ Regras:
 - Use o tom de um assistente governamental amigável`;
 
 
-// ─── Chama API REST da OpenAI diretamente ─────────────────────────────────────
-async function callChatGPT(apiKey, systemPrompt, history, userMessage) {
-  const url = 'https://api.openai.com/v1/chat/completions';
+// ─── Chama API REST do Google Gemini diretamente ────────────────────────────────
+async function callGemini(apiKey, systemPrompt, history, userMessage) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
-  const messages = [
-    { role: 'system', content: systemPrompt },
-    ...history,
-    { role: 'user', content: userMessage },
+  const contents = [
+    ...history.map(msg => ({
+      role: msg.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: msg.content }]
+    })),
+    {
+      role: 'user',
+      parts: [{ text: userMessage }]
+    }
   ];
 
   const res = await fetch(url, {
     method: 'POST',
     headers: { 
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      model: 'gpt-4o-mini',
-      messages: messages,
-      max_tokens: 512,
-      temperature: 0.7,
+      contents: contents,
+      systemInstruction: {
+        parts: [{ text: systemPrompt }]
+      },
+      generationConfig: {
+        temperature: 0.7,
+        maxOutputTokens: 512,
+      },
     }),
   });
 
   if (!res.ok) {
     const errData = await res.json().catch(() => ({}));
-    console.warn(`[Checky] OpenAI error ${res.status}:`, errData?.error?.message);
+    console.warn(`[Checky] Gemini error ${res.status}:`, errData?.error?.message);
     const err = new Error(errData?.error?.message || `HTTP ${res.status}`);
     err.status = res.status;
     throw err;
   }
 
   const data = await res.json();
-  return data?.choices?.[0]?.message?.content || '';
+  return data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
 }
 
 // ─── Componente ───────────────────────────────────────────────────────────────
@@ -136,7 +144,9 @@ export default function Mascot() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [hasApiKey] = useState(!!import.meta.env.VITE_OPENAI_API_KEY);
+  const [hasApiKey] = useState(
+    !!(import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.VITE_OPENAI_API_KEY)
+  );
 
   const historyRef = useRef([]);     // histórico REST: [{role, parts:[{text}]}]
   const messagesEndRef = useRef(null);
@@ -197,7 +207,7 @@ export default function Mascot() {
     const text = input.trim();
     if (!text || isTyping) return;
 
-    const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.VITE_OPENAI_API_KEY;
 
     setInput('');
     setMessages(prev => [...prev, { role: 'user', text, id: Date.now() }]);
@@ -208,7 +218,7 @@ export default function Mascot() {
         setIsTyping(false);
         setMessages(prev => [...prev, {
           role: 'assistant',
-          text: '⚠️ Chave de API não configurada. Adicione `VITE_OPENAI_API_KEY` no arquivo `.env` da raiz do projeto para ativar o assistente!',
+          text: '⚠️ Chave de API não configurada. Adicione `VITE_GEMINI_API_KEY` ou `VITE_OPENAI_API_KEY` no arquivo `.env` da raiz do projeto para ativar o assistente!',
           id: Date.now(),
         }]);
       }, 800);
@@ -219,7 +229,7 @@ export default function Mascot() {
     const systemPrompt = SYSTEM_PROMPT.replace('{CONTEXT}', ctx.context);
 
     try {
-      const reply = await callChatGPT(apiKey, systemPrompt, historyRef.current, text);
+      const reply = await callGemini(apiKey, systemPrompt, historyRef.current, text);
 
       // Atualiza histórico para manter contexto da conversa
       historyRef.current = [
@@ -230,13 +240,13 @@ export default function Mascot() {
 
       setMessages(prev => [...prev, { role: 'assistant', text: reply, id: Date.now() }]);
     } catch (err) {
-      console.error('[Checky] OpenAI error:', err);
+      console.error('[Checky] Gemini error:', err);
       const is429 = err?.status === 429 || err?.message?.includes('429');
       const is400 = err?.status === 400 || err?.message?.includes('400');
       const errMsg = is429
-        ? '⏳ Muitas requisições. Aguarde alguns segundos e tente de novo!'
+        ? '⏳ Muitas requisições da API Gemini. Aguarde alguns segundos e tente de novo!'
         : is400
-        ? '⚠️ Chave de API inválida ou sem permissão. Verifique o arquivo `.env` e reinicie o servidor.'
+        ? '⚠️ Chave de API do Gemini inválida ou sem permissão. Verifique o arquivo `.env` e reinicie o servidor.'
         : '😔 Não consegui responder agora. Tente novamente em instantes.';
       setMessages(prev => [...prev, { role: 'assistant', text: errMsg, id: Date.now() }]);
     } finally {

@@ -372,10 +372,11 @@ a {
 
 /* glass-panel hover — subtle, no large translateY jump */
 .glass-panel {
-  transition: border-color 0.25s ease, box-shadow 0.25s ease !important;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease !important;
 }
 
 .glass-panel:hover {
+  transform: translateY(-2px) scale(1.005) !important;
   border-color: rgba(16, 185, 129, 0.22) !important;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3) !important;
 }

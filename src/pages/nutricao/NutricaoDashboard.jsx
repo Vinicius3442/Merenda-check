@@ -67,6 +67,20 @@ const ACOES_NUTRICAO = [
     desc: 'Monte o cardápio semanal dentro das diretrizes PNAE.',
     color: 'var(--alert-blue)',
   },
+  {
+    to: '#',
+    icon: 'fa-apple-whole',
+    title: 'Relatório Nutricional',
+    desc: 'Exporte os indicadores de macro e micronutrientes do mês.',
+    color: 'var(--alert-green)',
+  },
+  {
+    to: '#',
+    icon: 'fa-face-smile-beam',
+    title: 'Aceitabilidade',
+    desc: 'Monitore as avaliações do teste de aceitabilidade dos pratos.',
+    color: 'var(--alert-yellow)',
+  },
 ];
 
 export default function NutricaoDashboard() {

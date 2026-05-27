@@ -239,7 +239,7 @@
 
 /* Inventory list (baixa-insumo) */
 .inventory-list { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; }
-.inv-item { border: 1px solid var(--border-subtle); padding: 20px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; background: var(--bg-surface-elevated); transition: 0.3s; cursor: pointer; }
+.inv-item { border: 1px solid var(--border-subtle); padding: 14px 16px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; background: var(--bg-surface-elevated); transition: 0.3s; cursor: pointer; }
 .inv-item:hover { border-color: var(--primary); }
 .inv-item.selected { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary); background: rgba(5, 150, 105, 0.05); }
 .inv-item.locked { opacity: 0.6; pointer-events: none; border-color: var(--border-subtle); }

@@ -349,7 +349,7 @@ export default function GestorEstoque() {
                       <div style={{ display: 'flex', gap: 6 }}>
                         {item.eligible && (
                           <Link to={`/operador/baixa?id=${item.id}`} className="btn btn-primary" style={{ padding: '7px 14px', fontSize: '0.82rem' }}>
-                            <i className="fa-solid fa-download"></i> {item.status === 'urgente' ? 'Baixar Agora' : 'Baixar'}
+                            <i className="fa-solid fa-box-open"></i> {item.status === 'urgente' ? 'Dar Baixa (Urgente)' : 'Dar Baixa'}
                           </Link>
                         )}
                         {item.status === 'bloqueado' && (

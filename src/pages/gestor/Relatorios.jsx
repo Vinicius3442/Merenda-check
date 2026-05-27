@@ -111,12 +111,10 @@ export default function Relatorios() {
 
   const handleSobra = () => {
     setLoadingSobra(true);
-    setTimeout(() => {
-      const csv = gerarRelatorioSobra();
-      downloadFile('Auditoria-SobraLimpa-D0.csv', csv);
-      showToast('Download Iniciado', 'Relatório de Sobra Limpa exportado com sucesso (CSV).', 'success');
-      setLoadingSobra(false);
-    }, 1200);
+    const csv = gerarRelatorioSobra();
+    downloadFile('Auditoria-SobraLimpa-D0.csv', csv);
+    showToast('Download Iniciado', 'Relatório de Sobra Limpa exportado com sucesso (CSV).', 'success');
+    setLoadingSobra(false);
   };
 
   const handleConsumo = () => {
@@ -125,28 +123,24 @@ export default function Relatorios() {
       return;
     }
     setLoadingConsumo(true);
-    setTimeout(() => {
-      const csv = gerarRelatorioConsumo(mesConsumo);
-      downloadFile(`Consumo-${mesConsumo}.csv`, csv);
-      showToast('Relatório Gerado', `Evolução de consumo de ${mesConsumo} exportada (CSV).`, 'success');
-      setLoadingConsumo(false);
-    }, 1400);
+    const csv = gerarRelatorioConsumo(mesConsumo);
+    downloadFile(`Consumo-${mesConsumo}.csv`, csv);
+    showToast('Relatório Gerado', `Evolução de consumo de ${mesConsumo} exportada (CSV).`, 'success');
+    setLoadingConsumo(false);
   };
 
   const handleCertificado = () => {
     setLoadingCert(true);
-    setTimeout(() => {
-      const html = gerarCertificadoHTML();
-      const janela = window.open('', '_blank');
-      if (janela) {
-        janela.document.write(html);
-        janela.document.close();
-        showToast('Certificado Emitido', 'Janela de impressão aberta. Use Ctrl+P para salvar como PDF.', 'success');
-      } else {
-        showToast('Bloqueado', 'Permita popups neste site para abrir o certificado.', 'error');
-      }
-      setLoadingCert(false);
-    }, 1000);
+    const html = gerarCertificadoHTML();
+    const janela = window.open('', '_blank');
+    if (janela) {
+      janela.document.write(html);
+      janela.document.close();
+      showToast('Certificado Emitido', 'Janela de impressão aberta. Use Ctrl+P para salvar como PDF.', 'success');
+    } else {
+      showToast('Bloqueado', 'Permita popups neste site para abrir o certificado.', 'error');
+    }
+    setLoadingCert(false);
   };
 
   return (

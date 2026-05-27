@@ -113,7 +113,7 @@ export default function OperadorHome() {
 
       {/* Grid de ações */}
       <div
-        style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24 }}
+        style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 20 }}
         className="animate-slide-up delay-100"
       >
         {actions.map((a) => (
@@ -122,16 +122,16 @@ export default function OperadorHome() {
             to={a.to}
             className="glass-panel"
             style={{ 
-              padding: 32, textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: 16,
+              padding: '24px', textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: 12,
               background: `linear-gradient(135deg, rgba(30,41,59,0.9), rgba(15,23,42,0.95))`
             }}
           >
             {/* Ícone */}
             <div style={{
-              width: 60, height: 60, borderRadius: 16,
+              width: 50, height: 50, borderRadius: 14,
               background: `linear-gradient(135deg, ${a.color}20, ${a.color}10)`, 
               color: a.color, border: `1px solid ${a.color}30`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.6rem', flexShrink: 0,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', flexShrink: 0,
               boxShadow: `0 10px 20px ${a.color}15`
             }}>
               <i className={`fa-solid ${a.icon}`}></i>

@@ -36,6 +36,20 @@ const ACOES_GESTOR = [
     desc: 'Visualize e ajuste os níveis de insumos da unidade escolar.',
     color: 'var(--alert-red)',
   },
+  {
+    to: '#',
+    icon: 'fa-chart-pie',
+    title: 'Metas de Economia',
+    desc: 'Acompanhe as métricas de redução de desperdício na merenda.',
+    color: 'var(--alert-green)',
+  },
+  {
+    to: '/licitacao/fornecedores',
+    icon: 'fa-handshake',
+    title: 'Avaliar Fornecedores',
+    desc: 'Avalie a qualidade das entregas e pontue as empresas.',
+    color: 'var(--primary-dark)',
+  },
 ];
 
 export default function GestorHome() {

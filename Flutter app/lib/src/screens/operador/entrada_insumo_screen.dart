@@ -35,7 +35,7 @@ class _EntradaInsumoScreenState extends State<EntradaInsumoScreen> {
       final response = await Supabase.instance.client
           .from('lotes_transporte')
           .select()
-          .eq('destino_escola', user.escolaId)
+          .eq('destino_escola', user.escolaId!)
           .eq('status', 'em_transito')
           .order('criado_em', ascending: false);
           

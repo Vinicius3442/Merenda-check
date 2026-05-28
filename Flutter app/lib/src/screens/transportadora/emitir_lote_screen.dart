@@ -86,7 +86,7 @@ class _EmitirLoteScreenState extends State<EmitirLoteScreen> {
                       child: SelectableText(
                         'Hash: $_generatedHash',
                         style: const TextStyle(color: Colors.white70, fontSize: 10, fontFamily: 'Courier'),
-                        textAlign: Center,
+                        textAlign: TextAlign.center,
                       ),
                     ),
                     const SizedBox(height: 20),

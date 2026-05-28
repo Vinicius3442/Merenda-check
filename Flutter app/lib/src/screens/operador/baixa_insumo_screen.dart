@@ -37,7 +37,7 @@ class _BaixaInsumoScreenState extends State<BaixaInsumoScreen> {
       final response = await Supabase.instance.client
           .from('estoque')
           .select()
-          .eq('escola_id', user.escolaId)
+          .eq('escola_id', user.escolaId!)
           .gt('volume_kg', 0)
           .order('validade', ascending: true);
           

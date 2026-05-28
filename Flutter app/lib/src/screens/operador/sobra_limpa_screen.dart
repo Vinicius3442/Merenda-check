@@ -38,7 +38,7 @@ class _SobraLimpaScreenState extends State<SobraLimpaScreen> {
       final response = await Supabase.instance.client
           .from('estoque')
           .select()
-          .eq('escola_id', user.escolaId)
+          .eq('escola_id', user.escolaId!)
           .gt('volume_kg', 0)
           .order('nome', ascending: true);
           

@@ -129,12 +129,29 @@ class _EntradaInsumoScreenState extends State<EntradaInsumoScreen> {
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: Colors.blue.shade200),
                   ),
-                  child: const Row(
-                    children: [
-                      Icon(Icons.qr_code_scanner, size: 40, color: Colors.blue),
-                      SizedBox(width: 16),
-                      Expanded(child: Text('Na versão final, a câmera será aberta aqui. Selecione o lote abaixo para simular o recebimento via leitura óptica.')),
-                    ],
+                  child: InkWell(
+                    onTap: () async {
+                      final scannedCode = await context.push('/operador/scanner');
+                      if (scannedCode != null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Lote $scannedCode lido com sucesso!')),
+                        );
+                        // Idealmente aqui setariamos o lote no _selectedLoteId se houvesse match
+                      }
+                    },
+                    child: const Row(
+                      children: [
+                        Icon(Icons.qr_code_scanner, size: 40, color: Colors.blue),
+                        SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            'Toque aqui para abrir a Câmera e Escanear o Romaneio via QR Code.',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Icon(Icons.chevron_right, color: Colors.blue),
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 24),

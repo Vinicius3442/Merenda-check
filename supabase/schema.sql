@@ -414,11 +414,36 @@ on conflict do nothing;
 -- PASSO 3: Após criar cada usuário no Auth, copie o UUID gerado
 --          e execute o INSERT abaixo substituindo o <uuid-xxx>:
 --
--- insert into public.usuarios (auth_id, nome, email, role, iniciais, escola_id, status) values
---   ('<uuid-operador>',  'Maria Silva',      'operador@merendacheck.gov.br',        'operador',       'MS', '33333333-3333-3333-3333-333333333333', 'ativo'),
---   ('<uuid-gestor>',    'Carlos Roberto',   'gestor@merendacheck.gov.br',          'gestor',         'CR', '33333333-3333-3333-3333-333333333333', 'ativo'),
---   ('<uuid-auditor>',   'Dra. Ana Gomes',   'auditor@merendacheck.gov.br',         'auditor',        'AG', null, 'ativo'),
---   ('<uuid-nutricao>',  'Dra. Fernanda L.', 'nutricao@merendacheck.gov.br',        'nutricao',       'FL', null, 'ativo'),
---   ('<uuid-licitacao>', 'Roberto Braga',    'licitacao@merendacheck.gov.br',       'licitacao',      'RB', null, 'ativo'),
---   ('<uuid-transport>', 'João Logística',   'transportadora@merendacheck.gov.br',  'transportadora', 'JL', null, 'ativo'),
---   ('<uuid-admin>',     'SysAdmin TI',      'admin@merendacheck.gov.br',           'admin',          'TI', null, 'ativo');
+insert into public.usuarios (auth_id, nome, email, role, iniciais, escola_id, status) values
+  ('24bb2470-69ec-41f6-97e2-3677d1f23323',  'Maria Silva',      'operador@merendacheck.gov.br',        'operador',       'MS', '33333333-3333-3333-3333-333333333333', 'ativo'),
+  ('b6b54dbb-0e3c-4d59-bf2d-4204e413062b',    'Carlos Roberto',   'gestor@merendacheck.gov.br',          'gestor',         'CR', '33333333-3333-3333-3333-333333333333', 'ativo'),
+  ('556fd993-a2d2-4b48-95f6-0f3b9a87798e',   'Dra. Ana Gomes',   'auditor@merendacheck.gov.br',         'auditor',        'AG', null, 'ativo'),
+  ('792f423b-aece-4763-bbac-381c3860bb72',  'Dra. Fernanda L.', 'nutricao@merendacheck.gov.br',        'nutricao',       'FL', null, 'ativo'),
+  ('36366701-5b7b-43c0-9686-85c65a6b0db0', 'Roberto Braga',    'licitacao@merendacheck.gov.br',       'licitacao',      'RB', null, 'ativo'),
+  ('791514be-b0df-452c-94b5-1c58793acd38', 'João Logística',   'transportadora@merendacheck.gov.br',  'transportadora', 'JL', null, 'ativo'),
+  ('eca16a61-fe47-414e-af97-a9f77576ec23',     'SysAdmin TI',      'admin@merendacheck.gov.br',           'admin',          'TI', null, 'ativo');
+
+-- ============================================================
+-- 12. TABELA: contatos (Formulário de Ouvidoria/Contato)
+-- ============================================================
+create table if not exists public.contatos (
+  id uuid primary key default uuid_generate_v4(),
+  nome text not null,
+  email text not null,
+  mensagem text not null,
+  lido boolean default false,
+  criado_em timestamptz default now()
+);
+
+alter table public.contatos enable row level security;
+-- Permite que qualquer pessoa insira dados no contato sem estar logada
+create policy "Inserção pública de contatos" on public.contatos for insert with check (true);
+create policy "Leitura de contatos" on public.contatos for select using (auth.role() = 'authenticated');
+
+-- ============================================================
+-- SEED: Dados de demonstração adicionais (Contatos)
+-- ============================================================
+insert into public.contatos (nome, email, mensagem, lido) values
+  ('Ana Paula', 'ana.escola@gov.br', 'Gostaria de agendar uma demonstração do sistema para a nossa rede de creches.', false),
+  ('Prefeito João', 'gabinete@prefeitura.gov.br', 'O portal de transparência está excelente. Quero estender o uso para o almoxarifado central.', true)
+on conflict do nothing;

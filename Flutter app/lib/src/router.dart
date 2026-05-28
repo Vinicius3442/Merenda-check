@@ -9,6 +9,7 @@ import 'screens/operador/entrada_insumo_screen.dart';
 import 'screens/operador/baixa_insumo_screen.dart';
 import 'screens/operador/registrar_refeicao_screen.dart';
 import 'screens/operador/sobra_limpa_screen.dart';
+import 'screens/operador/qr_scanner_screen.dart';
 
 // Gestor
 import 'screens/gestor/gestor_home_screen.dart';
@@ -77,6 +78,10 @@ final router = GoRouter(
     GoRoute(
       path: '/operador/baixa',
       builder: (context, state) => const BaixaInsumoScreen(),
+    ),
+    GoRoute(
+      path: '/operador/scanner',
+      builder: (context, state) => const QRScannerScreen(),
     ),
     GoRoute(
       path: '/operador/refeicao',

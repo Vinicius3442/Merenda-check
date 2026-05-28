@@ -1,29 +1,48 @@
 import { Link } from 'react-router-dom';
-import Footer from '../../components/ui/Footer';
+import BgMesh from '../../components/ui/BgMesh';
+import PublicFooter from '../../components/ui/PublicFooter';
+import '../../styles/landing.css';
 
 export default function Ouvidoria() {
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#f8fafc', color: '#0f172a', fontFamily: 'Inter, sans-serif' }}>
-      <header style={{ background: '#ffffff', borderBottom: '1px solid #e2e8f0', padding: '16px 24px' }}>
-        <div style={{ maxWidth: 800, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <Link to="/transparencia" style={{ color: '#64748b', textDecoration: 'none', fontSize: '1.2rem' }}>
-              <i className="fa-solid fa-arrow-left"></i>
-            </Link>
-            <h1 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, color: '#0f172a' }}>Ouvidoria da Merenda</h1>
-          </div>
-        </div>
+    <>
+      <BgMesh />
+      <header className="landing-header animate-fade-in" style={{ background: 'var(--bg-base)', borderBottom: '1px solid var(--border-subtle)' }}>
+        <Link to="/" className="landing-logo">
+          <img src="/logo.png" alt="Merenda Check" className="logo-img" />
+          <span className="landing-logo-tagline" style={{ display: 'none' }}>Ouvidoria Pública</span>
+        </Link>
+        <nav className="landing-nav">
+          <Link to="/">Voltar para Home</Link>
+          <Link to="/transparencia">Transparência</Link>
+        </nav>
+        <Link to="/login" className="btn btn-primary" style={{ borderRadius: 50, padding: '10px 24px' }}>
+          <i className="fa-solid fa-arrow-right-to-bracket"></i> Acessar
+        </Link>
       </header>
 
-      <main style={{ maxWidth: 600, margin: '40px auto', padding: '0 24px' }}>
-        <div style={{ background: '#fff', padding: 32, borderRadius: 12, border: '1px solid #e2e8f0', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }}>
-          <h2 style={{ margin: '0 0 8px 0', fontSize: '1.5rem' }}>Relatar um Problema</h2>
-          <p style={{ color: '#64748b', marginBottom: 24 }}>Sua identidade será mantida em sigilo absoluto (Opcional). As fotos vão direto para o Auditor Municipal.</p>
+      <main className="animate-slide-up" style={{ paddingTop: 140, paddingBottom: 80, maxWidth: 800, margin: '0 auto', minHeight: '80vh', paddingLeft: 20, paddingRight: 20 }}>
+        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+          <div className="compliance-tag" style={{ margin: '0 auto 20px auto' }}>
+            <i className="fa-solid fa-bullhorn"></i> Controle Social
+          </div>
+          <h1 className="hero-title" style={{ fontSize: '2.5rem', margin: 0 }}>
+            Ouvidoria da <span className="text-gradient">Merenda</span>
+          </h1>
+          <p style={{ color: 'var(--text-muted)', marginTop: 16 }}>
+            Sua identidade será mantida em sigilo absoluto. Os relatos são auditados diretamente.
+          </p>
+        </div>
+
+        <div className="glass-panel" style={{ padding: '40px', borderRadius: '24px' }}>
+          <h2 style={{ margin: '0 0 24px 0', fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: 10 }}>
+            <i className="fa-solid fa-file-signature" style={{ color: 'var(--primary)' }}></i> Relatar um Problema
+          </h2>
           
-          <form onSubmit={(e) => { e.preventDefault(); alert("Obrigado pelo seu relato. O Auditor já foi notificado."); }}>
-            <div style={{ marginBottom: 16 }}>
-              <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, fontSize: '0.9rem' }}>Selecione a Escola</label>
-              <select style={{ width: '100%', padding: '10px 14px', borderRadius: 6, border: '1px solid #cbd5e1', background: '#f8fafc' }} required>
+          <form onSubmit={(e) => { e.preventDefault(); alert("Obrigado pelo seu relato. A Ouvidoria já foi notificada e irá investigar."); }}>
+            <div className="form-group" style={{ marginBottom: 20 }}>
+              <label className="form-label" style={{ display: 'block', marginBottom: 8, color: 'var(--text-main)' }}>Selecione a Escola</label>
+              <select className="form-control" style={{ width: '100%', background: 'rgba(15, 23, 42, 0.6)' }} required>
                 <option value="">Selecione...</option>
                 <option value="1">CEI Pequeninos</option>
                 <option value="2">EMEF João Silva</option>
@@ -31,9 +50,9 @@ export default function Ouvidoria() {
               </select>
             </div>
 
-            <div style={{ marginBottom: 16 }}>
-              <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, fontSize: '0.9rem' }}>Qual o problema?</label>
-              <select style={{ width: '100%', padding: '10px 14px', borderRadius: 6, border: '1px solid #cbd5e1', background: '#f8fafc' }} required>
+            <div className="form-group" style={{ marginBottom: 20 }}>
+              <label className="form-label" style={{ display: 'block', marginBottom: 8, color: 'var(--text-main)' }}>Qual o problema?</label>
+              <select className="form-control" style={{ width: '100%', background: 'rgba(15, 23, 42, 0.6)' }} required>
                 <option value="">Selecione a categoria</option>
                 <option value="falta">Falta de Merenda (Cardápio não servido)</option>
                 <option value="qualidade">Comida estragada ou com aspecto ruim</option>
@@ -41,27 +60,25 @@ export default function Ouvidoria() {
               </select>
             </div>
 
-            <div style={{ marginBottom: 16 }}>
-              <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, fontSize: '0.9rem' }}>Detalhes Adicionais</label>
-              <textarea rows="4" placeholder="Descreva o que aconteceu..." style={{ width: '100%', padding: '10px 14px', borderRadius: 6, border: '1px solid #cbd5e1', background: '#f8fafc', resize: 'vertical' }}></textarea>
+            <div className="form-group" style={{ marginBottom: 20 }}>
+              <label className="form-label" style={{ display: 'block', marginBottom: 8, color: 'var(--text-main)' }}>Detalhes Adicionais</label>
+              <textarea className="form-control" rows="4" placeholder="Descreva o que aconteceu em detalhes..." style={{ width: '100%', resize: 'vertical', background: 'rgba(15, 23, 42, 0.6)' }} required></textarea>
             </div>
 
-            <div style={{ marginBottom: 24, padding: 16, background: '#f1f5f9', border: '1px dashed #94a3b8', borderRadius: 8, textAlign: 'center', cursor: 'pointer' }}>
-              <i className="fa-solid fa-camera" style={{ fontSize: '2rem', color: '#64748b', marginBottom: 8 }}></i>
-              <div style={{ fontWeight: 600, color: '#334155' }}>Anexar Imagem (Opcional)</div>
-              <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Tire uma foto do prato ou da situação</div>
+            <div style={{ marginBottom: 30, padding: 24, background: 'rgba(255,255,255,0.02)', border: '1px dashed var(--border-subtle)', borderRadius: 12, textAlign: 'center', cursor: 'pointer', transition: 'all 0.3s' }} onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--primary)'} onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--border-subtle)'}>
+              <i className="fa-solid fa-camera" style={{ fontSize: '2.5rem', color: 'var(--text-muted)', marginBottom: 12 }}></i>
+              <div style={{ fontWeight: 600, color: 'var(--text-main)' }}>Anexar Imagem (Opcional)</div>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: 4 }}>Tire uma foto do prato ou da situação como evidência</div>
             </div>
 
-            <button type="submit" style={{ width: '100%', padding: 16, background: '#059669', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: '1rem', cursor: 'pointer' }}>
-              Enviar Relato Anônimo
+            <button type="submit" className="btn btn-primary btn-lg" style={{ width: '100%' }}>
+              <i className="fa-solid fa-paper-plane"></i> Enviar Relato Seguro
             </button>
           </form>
         </div>
       </main>
 
-      <div style={{ padding: '24px', background: '#ffffff', borderTop: '1px solid #e2e8f0', marginTop: 'auto' }}>
-        <Footer />
-      </div>
-    </div>
+      <PublicFooter />
+    </>
   );
 }

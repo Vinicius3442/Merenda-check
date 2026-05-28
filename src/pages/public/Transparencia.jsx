@@ -8,6 +8,61 @@ import '../../styles/landing.css';
 export default function Transparencia() {
   const [lotesRecentes, setLotesRecentes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(null);
+  const [contratosDb, setContratosDb] = useState([]);
+  const [refeicoesDb, setRefeicoesDb] = useState([]);
+  const [loadingModal, setLoadingModal] = useState(false);
+
+  const formatCurrency = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val || 0);
+
+  const handleOpenContratos = async () => {
+    setShowModal('contratos');
+    setLoadingModal(true);
+    const { data } = await supabase
+      .from('contratos')
+      .select('*, fornecedores(nome, cnpj)')
+      .eq('status', 'vigente');
+    if (data) setContratosDb(data);
+    setLoadingModal(false);
+  };
+
+  const handleOpenDesperdicio = async () => {
+    setShowModal('desperdicio');
+    setLoadingModal(true);
+    // Buscar as refeições mais recentes para ter dados
+    const { data } = await supabase
+      .from('refeicoes')
+      .select('*, escolas(nome)')
+      .order('data_ref', { ascending: false })
+      .limit(10);
+    if (data) {
+      // Agrupar por escola para calcular taxa
+      const grouped = data.reduce((acc, curr) => {
+        const escolaName = curr.escolas?.nome || 'Escola Desconhecida';
+        if (!acc[escolaName]) acc[escolaName] = { refeicoes: 0, sobras: 0 };
+        acc[escolaName].refeicoes += parseInt(curr.total_servidos || 0);
+        acc[escolaName].sobras += parseFloat(curr.resto_kg || 0);
+        return acc;
+      }, {});
+
+      const processed = Object.entries(grouped).map(([escola, val]) => {
+        const pesoPorRefeicao = 0.4; // Ex: 400g por refeição
+        const comidaServidaKg = val.refeicoes * pesoPorRefeicao;
+        let taxaNum = 0;
+        if (comidaServidaKg > 0) taxaNum = (val.sobras / comidaServidaKg) * 100;
+        
+        return {
+          escola,
+          refeicoes: val.refeicoes,
+          sobras: val.sobras.toFixed(1) + ' kg',
+          taxa: taxaNum.toFixed(1) + '%',
+          status: taxaNum < 5 ? 'excelente' : taxaNum < 10 ? 'bom' : 'alerta'
+        };
+      });
+      setRefeicoesDb(processed);
+    }
+    setLoadingModal(false);
+  };
 
   useEffect(() => {
     async function fetchPublicData() {
@@ -119,13 +174,13 @@ export default function Transparencia() {
               <i className="fa-solid fa-file-contract" style={{ fontSize: '2.5rem', color: 'var(--alert-blue)', marginBottom: 16 }}></i>
               <h3 style={{ marginBottom: 10 }}>Contratos Abertos</h3>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: 16 }}>Visualize as atas de registro de preço e contratos com fornecedores do PNAE.</p>
-              <button className="btn btn-secondary" style={{ width: '100%' }}>Consultar</button>
+              <button className="btn btn-secondary" style={{ width: '100%' }} onClick={handleOpenContratos}>Consultar</button>
             </div>
             <div className="card glass-panel" style={{ padding: 24, textAlign: 'center' }}>
               <i className="fa-solid fa-chart-pie" style={{ fontSize: '2.5rem', color: 'var(--alert-yellow)', marginBottom: 16 }}></i>
               <h3 style={{ marginBottom: 10 }}>Desperdício (Sobras)</h3>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: 16 }}>Estatísticas reais de resto-ingesta por unidade escolar em tempo real.</p>
-              <button className="btn btn-secondary" style={{ width: '100%' }}>Ver Relatórios</button>
+              <button className="btn btn-secondary" style={{ width: '100%' }} onClick={handleOpenDesperdicio}>Ver Relatórios</button>
             </div>
             <div className="card glass-panel" style={{ padding: 24, textAlign: 'center', border: '1px solid var(--alert-green)' }}>
               <i className="fa-solid fa-shield-halved" style={{ fontSize: '2.5rem', color: 'var(--alert-green)', marginBottom: 16 }}></i>
@@ -182,6 +237,91 @@ export default function Transparencia() {
           </div>
         </div>
       </main>
+
+      {/* Modais */}
+      {showModal === 'contratos' && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div className="glass-panel animate-slide-up" style={{ background: 'var(--bg-surface)', width: '100%', maxWidth: 800, padding: 30, borderRadius: 20 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10, fontSize: '1.5rem' }}>
+                <i className="fa-solid fa-file-contract" style={{ color: 'var(--alert-blue)' }}></i> Contratos PNAE Ativos
+              </h2>
+              <button onClick={() => setShowModal(null)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '2rem', cursor: 'pointer' }}>&ti            <div style={{ overflowX: 'auto' }}>
+              {loadingModal ? (
+                <div style={{ textAlign: 'center', padding: 40 }}><i className="fa-solid fa-circle-notch fa-spin"></i> Consultando base de dados pública...</div>
+              ) : contratosDb.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)' }}>Nenhum contrato ativo no momento.</div>
+              ) : (
+                <table className="data-table" style={{ width: '100%', textAlign: 'left', fontSize: '0.9rem', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                      <th style={{ padding: '12px 8px', color: 'var(--text-muted)' }}>Empresa/Fornecedor</th>
+                      <th style={{ padding: '12px 8px', color: 'var(--text-muted)' }}>CNPJ</th>
+                      <th style={{ padding: '12px 8px', color: 'var(--text-muted)' }}>Objeto</th>
+                      <th style={{ padding: '12px 8px', color: 'var(--text-muted)' }}>Valor Contratado</th>
+                      <th style={{ padding: '12px 8px', color: 'var(--text-muted)' }}>Vigência</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {contratosDb.map((c) => (
+                      <tr key={c.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                        <td style={{ padding: '12px 8px' }}>{c.fornecedores?.nome || 'Fornecedor Desconhecido'}</td>
+                        <td style={{ padding: '12px 8px' }}>{c.fornecedores?.cnpj || 'N/A'}</td>
+                        <td style={{ padding: '12px 8px' }}>{c.objeto}</td>
+                        <td style={{ padding: '12px 8px', fontWeight: 'bold' }}>{formatCurrency(c.valor_total)}</td>
+                        <td style={{ padding: '12px 8px' }}>Até {new Date(c.data_fim).toLocaleDateString('pt-BR')}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showModal === 'desperdicio' && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div className="glass-panel animate-slide-up" style={{ background: 'var(--bg-surface)', width: '100%', maxWidth: 700, padding: 30, borderRadius: 20 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10, fontSize: '1.5rem' }}>
+                <i className="fa-solid fa-chart-pie" style={{ color: 'var(--alert-yellow)' }}></i> Relatório de Desperdício Recente
+              </h2>
+              <button onClick={() => setShowModal(null)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '2rem', cursor: 'pointer' }}>&times;</button>
+            </div>
+            
+            {loadingModal ? (
+              <div style={{ textAlign: 'center', padding: 40 }}><i className="fa-solid fa-circle-notch fa-spin"></i> Consolidando dados de resto-ingesta...</div>
+            ) : refeicoesDb.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)' }}>Nenhum dado de refeição consolidado recentemente.</div>
+            ) : (
+              <>
+                <p style={{ color: 'var(--text-muted)', marginBottom: 24 }}>O cálculo de Resto-Ingesta é baseado nos apontamentos reais de consumo das escolas. (Meta PNAE: &lt; 10%)</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxHeight: '60vh', overflowY: 'auto', paddingRight: 8 }}>
+                  {refeicoesDb.map((item, i) => (
+                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.03)', padding: '16px', borderRadius: 12, border: '1px solid var(--border-subtle)' }}>
+                      <div>
+                        <h4 style={{ margin: '0 0 4px 0', fontSize: '1.1rem' }}>{item.escola}</h4>
+                        <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{item.refeicoes} refeições servidas</span>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ fontWeight: 'bold', fontSize: '1.2rem', color: item.status === 'excelente' ? 'var(--alert-green)' : item.status === 'alerta' ? 'var(--alert-red)' : 'var(--alert-yellow)' }}>
+                          {item.taxa}
+                        </div>
+                        <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{item.sobras} sobras limpas</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}div>
+          </div>
+        </div>
+      )}
+
       <PublicFooter />
     </>
   );

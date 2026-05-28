@@ -2,14 +2,15 @@ import { useState } from 'react';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import { useToast } from '../../contexts/ToastContext';
 
-// ── Utilitário: dispara download de um arquivo ────────────────────────────────
 function downloadFile(nomeArquivo, conteudo, tipo = 'text/csv;charset=utf-8') {
   const blob = new Blob(['\uFEFF' + conteudo], { type: tipo });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
   a.download = nomeArquivo;
+  document.body.appendChild(a); // Fallback de compatibilidade
   a.click();
+  document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
 
@@ -118,14 +119,13 @@ export default function Relatorios() {
   };
 
   const handleConsumo = () => {
-    if (!mesConsumo) {
-      showToast('Selecione o Mês', 'Escolha o mês de referência antes de consultar.', 'error');
-      return;
-    }
+    // Para simplificar a demo, se não tiver mês, usa o mês atual
+    const mesValido = mesConsumo || new Date().toISOString().slice(0, 7);
+    
     setLoadingConsumo(true);
-    const csv = gerarRelatorioConsumo(mesConsumo);
-    downloadFile(`Consumo-${mesConsumo}.csv`, csv);
-    showToast('Relatório Gerado', `Evolução de consumo de ${mesConsumo} exportada (CSV).`, 'success');
+    const csv = gerarRelatorioConsumo(mesValido);
+    downloadFile(`Consumo-${mesValido}.csv`, csv);
+    showToast('Relatório Gerado', `Evolução de consumo exportada com sucesso (CSV).`, 'success');
     setLoadingConsumo(false);
   };
 

@@ -21,6 +21,9 @@
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   z-index: 9999;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, background, box-shadow;
+  transform: translateX(-50%) translateZ(0);
+  backface-visibility: hidden;
 }
 
 .landing-header:hover {
@@ -39,6 +42,9 @@
 .landing-logo .logo-img {
   height: 44px;
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .landing-logo:hover .logo-img {
@@ -200,6 +206,8 @@
     inset 0 0 40px rgba(16, 185, 129, 0.1);
   animation: float3D-centered 8s ease-in-out infinite;
   transform-style: preserve-3d;
+  will-change: transform;
+  backface-visibility: hidden;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -272,6 +280,9 @@
   border: 1px solid rgba(255,255,255,0.03);
   text-align: center;
   transition: transform 0.3s;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .mockup-kpi:hover {
@@ -369,10 +380,13 @@
   overflow: visible !important;
   margin-top: 30px;
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .workflow-card:hover {
-  transform: translateY(-10px) !important;
+  transform: translateY(-2px) !important;
   border-top-color: var(--primary) !important;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4) !important;
 }
@@ -434,10 +448,13 @@
   flex-direction: column;
   gap: 20px;
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .module-card:hover {
-  transform: translateY(-10px) !important;
+  transform: translateY(-2px) !important;
   border-color: var(--primary) !important;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4) !important;
 }

@@ -6,7 +6,6 @@ import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import EsqueciSenhaPage from './pages/EsqueciSenhaPage';
 import ProfilePage from './pages/ProfilePage';
-import Mascot from './components/ui/Mascot';
 
 // Personas
 import OperadorHome from './pages/operador/OperadorHome';
@@ -143,7 +142,6 @@ export default function App() {
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-      <Mascot />
     </BrowserRouter>
   );
 }

@@ -38,10 +38,13 @@ const ACOES_GESTOR = [
   },
   {
     to: '#',
-    icon: 'fa-chart-pie',
-    title: 'Metas de Economia',
-    desc: 'Acompanhe as métricas de redução de desperdício na merenda.',
+    icon: 'fa-file-signature',
+    title: 'Assinar Prestação FNDE',
+    desc: 'Assina digitalmente os relatórios de consumo do mês atual.',
     color: 'var(--alert-green)',
+    isAction: true,
+    successTitle: 'Prestação Assinada',
+    successMsg: 'Os documentos foram assinados digitalmente e enviados à Auditoria.',
   },
   {
     to: '/licitacao/fornecedores',
@@ -57,6 +60,8 @@ export default function GestorHome() {
   const { loading: submitting, mockSubmit } = useMockSubmit();
   const { kpis, chartData, loading } = useDashboardStats('gestor', user?.escola_id);
   const [toastMsg, setToastMsg] = useState('');
+  const [loteResolvido, setLoteResolvido] = useState(false);
+  const [assinouPrestacao, setAssinouPrestacao] = useState(false);
 
   // Trigger default system alert upon loading to alert user of the 3-day critical expiry
   useEffect(() => {
@@ -143,34 +148,66 @@ export default function GestorHome() {
           style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16 }}
           className="animate-slide-up delay-100"
         >
-          {ACOES_GESTOR.map((a) => (
-            <Link
-              key={a.to}
-              to={a.to}
-              className="glass-panel"
-              style={{
-                padding: '20px 24px', textDecoration: 'none',
-                display: 'flex', alignItems: 'center', gap: 16,
-                borderLeft: `3px solid ${a.color}`,
-                transition: 'all 0.25s',
-              }}
-              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = `0 12px 24px ${a.color}20`; }}
-              onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = ''; }}
-            >
-              <div style={{
-                width: 46, height: 46, borderRadius: 12, flexShrink: 0,
-                background: `${a.color}18`, color: a.color, border: `1px solid ${a.color}30`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem',
-              }}>
-                <i className={`fa-solid ${a.icon}`}></i>
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontWeight: 700, fontSize: '0.95rem', fontFamily: 'Outfit', marginBottom: 3 }}>{a.title}</div>
-                <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', lineHeight: 1.4 }}>{a.desc}</div>
-              </div>
-              <i className="fa-solid fa-chevron-right" style={{ color: 'var(--text-muted)', fontSize: '0.75rem', flexShrink: 0 }}></i>
-            </Link>
-          ))}
+          {ACOES_GESTOR.filter(a => !(a.title === 'Assinar Prestação FNDE' && assinouPrestacao)).map((a) => {
+            const content = (
+              <>
+                <div style={{
+                  width: 46, height: 46, borderRadius: 12, flexShrink: 0,
+                  background: `${a.color}18`, color: a.color, border: `1px solid ${a.color}30`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem',
+                }}>
+                  <i className={`fa-solid ${a.icon}`}></i>
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontWeight: 700, fontSize: '0.95rem', fontFamily: 'Outfit', marginBottom: 3 }}>{a.title}</div>
+                  <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', lineHeight: 1.4 }}>{a.desc}</div>
+                </div>
+                {a.isAction 
+                  ? <i className="fa-solid fa-check" style={{ color: a.color, fontSize: '0.85rem', flexShrink: 0 }}></i>
+                  : <i className="fa-solid fa-chevron-right" style={{ color: 'var(--text-muted)', fontSize: '0.75rem', flexShrink: 0 }}></i>
+                }
+              </>
+            );
+
+            const commonStyle = {
+              padding: '20px 24px', textDecoration: 'none',
+              display: 'flex', alignItems: 'center', gap: 16,
+              borderLeft: `3px solid ${a.color}`,
+              transition: 'all 0.25s',
+              cursor: 'pointer'
+            };
+
+            if (a.isAction) {
+              return (
+                <div
+                  key={a.title}
+                  className="glass-panel"
+                  style={commonStyle}
+                  onClick={() => {
+                    if (a.title === 'Assinar Prestação FNDE') setAssinouPrestacao(true);
+                    mockSubmit({ successTitle: a.successTitle, successMsg: a.successMsg });
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = `0 12px 24px ${a.color}20`; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = ''; }}
+                >
+                  {content}
+                </div>
+              );
+            }
+
+            return (
+              <Link
+                key={a.to}
+                to={a.to}
+                className="glass-panel"
+                style={commonStyle}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = `0 12px 24px ${a.color}20`; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = ''; }}
+              >
+                {content}
+              </Link>
+            );
+          })}
         </div>
       </div>
 
@@ -184,12 +221,18 @@ export default function GestorHome() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24 }}>
           
           {/* Alerta Lote Crítico Card */}
-          <div className="glass-panel" style={{ padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', border: '1px solid rgba(239, 68, 68, 0.25)' }}>
+          <div className="glass-panel" style={{ padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', border: loteResolvido ? '1px solid rgba(16, 185, 129, 0.25)' : '1px solid rgba(239, 68, 68, 0.25)' }}>
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                <span className="badge" style={{ background: 'rgba(239,68,68,0.1)', color: 'var(--alert-red)', border: '1px solid rgba(239,68,68,0.2)' }}>
-                  ⚠️ Risco de Perda FIFO Crítico
-                </span>
+                {loteResolvido ? (
+                  <span className="badge" style={{ background: 'rgba(16,185,129,0.1)', color: 'var(--alert-green)', border: '1px solid rgba(16,185,129,0.2)' }}>
+                    ✅ Risco FIFO Resolvido
+                  </span>
+                ) : (
+                  <span className="badge" style={{ background: 'rgba(239,68,68,0.1)', color: 'var(--alert-red)', border: '1px solid rgba(239,68,68,0.2)' }}>
+                    ⚠️ Risco de Perda FIFO Crítico
+                  </span>
+                )}
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Lote #BOV-4820</span>
               </div>
               
@@ -198,16 +241,22 @@ export default function GestorHome() {
               </h3>
               
               <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', lineHeight: '1.5', margin: '0 0 16px 0' }}>
-                O algoritmo FIFO detectou que <strong>50kg</strong> deste insumo armazenados no depósito central estão a exatamente <strong style={{ color: 'var(--alert-red)' }}>3 dias do vencimento (25/05/2026)</strong>.
+                {loteResolvido ? (
+                  <>Este lote foi <strong style={{ color: 'var(--alert-green)' }}>realocado com sucesso</strong> no cardápio de Segunda-feira. Zero desperdício garantido.</>
+                ) : (
+                  <>O algoritmo FIFO detectou que <strong>50kg</strong> deste insumo armazenados no depósito central estão a exatamente <strong style={{ color: 'var(--alert-red)' }}>3 dias do vencimento (25/05/2026)</strong>.</>
+                )}
               </p>
 
-              <div style={{
-                background: 'rgba(255,255,255,0.02)', borderRadius: 8, padding: 12,
-                border: '1px solid var(--border-subtle)', marginBottom: 20, fontSize: '0.82rem'
-              }}>
-                <strong style={{ color: 'var(--text-main)', display: 'block', marginBottom: 4 }}>Ação FIFO Automatizada Recomendada:</strong>
-                Priorizar uso no cardápio de <strong>Segunda-feira</strong> (Picadinho de Carne Moída) em substituição a lotes mais novos.
-              </div>
+              {!loteResolvido && (
+                <div style={{
+                  background: 'rgba(255,255,255,0.02)', borderRadius: 8, padding: 12,
+                  border: '1px solid var(--border-subtle)', marginBottom: 20, fontSize: '0.82rem'
+                }}>
+                  <strong style={{ color: 'var(--text-main)', display: 'block', marginBottom: 4 }}>Ação FIFO Automatizada Recomendada:</strong>
+                  Priorizar uso no cardápio de <strong>Segunda-feira</strong> (Picadinho de Carne Moída) em substituição a lotes mais novos.
+                </div>
+              )}
             </div>
           </div>
 
@@ -255,22 +304,27 @@ export default function GestorHome() {
               </div>
             </div>
 
-            <button 
-              className="btn btn-primary"
-              onClick={() => mockSubmit({ successTitle: 'Cardápio Atualizado', successMsg: 'Lote crítico #BOV-4820 foi priorizado no cardápio de segunda-feira!' })}
-              style={{
-                width: '100%',
-                fontWeight: 700,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 8,
-                padding: '12px',
-                marginTop: 16
-              }}
-            >
-              <i className="fa-solid fa-calendar-plus"></i> Aplicar Priorização no Cardápio
-            </button>
+            {!loteResolvido && (
+              <button 
+                className="btn btn-primary"
+                onClick={() => {
+                  setLoteResolvido(true);
+                  mockSubmit({ successTitle: 'Cardápio Atualizado', successMsg: 'Lote crítico #BOV-4820 foi priorizado no cardápio de segunda-feira!' });
+                }}
+                style={{
+                  width: '100%',
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 8,
+                  padding: '12px',
+                  marginTop: 16
+                }}
+              >
+                <i className="fa-solid fa-calendar-plus"></i> Aplicar Priorização no Cardápio
+              </button>
+            )}
           </div>
         </div>
       </div>

@@ -69,10 +69,13 @@ const ACOES_NUTRICAO = [
   },
   {
     to: '#',
-    icon: 'fa-apple-whole',
-    title: 'Relatório Nutricional',
-    desc: 'Exporte os indicadores de macro e micronutrientes do mês.',
+    icon: 'fa-bullhorn',
+    title: 'Publicar Cardápio Base',
+    desc: 'Publica o novo cardápio do mês para todas as escolas.',
     color: 'var(--alert-green)',
+    isAction: true,
+    successTitle: 'Cardápio Publicado',
+    successMsg: 'O novo cardápio base foi enviado para o mural de todas as escolas da rede.',
   },
   {
     to: '#',
@@ -89,6 +92,8 @@ export default function NutricaoDashboard() {
   const { estoque } = useEstoque();
   const { refeicoes } = useRefeicoes();
   const [downloadingFnde, setDownloadingFnde] = useState(false);
+  const [compraSolicitada, setCompraSolicitada] = useState(false);
+  const [cardapioPublicado, setCardapioPublicado] = useState(false);
 
   const totalEstoqueKg = estoque.reduce((acc, item) => acc + (parseFloat(item.volume_kg) || 0), 0).toFixed(1);
   const totalRefeicoes = refeicoes.reduce((acc, r) => acc + (parseInt(r.total_servidos) || 0), 0);
@@ -164,62 +169,110 @@ export default function NutricaoDashboard() {
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14 }}
             className="animate-slide-up delay-100">
-            {ACOES_NUTRICAO.map((a) => (
-              <Link
-                key={a.to}
-                to={a.to}
-                className="glass-panel"
-                style={{
-                  padding: '18px 22px', textDecoration: 'none',
-                  display: 'flex', alignItems: 'center', gap: 14,
-                  borderLeft: `3px solid ${a.color}`,
-                  transition: 'all 0.25s',
-                }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = `0 10px 20px ${a.color}20`; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = ''; }}
-              >
-                <div style={{
-                  width: 44, height: 44, borderRadius: 12, flexShrink: 0,
-                  background: `${a.color}18`, color: a.color, border: `1px solid ${a.color}30`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.15rem',
-                }}>
-                  <i className={`fa-solid ${a.icon}`}></i>
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontWeight: 700, fontSize: '0.92rem', fontFamily: 'Outfit', marginBottom: 2 }}>{a.title}</div>
-                  <div style={{ color: 'var(--text-muted)', fontSize: '0.78rem', lineHeight: 1.4 }}>{a.desc}</div>
-                </div>
-                <i className="fa-solid fa-chevron-right" style={{ color: 'var(--text-muted)', fontSize: '0.7rem', flexShrink: 0 }}></i>
-              </Link>
-            ))}
+            {ACOES_NUTRICAO.filter(a => !(a.title === 'Publicar Cardápio Base' && cardapioPublicado)).map((a) => {
+              const content = (
+                <>
+                  <div style={{
+                    width: 44, height: 44, borderRadius: 12, flexShrink: 0,
+                    background: `${a.color}18`, color: a.color, border: `1px solid ${a.color}30`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.15rem',
+                  }}>
+                    <i className={`fa-solid ${a.icon}`}></i>
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontWeight: 700, fontSize: '0.92rem', fontFamily: 'Outfit', marginBottom: 2 }}>{a.title}</div>
+                    <div style={{ color: 'var(--text-muted)', fontSize: '0.78rem', lineHeight: 1.4 }}>{a.desc}</div>
+                  </div>
+                  {a.isAction 
+                    ? <i className="fa-solid fa-bullhorn" style={{ color: a.color, fontSize: '0.85rem', flexShrink: 0 }}></i>
+                    : <i className="fa-solid fa-chevron-right" style={{ color: 'var(--text-muted)', fontSize: '0.7rem', flexShrink: 0 }}></i>
+                  }
+                </>
+              );
+
+              const commonStyle = {
+                padding: '18px 22px', textDecoration: 'none',
+                display: 'flex', alignItems: 'center', gap: 14,
+                borderLeft: `3px solid ${a.color}`,
+                transition: 'all 0.25s',
+                cursor: 'pointer'
+              };
+
+              if (a.isAction) {
+                return (
+                  <div
+                    key={a.title}
+                    className="glass-panel"
+                    style={commonStyle}
+                    onClick={() => {
+                      if (a.title === 'Publicar Cardápio Base') setCardapioPublicado(true);
+                      mockSubmit({ successTitle: a.successTitle, successMsg: a.successMsg });
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = `0 10px 20px ${a.color}20`; }}
+                    onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = ''; }}
+                  >
+                    {content}
+                  </div>
+                );
+              }
+
+              return (
+                <Link
+                  key={a.to}
+                  to={a.to}
+                  className="glass-panel"
+                  style={commonStyle}
+                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = `0 10px 20px ${a.color}20`; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = ''; }}
+                >
+                  {content}
+                </Link>
+              );
+            })}
           </div>
         </div>
 
         {/* Alerta IA */}
-        <div className="glass-panel animate-slide-up delay-100" style={{ padding: 24, marginTop: 8 }}>
+        <div className="glass-panel animate-slide-up delay-100" style={{ padding: 24, marginTop: 8, border: compraSolicitada ? '1px solid rgba(16, 185, 129, 0.3)' : 'none' }}>
           <h3 style={{ fontFamily: 'Outfit', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <i className="fa-solid fa-triangle-exclamation" style={{ color: 'var(--alert-red)' }}></i>
-            Avisos do Sistema de IA
+            {compraSolicitada ? (
+              <><i className="fa-solid fa-circle-check" style={{ color: 'var(--alert-green)' }}></i> IA: Problema Mitigado</>
+            ) : (
+              <><i className="fa-solid fa-triangle-exclamation" style={{ color: 'var(--alert-red)' }}></i> Avisos do Sistema de IA</>
+            )}
           </h3>
           <p style={{ color: 'var(--text-muted)', marginBottom: 16 }}>
             O cruzamento preditivo encontrou uma inconsistência entre o Estoque Geral e o Cardápio Planejado:
           </p>
-          <div style={{ padding: 16, background: 'rgba(245,158,11,0.1)', borderLeft: '4px solid var(--alert-yellow)', borderRadius: '0 8px 8px 0', marginBottom: 20 }}>
-            <strong>Atenção:</strong> Há déficit projetado de <strong>120kg de Carne Bovina</strong> para o dia 22/04 (Cardápio: Estrogonofe).
-            Recomenda-se acionar Licitação ou alterar o cardápio.
-          </div>
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-            <Link to="/nutricao/cardapios" className="btn btn-primary">
-              <i className="fa-solid fa-pen-to-square"></i> Editar Cardápio
-            </Link>
-            <button
-              className="btn btn-secondary"
-              onClick={() => mockSubmit({ successTitle: 'Solicitação Enviada', successMsg: 'Pedido encaminhado ao setor de Licitação com prioridade máxima.' })}
-              disabled={loading}
-            >
-              <i className="fa-solid fa-paper-plane"></i> Solicitar Compra
-            </button>
-          </div>
+          
+          {compraSolicitada ? (
+            <div style={{ padding: 16, background: 'rgba(16,185,129,0.1)', borderLeft: '4px solid var(--alert-green)', borderRadius: '0 8px 8px 0', marginBottom: 20 }}>
+              <strong>Ação Tomada:</strong> O pedido emergencial de <strong>120kg de Carne Bovina</strong> foi encaminhado e está sob análise do setor de Licitação. O déficit projetado foi mitigado.
+            </div>
+          ) : (
+            <div style={{ padding: 16, background: 'rgba(245,158,11,0.1)', borderLeft: '4px solid var(--alert-yellow)', borderRadius: '0 8px 8px 0', marginBottom: 20 }}>
+              <strong>Atenção:</strong> Há déficit projetado de <strong>120kg de Carne Bovina</strong> para o dia 22/04 (Cardápio: Estrogonofe).
+              Recomenda-se acionar Licitação ou alterar o cardápio.
+            </div>
+          )}
+
+          {!compraSolicitada && (
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+              <Link to="/nutricao/cardapios" className="btn btn-primary">
+                <i className="fa-solid fa-pen-to-square"></i> Editar Cardápio
+              </Link>
+              <button
+                className="btn btn-secondary"
+                onClick={() => {
+                  setCompraSolicitada(true);
+                  mockSubmit({ successTitle: 'Solicitação Enviada', successMsg: 'Pedido encaminhado ao setor de Licitação com prioridade máxima.' });
+                }}
+                disabled={loading}
+              >
+                <i className="fa-solid fa-paper-plane"></i> Solicitar Compra
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </DashboardLayout>

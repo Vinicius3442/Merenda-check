@@ -246,7 +246,9 @@ export default function Transparencia() {
               <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10, fontSize: '1.5rem' }}>
                 <i className="fa-solid fa-file-contract" style={{ color: 'var(--alert-blue)' }}></i> Contratos PNAE Ativos
               </h2>
-              <button onClick={() => setShowModal(null)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '2rem', cursor: 'pointer' }}>&ti            <div style={{ overflowX: 'auto' }}>
+              <button onClick={() => setShowModal(null)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '2rem', cursor: 'pointer' }}>&times;</button>
+            </div>
+            <div style={{ overflowX: 'auto' }}>
               {loadingModal ? (
                 <div style={{ textAlign: 'center', padding: 40 }}><i className="fa-solid fa-circle-notch fa-spin"></i> Consultando base de dados pública...</div>
               ) : contratosDb.length === 0 ? (
@@ -315,9 +317,6 @@ export default function Transparencia() {
                 </div>
               </>
             )}
-          </div>
-        </div>
-      )}div>
           </div>
         </div>
       )}

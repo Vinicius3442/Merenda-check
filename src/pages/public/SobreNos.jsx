@@ -7,23 +7,30 @@ export default function SobreNos() {
   return (
     <>
       <BgMesh />
-      <header className="landing-header animate-fade-in" style={{ borderBottom: '1px solid var(--border-subtle)', background: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(12px)' }}>
+      <header className="landing-header animate-fade-in" style={{ background: 'var(--bg-base)', borderBottom: '1px solid var(--border-subtle)' }}>
         <Link to="/" className="landing-logo">
-            <img src="/logo.png" alt="Merenda Check" className="logo-img" />
-          </Link>
-          <nav className="landing-nav">
-            <Link to="/">Voltar para Home</Link>
-          </nav>
-          <Link to="/login" className="btn btn-primary" style={{ borderRadius: 50, padding: '10px 24px' }}>
-            Acessar
-          </Link>
+          <img src="/logo.png" alt="Merenda Check" className="logo-img" />
+          <span className="landing-logo-tagline" style={{ display: 'none' }}>Solução de Transparência</span>
+        </Link>
+        <nav className="landing-nav">
+          <Link to="/">Voltar para Home</Link>
+        </nav>
+        <Link to="/login" className="btn btn-primary" style={{ borderRadius: 50, padding: '10px 24px' }}>
+          <i className="fa-solid fa-arrow-right-to-bracket"></i> Acessar
+        </Link>
       </header>
       
-      <main style={{ paddingTop: 120, paddingBottom: 60, maxWidth: 800, margin: '0 auto', minHeight: '80vh', paddingLeft: 20, paddingRight: 20 }}>
-        <div className="glass-panel animate-slide-up" style={{ padding: '40px 30px' }}>
-            <h1 style={{ fontSize: '2.5rem', marginBottom: 20, textAlign: 'center' }}>
-              Nossa <span className="text-gradient">Missão</span>
-            </h1>
+      <main className="animate-slide-up" style={{ paddingTop: 140, paddingBottom: 80, maxWidth: 900, margin: '0 auto', minHeight: '80vh', paddingLeft: 20, paddingRight: 20 }}>
+        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+          <div className="compliance-tag" style={{ margin: '0 auto 20px auto' }}>
+            <i className="fa-solid fa-bullseye"></i> Propósito e Visão
+          </div>
+          <h1 className="hero-title" style={{ fontSize: '3rem', margin: 0 }}>
+            Nossa <span className="text-gradient">Missão</span>
+          </h1>
+        </div>
+
+        <div className="glass-panel" style={{ padding: '50px 40px', borderRadius: '24px' }}>
             
             <div style={{ fontSize: '1.1rem', lineHeight: 1.8, color: 'var(--text-main)' }}>
               <p style={{ marginBottom: 20 }}>

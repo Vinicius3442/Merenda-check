@@ -52,6 +52,69 @@ export default function Transparencia() {
           </p>
           
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 20, marginBottom: 40 }}>
+            {/* Cardápio do Dia */}
+            <div className="card glass-panel" style={{ padding: 24, gridColumn: '1 / -1', marginBottom: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
+                <div style={{ background: 'rgba(16, 185, 129, 0.1)', color: 'var(--alert-green)', width: 48, height: 48, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}>
+                  <i className="fa-solid fa-utensils"></i>
+                </div>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '1.4rem' }}>Cardápio de Hoje</h3>
+                  <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem' }}>Refeições servidas na rede municipal</p>
+                </div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20 }}>
+                <div style={{ background: 'var(--bg-surface)', padding: 16, borderRadius: 12, border: '1px solid var(--border-subtle)' }}>
+                  <h4 style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--alert-yellow)' }}>
+                    <i className="fa-solid fa-baby"></i> Educação Infantil (Creches)
+                  </h4>
+                  <ul style={{ listStyle: 'none', padding: 0, margin: '12px 0 0 0' }}>
+                    <li style={{ padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                      <span style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-muted)' }}>DESJEJUM (08:00)</span>
+                      Mingau de Aveia com Maçã picada
+                    </li>
+                    <li style={{ padding: '8px 0' }}>
+                      <span style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-muted)' }}>ALMOÇO (11:30)</span>
+                      Arroz, Feijão, Frango Desfiado e Cenoura
+                    </li>
+                  </ul>
+                </div>
+                <div style={{ background: 'var(--bg-surface)', padding: 16, borderRadius: 12, border: '1px solid var(--border-subtle)' }}>
+                  <h4 style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--primary)' }}>
+                    <i className="fa-solid fa-child-reaching"></i> Ensino Fundamental
+                  </h4>
+                  <ul style={{ listStyle: 'none', padding: 0, margin: '12px 0 0 0' }}>
+                    <li style={{ padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                      <span style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-muted)' }}>ALMOÇO (12:00)</span>
+                      Macarronada com Carne Moída e Salada
+                    </li>
+                    <li style={{ padding: '8px 0' }}>
+                      <span style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-muted)' }}>LANCHE DA TARDE (15:00)</span>
+                      Banana e Suco de Caju
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Totais */}
+            <div className="card glass-panel" style={{ padding: 24, gridColumn: '1 / -1', display: 'flex', flexWrap: 'wrap', gap: 30, alignItems: 'center', background: 'rgba(15, 23, 42, 0.6)' }}>
+              <div style={{ flex: 1, minWidth: 250 }}>
+                <h3 style={{ margin: '0 0 8px 0', fontSize: '1.4rem' }}>Resumo em Tempo Real</h3>
+                <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem' }}>Acompanhe os números da alimentação escolar no município hoje.</p>
+              </div>
+              <div style={{ display: 'flex', gap: 40 }}>
+                <div>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Refeições Hoje</div>
+                  <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--alert-green)' }}>12.450</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Investimento Mês</div>
+                  <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-main)' }}>R$ 1.8 Mi</div>
+                </div>
+              </div>
+            </div>
+
             <div className="card glass-panel" style={{ padding: 24, textAlign: 'center' }}>
               <i className="fa-solid fa-file-contract" style={{ fontSize: '2.5rem', color: 'var(--alert-blue)', marginBottom: 16 }}></i>
               <h3 style={{ marginBottom: 10 }}>Contratos Abertos</h3>

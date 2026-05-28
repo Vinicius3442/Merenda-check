@@ -54,7 +54,6 @@ import EmitirLote from './pages/transportadora/EmitirLote';
 import AjudaPage from './pages/AjudaPage';
 
 // Public & Kiosk
-import PortalTransparencia from './pages/public/PortalTransparencia';
 import Ouvidoria from './pages/public/Ouvidoria';
 import KioskRefeitorio from './pages/kiosk/KioskRefeitorio';
 
@@ -138,7 +137,6 @@ export default function App() {
         <Route path="/ajuda" element={<ProtectedRoute><AjudaPage /></ProtectedRoute>} />
 
         {/* Telas Públicas (Sem login) */}
-        <Route path="/transparencia" element={<PortalTransparencia />} />
         <Route path="/ouvidoria" element={<Ouvidoria />} />
         <Route path="/kiosk" element={<KioskRefeitorio />} />
 

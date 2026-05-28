@@ -1,9 +1,46 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import BgMesh from '../components/ui/BgMesh';
 import PublicFooter from '../components/ui/PublicFooter';
+import { supabase } from '../lib/supabase';
 import '../styles/landing.css';
 
 export default function LandingPage() {
+  const [contatoNome, setContatoNome] = useState('');
+  const [contatoEmail, setContatoEmail] = useState('');
+  const [contatoMensagem, setContatoMensagem] = useState('');
+  const [enviando, setEnviando] = useState(false);
+  const [enviado, setEnviado] = useState(false);
+
+  const handleContatoSubmit = async (e) => {
+    e.preventDefault();
+    setEnviando(true);
+    
+    // Insert into supabase
+    const { error } = await supabase
+      .from('contatos')
+      .insert([
+        {
+          nome: contatoNome,
+          email: contatoEmail,
+          mensagem: contatoMensagem
+        }
+      ]);
+
+    setEnviando(false);
+    
+    if (error) {
+      console.error('Erro ao enviar contato:', error);
+      alert('Erro ao enviar mensagem. Tente novamente mais tarde.');
+    } else {
+      setEnviado(true);
+      setContatoNome('');
+      setContatoEmail('');
+      setContatoMensagem('');
+      // Reseta a mensagem de sucesso após 5 segundos
+      setTimeout(() => setEnviado(false), 5000);
+    }
+  };
   return (
     <>
       <BgMesh />
@@ -223,16 +260,68 @@ Feito com ❤ para a educação pública brasileira.
         </div>
       </section>
 
-      {/* CTA */}
+      {/* CTA / Contato */}
       <section className="cta-section" id="cta">
-        <div className="cta-card glass-panel animate-slide-up">
-          <h2>Transforme a <span className="text-gradient">Merenda Escolar</span></h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', maxWidth: 600, margin: '0 auto 32px', lineHeight: 1.7 }}>
-            Junte-se às escolas que já estão economizando milhões enquanto garantem refeições de maior qualidade para os alunos.
-          </p>
-          <Link to="/login" className="btn btn-primary btn-lg">
-            <i className="fa-solid fa-rocket"></i> Agendar Demonstração
-          </Link>
+        <div className="cta-card glass-panel animate-slide-up" style={{ display: 'flex', flexDirection: 'column', gap: '40px', maxWidth: '800px', padding: '40px' }}>
+          <div>
+            <h2>Transforme a <span className="text-gradient">Merenda Escolar</span></h2>
+            <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', maxWidth: 600, margin: '0 auto', lineHeight: 1.7 }}>
+              Junte-se às escolas que já estão economizando milhões enquanto garantem refeições de maior qualidade para os alunos.
+            </p>
+          </div>
+          
+          <div style={{ background: 'rgba(255, 255, 255, 0.03)', borderRadius: '16px', padding: '30px', border: '1px solid var(--border-subtle)', textAlign: 'left' }}>
+            <h3 style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <i className="fa-solid fa-envelope" style={{ color: 'var(--primary)' }}></i>
+              Fale Conosco
+            </h3>
+            
+            {enviado ? (
+              <div style={{ padding: '20px', background: 'rgba(16, 185, 129, 0.1)', border: '1px solid var(--alert-green)', borderRadius: '12px', color: 'var(--alert-green)', textAlign: 'center' }}>
+                <i className="fa-solid fa-circle-check" style={{ fontSize: '2rem', marginBottom: '10px' }}></i>
+                <h4>Mensagem Enviada!</h4>
+                <p style={{ fontSize: '0.9rem', marginTop: '5px' }}>Nossa equipe entrará em contato em breve.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleContatoSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <input 
+                    type="text" 
+                    placeholder="Seu Nome" 
+                    required 
+                    value={contatoNome}
+                    onChange={(e) => setContatoNome(e.target.value)}
+                    style={{ padding: '12px 16px', borderRadius: '8px', background: 'var(--bg-base)', border: '1px solid var(--border-subtle)', color: 'var(--text-main)', width: '100%' }}
+                  />
+                  <input 
+                    type="email" 
+                    placeholder="Seu E-mail Institucional" 
+                    required 
+                    value={contatoEmail}
+                    onChange={(e) => setContatoEmail(e.target.value)}
+                    style={{ padding: '12px 16px', borderRadius: '8px', background: 'var(--bg-base)', border: '1px solid var(--border-subtle)', color: 'var(--text-main)', width: '100%' }}
+                  />
+                </div>
+                <textarea 
+                  placeholder="Como podemos ajudar sua rede de ensino?" 
+                  required 
+                  rows="4"
+                  value={contatoMensagem}
+                  onChange={(e) => setContatoMensagem(e.target.value)}
+                  style={{ padding: '12px 16px', borderRadius: '8px', background: 'var(--bg-base)', border: '1px solid var(--border-subtle)', color: 'var(--text-main)', width: '100%', resize: 'vertical' }}
+                ></textarea>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Link to="/login" className="btn btn-secondary" style={{ padding: '10px 24px' }}>
+                    <i className="fa-solid fa-arrow-right-to-bracket"></i> Acesso Restrito
+                  </Link>
+                  <button type="submit" className="btn btn-primary" disabled={enviando} style={{ padding: '10px 24px' }}>
+                    {enviando ? <i className="fa-solid fa-circle-notch fa-spin"></i> : <i className="fa-solid fa-paper-plane"></i>}
+                    {enviando ? ' Enviando...' : ' Enviar Mensagem'}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
         </div>
       </section>
 

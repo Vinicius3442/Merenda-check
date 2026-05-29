@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import { useLotesTransporte } from '../../hooks/useLotesTransporte';
 import { useFornecedores } from '../../hooks/useFornecedores';
@@ -49,6 +50,26 @@ export default function EmitirLote() {
       setEtapa(2);
     } else {
       showToast('Erro ao Emitir Lote', res.error || 'Não foi possível registrar o lote.', 'error');
+    }
+  };
+
+  const handleDownloadQR = async () => {
+    try {
+      showToast('Gerando Imagem', 'Preparando o QR Code do romaneio para download...', 'success');
+      const url = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(loteEmitido.qrData || loteEmitido.txHash)}&color=0f172a&bgcolor=ffffff`;
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = `romaneio-${loteEmitido.txHash.substring(0, 8)}.jpg`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+    } catch (e) {
+      showToast('Erro no Download', 'Não foi possível baixar o QR Code.', 'error');
     }
   };
 
@@ -116,29 +137,35 @@ export default function EmitirLote() {
               <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
                 <thead>
                   <tr style={{ color: 'var(--text-muted)' }}>
-                    <th style={{ padding: 10 }}>Descrição</th>
-                    <th style={{ padding: 10 }}>Qtd</th>
-                    <th style={{ padding: 10 }}>Unid.</th>
-                    <th style={{ padding: 10 }}>Validade</th>
+                    <th style={{ padding: 10, width: '40%' }}>Descrição</th>
+                    <th style={{ padding: 10, width: '15%' }}>Qtd</th>
+                    <th style={{ padding: 10, width: '15%' }}>Unid.</th>
+                    <th style={{ padding: 10, width: '25%' }}>Validade</th>
+                    <th style={{ padding: 10, width: '5%' }}></th>
                   </tr>
                 </thead>
                 <tbody>
                   {items.map(item => (
                     <tr key={item.id} style={{ borderTop: '1px solid var(--border-subtle)' }}>
                       <td style={{ padding: 10 }}>
-                        <input type="text" className="form-control" value={item.descricao} onChange={e => setItems(prev => prev.map(i => i.id === item.id ? { ...i, descricao: e.target.value } : i))} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: '#fff' }} placeholder="Ex: Arroz Agulhinha" />
+                        <input type="text" className="form-control" value={item.descricao} onChange={e => setItems(prev => prev.map(i => i.id === item.id ? { ...i, descricao: e.target.value } : i))} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: '#fff', width: '100%', minWidth: '150px' }} placeholder="Ex: Arroz Agulhinha" />
                       </td>
                       <td style={{ padding: 10 }}>
-                        <input type="number" className="form-control" value={item.qtd} onChange={e => setItems(prev => prev.map(i => i.id === item.id ? { ...i, qtd: e.target.value } : i))} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: '#fff', width: 60 }} />
+                        <input type="number" className="form-control" value={item.qtd} onChange={e => setItems(prev => prev.map(i => i.id === item.id ? { ...i, qtd: e.target.value } : i))} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: '#fff', width: '100%', minWidth: '80px', textAlign: 'center' }} />
                       </td>
                       <td style={{ padding: 10 }}>
-                        <select className="form-control" value={item.unidade} onChange={e => setItems(prev => prev.map(i => i.id === item.id ? { ...i, unidade: e.target.value } : i))} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: '#fff' }}>
+                        <select className="form-control" value={item.unidade} onChange={e => setItems(prev => prev.map(i => i.id === item.id ? { ...i, unidade: e.target.value } : i))} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: '#fff', width: '100%', minWidth: '90px' }}>
                           <option value="kg" style={{ color: '#000' }}>kg</option>
-                          <option value="unidade" style={{ color: '#000' }}>unidade</option>
+                          <option value="unidade" style={{ color: '#000' }}>unid</option>
                         </select>
                       </td>
                       <td style={{ padding: 10 }}>
-                        <input type="date" className="form-control" value={item.validade} onChange={e => setItems(prev => prev.map(i => i.id === item.id ? { ...i, validade: e.target.value } : i))} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: 'var(--alert-yellow)' }} />
+                        <input type="date" className="form-control" value={item.validade} onChange={e => setItems(prev => prev.map(i => i.id === item.id ? { ...i, validade: e.target.value } : i))} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: 'var(--alert-yellow)', width: '100%', minWidth: '140px' }} />
+                      </td>
+                      <td style={{ padding: 10, textAlign: 'center' }}>
+                         <button type="button" onClick={() => setItems(prev => prev.filter(i => i.id !== item.id))} style={{ background: 'transparent', border: 'none', color: 'var(--alert-red)', cursor: 'pointer', fontSize: '1.2rem' }}>
+                           <i className="fa-solid fa-trash"></i>
+                         </button>
                       </td>
                     </tr>
                   ))}
@@ -185,13 +212,16 @@ export default function EmitirLote() {
             <strong style={{ color: 'var(--primary)' }}>Tx Hash:</strong> {loteEmitido.txHash}
           </div>
 
-          <div style={{ display: 'flex', gap: 16, justifyContent: 'center' }}>
-            <button className="btn btn-primary" onClick={() => window.print()}>
-              <i className="fa-solid fa-print"></i> Imprimir Guia
+          <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <button className="btn btn-primary" onClick={handleDownloadQR}>
+              <i className="fa-solid fa-download"></i> Baixar Romaneio (QR Code)
             </button>
             <button className="btn" onClick={() => { setEtapa(1); setPlaca(''); setMotorista(''); setLoteEmitido(null); }} style={{ background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--text-main)' }}>
               Emitir Novo Lote
             </button>
+            <Link to="/transportadora" className="btn btn-secondary" style={{ background: 'transparent', border: '1px solid var(--text-muted)' }}>
+              <i className="fa-solid fa-clock-rotate-left"></i> Histórico de Lotes
+            </Link>
           </div>
         </div>
       )}

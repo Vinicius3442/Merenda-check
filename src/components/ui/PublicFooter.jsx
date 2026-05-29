@@ -35,7 +35,6 @@ export default function PublicFooter() {
 
       <div className="footer-legal">
         <span>© 2026 Merenda Check. GovTech de Rastreabilidade Pública.</span>
-        <span>Feito com <i className="fa-solid fa-heart" style={{ color: 'var(--alert-red)' }}></i> para a educação.</span>
       </div>
     </footer>
   );

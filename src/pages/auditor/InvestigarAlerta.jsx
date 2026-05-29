@@ -213,7 +213,7 @@ export default function InvestigarAlerta() {
           usuario_email: user.email,
           acao: 'INSERT_PROCESSO_ADMINISTRATIVO',
           tabela_afetada: 'alertas',
-          detalhes: `Processo iniciado contra a escola ${escolaNome} por desvio ou anomalia.`
+          dados_novos: { detalhes: `Processo iniciado contra a escola ${escolaNome} por desvio ou anomalia.` }
         });
       } catch (e) {
         console.error('Falha ao auditar processo administrativo', e);

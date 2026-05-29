@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/auth_provider.dart';
+import 'screens/auth/landing_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/profile_screen.dart';
 import 'screens/operador/operador_home_screen.dart';
@@ -41,13 +42,14 @@ import 'screens/transportadora/transportadora_home_screen.dart';
 import 'screens/transportadora/emitir_lote_screen.dart';
 
 final router = GoRouter(
-  initialLocation: '/login',
+  initialLocation: '/',
   redirect: (BuildContext context, GoRouterState state) {
     final auth = context.read<AuthProvider>();
     final isLoggingIn = state.matchedLocation == '/login';
+    final isLanding = state.matchedLocation == '/';
 
-    if (!auth.isAuthenticated && !isLoggingIn) return '/login';
-    if (auth.isAuthenticated && isLoggingIn) {
+    if (!auth.isAuthenticated && !isLoggingIn && !isLanding) return '/';
+    if (auth.isAuthenticated && (isLoggingIn || isLanding)) {
       final role = auth.user?.role.toLowerCase() ?? '';
       
       if (role.contains('operador')) return '/operador';
@@ -63,6 +65,10 @@ final router = GoRouter(
     return null;
   },
   routes: [
+    GoRoute(
+      path: '/',
+      builder: (context, state) => const LandingScreen(),
+    ),
     GoRoute(
       path: '/login',
       builder: (context, state) => const LoginScreen(),

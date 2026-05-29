@@ -294,10 +294,10 @@ export default function GestorHome() {
           ) : (
           <div className="glass-panel" style={{ padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', border: '1px solid rgba(16, 185, 129, 0.25)', textAlign: 'center' }}>
             <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(16,185,129,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', color: 'var(--alert-green)', marginBottom: 16 }}>
-              <i className="fa-solid fa-shield-halved"></i>
+              <i className="fa-solid fa-shield-heart"></i>
             </div>
             <h3 style={{ fontFamily: 'Outfit', fontSize: '1.3rem', color: 'var(--text-main)', marginBottom: 8 }}>Estoque Saudável</h3>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>O algoritmo não identificou lotes com risco iminente de vencimento na sua unidade.</p>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>Nenhum lote com risco de vencimento foi identificado. Todos os insumos estão operacionais.</p>
           </div>
           )}
 
@@ -309,15 +309,15 @@ export default function GestorHome() {
             </h3>
             
             <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4, marginBottom: 16 }}>
-              A priorização correta deste lote de acordo com as regras FIFO evita desperdícios e garante a segurança alimentar na rede municipal.
+              {loteCritico ? 'A priorização correta deste lote evita desperdícios e garante a segurança alimentar na rede.' : 'A gestão do estoque está operando com máxima eficiência, sem riscos de perdas registradas.'}
             </p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14, flex: 1 }}>
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: 4 }}>
-                  <span>Aproveitamento Estimado</span>
+                  <span>Aproveitamento do Estoque</span>
                   <span style={{ color: (!loteCritico || loteResolvido) ? 'var(--alert-green)' : 'var(--alert-yellow)', fontWeight: 'bold' }}>
-                    {(!loteCritico || loteResolvido) ? '100%' : '55% (Risco de Perda)'}
+                    {(!loteCritico || loteResolvido) ? '100% (Excelente)' : '55% (Risco de Perda)'}
                   </span>
                 </div>
                 <div style={{ width: '100%', height: 6, background: 'rgba(255,255,255,0.05)', borderRadius: 3, overflow: 'hidden' }}>
@@ -327,13 +327,13 @@ export default function GestorHome() {
 
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: 4 }}>
-                  <span>Refeições Atendidas (Estimado)</span>
+                  <span>Capacidade Total (Refeições Projetadas)</span>
                   <span style={{ color: 'var(--alert-blue)', fontWeight: 'bold' }}>
-                    {loteCritico ? Math.floor(loteCritico.volume_kg * 4) : 0} refeições
+                    {loteCritico ? Math.floor(loteCritico.volume_kg * 4) : Math.floor(estoque.reduce((acc, item) => acc + (parseFloat(item.volume_kg) || 0), 0) * 4)} refeições
                   </span>
                 </div>
                 <div style={{ width: '100%', height: 6, background: 'rgba(255,255,255,0.05)', borderRadius: 3, overflow: 'hidden' }}>
-                  <div style={{ width: loteCritico ? '85%' : '0%', height: '100%', background: 'var(--alert-blue)', transition: 'width 0.5s' }} />
+                  <div style={{ width: '100%', height: '100%', background: 'var(--alert-blue)' }} />
                 </div>
               </div>
 
@@ -342,10 +342,10 @@ export default function GestorHome() {
                 borderRadius: 8, padding: 12, fontSize: '0.8rem', color: 'var(--text-muted)'
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--primary)', fontWeight: 'bold', marginBottom: 4 }}>
-                  <i className="fa-solid fa-shield-halved"></i>
-                  <span>Qualidade Certificada</span>
+                  <i className="fa-solid fa-shield-heart"></i>
+                  <span>Qualidade Padrão A1</span>
                 </div>
-                Lote inspecionado e liberado para consumo sob protocolo FIFO-A1.
+                {loteCritico ? 'Lote inspecionado e liberado para consumo sob protocolo FIFO.' : 'Todo o inventário certificado e apto para preparo nutricional.'}
               </div>
             </div>
 

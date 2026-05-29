@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../providers/auth_provider.dart';
 import '../../widgets/base_layout.dart';
 
 class StockItem {
+  final String id;
   final String name;
   final String category;
   double quantity;
@@ -11,6 +15,7 @@ class StockItem {
   final bool isCritical;
 
   StockItem({
+    required this.id,
     required this.name,
     required this.category,
     required this.quantity,
@@ -29,17 +34,46 @@ class GestorEstoqueScreen extends StatefulWidget {
 }
 
 class _GestorEstoqueScreenState extends State<GestorEstoqueScreen> {
-  final List<StockItem> _items = [
-    StockItem(name: 'Carne Moída Bovina', category: 'Proteínas', quantity: 50.0, unit: 'kg', validity: '29/05/2026', batchCode: 'BOV-4820', isCritical: true),
-    StockItem(name: 'Arroz Agulhinha Tipo 1', category: 'Grãos', quantity: 180.0, unit: 'kg', validity: '14/11/2026', batchCode: 'ARR-9011'),
-    StockItem(name: 'Feijão Carioca', category: 'Grãos', quantity: 120.0, unit: 'kg', validity: '10/08/2026', batchCode: 'FEI-2248'),
-    StockItem(name: 'Leite Integral em Pó', category: 'Laticínios', quantity: 45.0, unit: 'kg', validity: '02/07/2026', batchCode: 'LEI-1025'),
-    StockItem(name: 'Azeite de Oliva Extra Virgem', category: 'Óleos e Condimentos', quantity: 15.0, unit: 'L', validity: '20/12/2027', batchCode: 'AZE-8841'),
-    StockItem(name: 'Macarrão Espaguete Semola', category: 'Massas', quantity: 70.0, unit: 'kg', validity: '05/10/2026', batchCode: 'MAC-5390'),
-  ];
+  List<StockItem> _items = [];
+  bool _isLoading = true;
 
   String _searchQuery = '';
   final _adjustController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchEstoque();
+  }
+
+  Future<void> _fetchEstoque() async {
+    try {
+      final user = context.read<AuthProvider>().user;
+      if (user == null) return;
+      
+      final response = await Supabase.instance.client
+          .from('estoque')
+          .select()
+          .eq('escola_id', user.escolaId!)
+          .order('validade', ascending: true);
+          
+      setState(() {
+        _items = (response as List).map((e) => StockItem(
+          id: e['id'],
+          name: e['nome'] ?? 'Desconhecido',
+          category: 'Alimentos', 
+          quantity: (e['volume_kg'] as num).toDouble(),
+          unit: 'kg',
+          validity: e['validade']?.toString().split(' ')[0] ?? '-',
+          batchCode: e['lote'] ?? '-',
+          isCritical: e['status'] == 'urgente',
+        )).toList();
+        _isLoading = false;
+      });
+    } catch (e) {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +143,9 @@ class _GestorEstoqueScreenState extends State<GestorEstoqueScreen> {
 
             // Items List
             Expanded(
-              child: ListView.builder(
+              child: _isLoading 
+                ? const Center(child: CircularProgressIndicator())
+                : ListView.builder(
                 itemCount: filteredItems.length,
                 itemBuilder: (context, index) {
                   final item = filteredItems[index];
@@ -295,19 +331,34 @@ class _GestorEstoqueScreenState extends State<GestorEstoqueScreen> {
               child: const Text('Cancelar', style: TextStyle(color: Colors.white54)),
             ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 final double? delta = double.tryParse(_adjustController.text.trim());
                 if (delta != null) {
-                  setState(() {
-                    item.quantity = (item.quantity + delta).clamp(0.0, 9999.0);
-                  });
-                  Navigator.of(context).pop();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Estoque de "${item.name}" ajustado com sucesso para ${item.quantity} ${item.unit}!'),
-                      backgroundColor: const Color(0xFF10B981),
-                    ),
-                  );
+                  final newQuantity = (item.quantity + delta).clamp(0.0, 9999.0);
+                  
+                  try {
+                    await Supabase.instance.client
+                        .from('estoque')
+                        .update({'volume_kg': newQuantity})
+                        .eq('id', item.id);
+
+                    setState(() {
+                      item.quantity = newQuantity;
+                    });
+                    
+                    if (!mounted) return;
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Estoque de "${item.name}" ajustado com sucesso para ${item.quantity} ${item.unit}!'),
+                        backgroundColor: const Color(0xFF10B981),
+                      ),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Erro ao atualizar: $e'), backgroundColor: Colors.red),
+                    );
+                  }
                 }
               },
               style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),

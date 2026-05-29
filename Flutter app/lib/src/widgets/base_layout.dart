@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
-import 'mascot_chat.dart';
+
 
 class BaseLayout extends StatelessWidget {
   final String title;
@@ -125,10 +125,7 @@ class BaseLayout extends StatelessWidget {
           ],
         ),
       ),
-      body: MascotChatOverlay(
-        routeContext: 'O usuário está na tela "$title" (caminho: $currentRoute).',
-        child: body,
-      ),
+      body: body,
     );
   }
 

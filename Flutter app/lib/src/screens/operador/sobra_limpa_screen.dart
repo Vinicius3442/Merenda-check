@@ -4,7 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:go_router/go_router.dart';
 import '../../providers/auth_provider.dart';
 import '../../utils/theme.dart';
-import '../../widgets/mascot_chat.dart';
+
 
 class SobraLimpaScreen extends StatefulWidget {
   const SobraLimpaScreen({super.key});
@@ -86,9 +86,7 @@ class _SobraLimpaScreenState extends State<SobraLimpaScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MascotChatOverlay(
-      routeContext: 'Tela de Sobra Limpa. O usuário vai registrar alimentos que foram preparados mas não servidos (sobra limpa).',
-      child: Scaffold(
+    return Scaffold(
         appBar: AppBar(title: const Text('Registrar Sobra Limpa')),
         body: _isLoading 
           ? const Center(child: CircularProgressIndicator())
@@ -146,7 +144,6 @@ class _SobraLimpaScreenState extends State<SobraLimpaScreen> {
             ),
           ),
         ),
-      ),
     );
   }
 }

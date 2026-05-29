@@ -4,7 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:go_router/go_router.dart';
 import '../../providers/auth_provider.dart';
 import '../../utils/theme.dart';
-import '../../widgets/mascot_chat.dart';
+
 
 class RegistrarRefeicaoScreen extends StatefulWidget {
   const RegistrarRefeicaoScreen({super.key});
@@ -56,9 +56,7 @@ class _RegistrarRefeicaoScreenState extends State<RegistrarRefeicaoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MascotChatOverlay(
-      routeContext: 'O usuário está na tela de Registrar Refeição. Ajude-o a preencher a quantidade de refeições servidas e as sobras (resto-ingesta).',
-      child: Scaffold(
+    return Scaffold(
         appBar: AppBar(title: const Text('Registrar Refeição')),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -118,7 +116,6 @@ class _RegistrarRefeicaoScreenState extends State<RegistrarRefeicaoScreen> {
             ),
           ),
         ),
-      ),
     );
   }
 }

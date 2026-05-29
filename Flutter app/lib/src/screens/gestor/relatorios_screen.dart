@@ -1,3 +1,6 @@
+import 'dart:convert';
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html;
 import 'package:flutter/material.dart';
 import '../../widgets/base_layout.dart';
 
@@ -33,6 +36,17 @@ class _RelatoriosScreenState extends State<RelatoriosScreen> {
   bool _generating = false;
   String? _generatingTitle;
 
+  void _downloadFile(String filename, String title) {
+    final content = 'Documento Oficial PNAE\nRelatorio: $title\nGerado em: ${DateTime.now()}\nStatus: Conformidade Verificada e Assinada.';
+    final bytes = utf8.encode(content);
+    final blob = html.Blob([bytes]);
+    final url = html.Url.createObjectUrlFromBlob(blob);
+    final anchor = html.AnchorElement(href: url)
+      ..setAttribute("download", filename)
+      ..click();
+    html.Url.revokeObjectUrl(url);
+  }
+
   void _generateReport(ReportType type) async {
     setState(() {
       _generating = true;
@@ -42,18 +56,21 @@ class _RelatoriosScreenState extends State<RelatoriosScreen> {
     await Future.delayed(const Duration(seconds: 2));
 
     if (mounted) {
+      final fileName = '${type.title.replaceAll(' ', '_')}_Gerado_${DateTime.now().day}_${DateTime.now().month}.pdf';
       setState(() {
         _generating = false;
         _pastReports.insert(0, {
-          'title': '${type.title.replaceAll(' ', '_')}_Gerado_${DateTime.now().day}_${DateTime.now().month}.pdf',
+          'title': fileName,
           'date': 'Hoje',
           'size': '450 KB',
         });
       });
+      
+      _downloadFile(fileName, type.title);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Sucesso: "${type.title}" gerado e salvo em downloads!'),
+          content: Text('Sucesso: "${type.title}" baixado!'),
           backgroundColor: const Color(0xFF10B981),
         ),
       );
@@ -213,9 +230,10 @@ class _RelatoriosScreenState extends State<RelatoriosScreen> {
                       ),
                       trailing: const Icon(Icons.remove_red_eye, color: Colors.white38, size: 18),
                       onTap: () {
+                        _downloadFile(report['title']!, report['title']!);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('Visualizando ${report['title']}...'),
+                            content: Text('Baixando ${report['title']} novamente...'),
                             backgroundColor: const Color(0xFF3B82F6),
                           ),
                         );

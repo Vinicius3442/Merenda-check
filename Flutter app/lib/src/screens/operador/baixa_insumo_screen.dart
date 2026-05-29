@@ -4,7 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:go_router/go_router.dart';
 import '../../providers/auth_provider.dart';
 import '../../utils/theme.dart';
-import '../../widgets/mascot_chat.dart';
+
 
 class BaixaInsumoScreen extends StatefulWidget {
   const BaixaInsumoScreen({super.key});
@@ -102,9 +102,7 @@ class _BaixaInsumoScreenState extends State<BaixaInsumoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MascotChatOverlay(
-      routeContext: 'O usuário está na tela de Baixa de Insumo (FIFO). Avise que ele deve selecionar o lote mais antigo para dar baixa para a cozinha.',
-      child: Scaffold(
+    return Scaffold(
         appBar: AppBar(title: const Text('Baixa de Insumo (Preparo)')),
         body: _isLoading 
           ? const Center(child: CircularProgressIndicator())
@@ -164,7 +162,6 @@ class _BaixaInsumoScreenState extends State<BaixaInsumoScreen> {
             ),
           ),
         ),
-      ),
     );
   }
 }

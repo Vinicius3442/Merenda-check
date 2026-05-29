@@ -11,17 +11,18 @@ class AppTheme {
 
   static ThemeData get lightTheme {
     return ThemeData(
+      brightness: Brightness.dark,
       primaryColor: primaryColor,
-      scaffoldBackgroundColor: backgroundColor,
-      colorScheme: ColorScheme.light(
+      scaffoldBackgroundColor: const Color(0xFF0F172A), // Dark Slate
+      colorScheme: ColorScheme.dark(
         primary: primaryColor,
         secondary: primaryDark,
         error: errorColor,
-        background: backgroundColor,
-        surface: surfaceColor,
+        background: const Color(0xFF0F172A),
+        surface: const Color(0xFF1E293B), // Slightly lighter slate
       ),
       appBarTheme: const AppBarTheme(
-        backgroundColor: primaryColor,
+        backgroundColor: Color(0xFF1E293B),
         foregroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
@@ -39,18 +40,18 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+          borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+          borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(color: primaryColor, width: 2),
         ),
         filled: true,
-        fillColor: surfaceColor,
+        fillColor: Colors.transparent,
       ),
     );
   }

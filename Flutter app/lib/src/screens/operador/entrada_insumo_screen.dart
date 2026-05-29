@@ -4,7 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:go_router/go_router.dart';
 import '../../providers/auth_provider.dart';
 import '../../utils/theme.dart';
-import '../../widgets/mascot_chat.dart';
+
 
 class EntradaInsumoScreen extends StatefulWidget {
   const EntradaInsumoScreen({super.key});
@@ -108,9 +108,7 @@ class _EntradaInsumoScreenState extends State<EntradaInsumoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MascotChatOverlay(
-      routeContext: 'O usuário está na tela de Entrada de Insumos. Ele deve conferir o romaneio pendente (simulando a leitura do QR Code).',
-      child: Scaffold(
+    return Scaffold(
         appBar: AppBar(title: const Text('Receber Romaneio (QR Code)')),
         body: _isLoading 
           ? const Center(child: CircularProgressIndicator())
@@ -187,7 +185,6 @@ class _EntradaInsumoScreenState extends State<EntradaInsumoScreen> {
             ),
           ),
         ),
-      ),
     );
   }
 }

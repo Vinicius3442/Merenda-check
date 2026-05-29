@@ -27,7 +27,7 @@ export default function LoginPage() {
   const handleRoleSelect = (key) => {
     setSelected(key);
     setEmail(`${key}@merendacheck.gov.br`);
-    setSenha('demo1234');
+    setSenha('Merenda@2026');
   };
 
   const handleLogin = async (e) => {

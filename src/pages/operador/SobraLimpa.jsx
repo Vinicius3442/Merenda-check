@@ -74,11 +74,35 @@ export default function SobraLimpa() {
                     type="number"
                     step="0.1"
                     min="0"
-                    className="form-control large-input"
+                    className="form-control"
                     placeholder="0.0"
                     value={pesoSobra}
                     onChange={(e) => setPesoSobra(e.target.value)}
-                    style={{ textAlign: 'center', paddingRight: '80px', width: '100%' }}
+                    style={{
+                      fontSize: '4.5rem',
+                      textAlign: 'center',
+                      padding: '30px 80px 30px 20px',
+                      borderRadius: '24px',
+                      height: 'auto',
+                      fontFamily: 'Outfit',
+                      fontWeight: 800,
+                      letterSpacing: '0.05em',
+                      border: '2px solid rgba(239,68,68,0.3)',
+                      background: 'rgba(239,68,68,0.05)',
+                      color: 'var(--alert-red)',
+                      boxShadow: 'inset 0 10px 30px rgba(239,68,68,0.1)',
+                      outline: 'none',
+                      transition: 'all 0.3s',
+                      width: '100%'
+                    }}
+                    onFocus={(e) => {
+                      e.currentTarget.style.borderColor = 'var(--alert-red)';
+                      e.currentTarget.style.boxShadow = '0 0 0 4px rgba(239,68,68,0.2), inset 0 10px 30px rgba(239,68,68,0.1)';
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.borderColor = 'rgba(239,68,68,0.3)';
+                      e.currentTarget.style.boxShadow = 'inset 0 10px 30px rgba(239,68,68,0.1)';
+                    }}
                   />
                   <span style={{
                     position: 'absolute', right: 24, fontSize: '1.5rem',

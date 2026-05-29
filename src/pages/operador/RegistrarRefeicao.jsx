@@ -55,11 +55,35 @@ export default function RegistrarRefeicao() {
               <div className="form-group" style={{ marginBottom: 40 }}>
                 <input
                   type="number"
-                  className="form-control large-input"
+                  className="form-control"
                   placeholder="000"
                   value={quantidade}
                   onChange={(e) => setQuantidade(e.target.value)}
                   min="0"
+                  style={{
+                    fontSize: '4.5rem',
+                    textAlign: 'center',
+                    padding: '30px 20px',
+                    borderRadius: '24px',
+                    height: 'auto',
+                    fontFamily: 'Outfit',
+                    fontWeight: 800,
+                    letterSpacing: '0.05em',
+                    border: '2px solid rgba(16,185,129,0.3)',
+                    background: 'rgba(16,185,129,0.05)',
+                    color: 'var(--primary)',
+                    boxShadow: 'inset 0 10px 30px rgba(16,185,129,0.1)',
+                    outline: 'none',
+                    transition: 'all 0.3s'
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--primary)';
+                    e.currentTarget.style.boxShadow = '0 0 0 4px rgba(16,185,129,0.2), inset 0 10px 30px rgba(16,185,129,0.1)';
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = 'rgba(16,185,129,0.3)';
+                    e.currentTarget.style.boxShadow = 'inset 0 10px 30px rgba(16,185,129,0.1)';
+                  }}
                 />
               </div>
 

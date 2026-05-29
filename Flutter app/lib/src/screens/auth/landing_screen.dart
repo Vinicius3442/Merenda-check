@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'dart:ui';
 
 class LandingScreen extends StatelessWidget {
   const LandingScreen({super.key});
@@ -11,7 +10,7 @@ class LandingScreen extends StatelessWidget {
       backgroundColor: const Color(0xFF0F172A),
       body: Stack(
         children: [
-          // Background blobs for visual effect
+          // Background Glows
           Positioned(
             top: -100,
             left: -100,
@@ -43,132 +42,216 @@ class LandingScreen extends StatelessWidget {
             ),
           ),
           
+          // Main Content
           SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32.0),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Logo / Icon
-                  const Icon(
-                    Icons.shield_moon,
-                    size: 80,
-                    color: Color(0xFF10B981),
-                  ),
-                  const SizedBox(height: 24),
-                  
-                  // App Title with Gradient simulation (ShaderMask)
-                  ShaderMask(
-                    shaderCallback: (bounds) => const LinearGradient(
-                      colors: [Color(0xFF10B981), Color(0xFF3B82F6)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ).createShader(bounds),
-                    child: const Text(
-                      'Merenda Check',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 42,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.white,
-                        letterSpacing: -1,
+                  // Logo / Header
+                  Row(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF10B981).withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(Icons.shield_outlined, color: Color(0xFF10B981)),
                       ),
+                      const SizedBox(width: 12),
+                      const Text(
+                        'Merenda Check',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w900,
+                          fontFamily: 'Outfit',
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 60),
+
+                  // Hero Text
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF10B981).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: const Color(0xFF10B981).withOpacity(0.3)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: const [
+                        Icon(Icons.verified_user, color: Color(0xFF10B981), size: 14),
+                        SizedBox(width: 6),
+                        Text(
+                          'Transparência Pública',
+                          style: TextStyle(color: Color(0xFF10B981), fontSize: 11, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Do Almoxarifado\nao Prato do Aluno.',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 36,
+                      fontWeight: FontWeight.w900,
+                      fontFamily: 'Outfit',
+                      height: 1.1,
                     ),
                   ),
                   const SizedBox(height: 16),
-                  
-                  // Subtitle
-                  const Text(
-                    'Ecossistema Logístico de Alta Performance para a Alimentação Escolar.',
-                    textAlign: TextAlign.center,
+                  Text(
+                    'Gestão inteligente, rastreabilidade completa e auditoria em tempo real. Elimine perdas na merenda escolar.',
                     style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white70,
+                      color: Colors.white.withOpacity(0.7),
+                      fontSize: 15,
                       height: 1.5,
                     ),
                   ),
-                  const SizedBox(height: 60),
+                  const SizedBox(height: 40),
 
-                  // Glassmorphism Card
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(24),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-                      child: Container(
-                        padding: const EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.05),
-                          borderRadius: BorderRadius.circular(24),
-                          border: Border.all(color: Colors.white.withOpacity(0.1)),
+                  // Acesso CTA
+                  InkWell(
+                    onTap: () => context.push('/login'),
+                    borderRadius: BorderRadius.circular(16),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 18),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF10B981), Color(0xFF059669)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
                         ),
-                        child: Column(
-                          children: [
-                            const Row(
-                              children: [
-                                Icon(Icons.check_circle, color: Color(0xFF10B981), size: 20),
-                                SizedBox(width: 12),
-                                Expanded(child: Text('Auditoria em Tempo Real', style: TextStyle(color: Colors.white70))),
-                              ],
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF10B981).withOpacity(0.4),
+                            blurRadius: 20,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Icon(Icons.login, color: Colors.white),
+                          SizedBox(width: 10),
+                          Text(
+                            'Acessar Sistema',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Outfit',
                             ),
-                            const SizedBox(height: 12),
-                            const Row(
-                              children: [
-                                Icon(Icons.check_circle, color: Color(0xFF10B981), size: 20),
-                                SizedBox(width: 12),
-                                Expanded(child: Text('Rastreabilidade Blockchain', style: TextStyle(color: Colors.white70))),
-                              ],
-                            ),
-                            const SizedBox(height: 12),
-                            const Row(
-                              children: [
-                                Icon(Icons.check_circle, color: Color(0xFF10B981), size: 20),
-                                SizedBox(width: 12),
-                                Expanded(child: Text('Prevenção de Desperdícios', style: TextStyle(color: Colors.white70))),
-                              ],
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                   const SizedBox(height: 60),
 
-                  // Action Button
-                  ElevatedButton(
-                    onPressed: () => context.go('/login'),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      backgroundColor: const Color(0xFF10B981),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      elevation: 8,
-                      shadowColor: const Color(0xFF10B981).withOpacity(0.5),
-                    ),
-                    child: const Text(
-                      'Acessar Sistema',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.2,
-                      ),
+                  // Workflow / Features
+                  const Text(
+                    'Como Funciona',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Outfit',
                     ),
                   ),
                   const SizedBox(height: 24),
                   
-                  // Footer
-                  Text(
-                    '© 2026 GovTech Solutions.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.white.withOpacity(0.3),
-                    ),
+                  _buildFeatureCard(
+                    icon: Icons.qr_code_scanner,
+                    color: const Color(0xFF3B82F6),
+                    title: 'Recepção Inteligente',
+                    desc: 'Leitura via QR Code com auditoria imediata. Pesagem e validade.',
                   ),
+                  _buildFeatureCard(
+                    icon: Icons.inventory_2,
+                    color: const Color(0xFFF59E0B),
+                    title: 'Estoque Dinâmico',
+                    desc: 'Algoritmo FIFO garante o consumo dos itens corretos evitando validade expirada.',
+                  ),
+                  _buildFeatureCard(
+                    icon: Icons.restaurant,
+                    color: const Color(0xFF10B981),
+                    title: 'Preparo Rastreado',
+                    desc: 'Transformação dos insumos em refeições documentada, com ficha técnica.',
+                  ),
+                  
+                  const SizedBox(height: 40),
                 ],
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeatureCard({required IconData icon, required Color color, required String title, required String desc}) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1E293B).withOpacity(0.7),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(icon, color: color, size: 28),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Outfit',
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  desc,
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.6),
+                    fontSize: 13,
+                    height: 1.4,
+                  ),
+                ),
+              ],
             ),
           ),
         ],

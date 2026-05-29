@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import jsQR from 'jsqr';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import Footer from '../../components/ui/Footer';
@@ -22,16 +23,60 @@ export default function EntradaInsumo() {
     lote: '',
   });
 
+  const fileInputRef = useRef(null);
+
   const handleSimularScan = () => {
-    setForm({
-      fornecedor: 'AgroSul Alimentos SA',
-      nome: 'Carne Moída Bovina - Int. Nacional',
-      volume_kg: '100',
-      validade: '2026-06-15',
-      observacao: 'Lote íntegro, aferição de temperatura OK.',
-      lote: `#${Math.floor(Math.random() * 9000 + 1000)}-${String.fromCharCode(65 + Math.floor(Math.random() * 26))}`,
-    });
-    showToast('Lote Identificado', 'Dados do fornecedor importados via QR Code.', 'success');
+    fileInputRef.current?.click();
+  };
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, img.width, img.height);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        
+        const code = jsQR(imageData.data, imageData.width, imageData.height);
+        
+        if (code) {
+          showToast('QR Code Lido!', 'Decodificando dados criptografados do romaneio...', 'success');
+          
+          try {
+            // Tenta dar parse no JSON, ou usa o própio texto como lote (hash)
+            let qrData = code.data;
+            if (qrData.startsWith('{')) {
+              const parsed = JSON.parse(qrData);
+              setForm({
+                fornecedor: parsed.fornecedor || 'Fornecedor Identificado',
+                nome: parsed.itens?.[0]?.descricao || '',
+                volume_kg: parsed.itens?.[0]?.qtd?.toString() || '',
+                validade: parsed.itens?.[0]?.validade || '',
+                observacao: `Motorista: ${parsed.motorista} | Placa: ${parsed.placa}`,
+                lote: parsed.txHash || code.data,
+              });
+            } else {
+              // Fallback para apenas o hash
+              setForm(prev => ({ ...prev, lote: code.data }));
+            }
+          } catch (err) {
+             setForm(prev => ({ ...prev, lote: code.data }));
+          }
+        } else {
+          showToast('Erro de Leitura', 'Nenhum QR Code válido encontrado na imagem.', 'error');
+        }
+      };
+      img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+    e.target.value = ''; // reseta o input
   };
 
   const handleChange = (e) => {
@@ -79,7 +124,16 @@ export default function EntradaInsumo() {
         </div>
 
             <div className="glass-panel animate-slide-up" style={{ padding: 40 }}>
-              {/* Scanner mockup */}
+              {/* File Input Oculto */}
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                accept="image/*" 
+                style={{ display: 'none' }} 
+                onChange={handleFileUpload} 
+              />
+              
+              {/* Scanner mockup/upload */}
               <div 
                 onClick={handleSimularScan}
                 style={{
@@ -87,10 +141,15 @@ export default function EntradaInsumo() {
                 display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                 background: 'rgba(5, 150, 105, 0.05)', color: 'var(--primary)', marginBottom: 30, cursor: 'pointer',
                 transition: '0.3s', fontSize: '1.1rem', gap: 10,
-              }}>
+              }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(5, 150, 105, 0.1)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(5, 150, 105, 0.05)'; }}
+              >
                 <i className="fa-solid fa-qrcode" style={{ fontSize: '3rem' }}></i>
-                <span style={{ fontWeight: 700, fontFamily: 'Outfit' }}>Toque para Escanear QR Code</span>
-                <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Lote pré-preenchido: {form.lote}</span>
+                <span style={{ fontWeight: 700, fontFamily: 'Outfit' }}>Toque para Enviar QR Code do Romaneio</span>
+                <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                  {form.lote ? `Lote importado: ${form.lote.substring(0, 12)}...` : 'Suporta JPG, PNG.'}
+                </span>
               </div>
 
               <div className="form-group">

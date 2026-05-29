@@ -70,44 +70,44 @@ class _LoginScreenState extends State<LoginScreen> {
   void _login() async {
     if (_selectedRole == null || _emailController.text.isEmpty || _senhaController.text.isEmpty) return;
 
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
     final auth = context.read<AuthProvider>();
-    final success = await auth.login(_emailController.text.trim(), _senhaController.text);
+    // login() agora retorna String? — null = sucesso, string = mensagem de erro
+    final errorMsg = await auth.login(_emailController.text.trim(), _senhaController.text);
 
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
-      if (success) {
-        final role = _selectedRole?.toLowerCase() ?? '';
-        if (role.contains('operador')) {
-          context.go('/operador');
-        } else if (role.contains('gestor')) {
-          context.go('/gestor');
-        } else if (role.contains('auditor')) {
-          context.go('/auditor');
-        } else if (role.contains('nutri')) {
-          context.go('/nutricao');
-        } else if (role.contains('licita') || role.contains('compra')) {
-          context.go('/licitacao');
-        } else if (role.contains('transport') || role.contains('logist')) {
-          context.go('/transportadora');
-        } else if (role.contains('admin') || role.contains('sys')) {
-          context.go('/admin');
-        } else {
-          context.go('/operador');
-        }
+    if (!mounted) return;
+    setState(() => _isLoading = false);
+
+    if (errorMsg == null) {
+      // Sucesso — redireciona pelo role real do perfil carregado
+      final userRole = auth.user?.role.toLowerCase() ?? _selectedRole?.toLowerCase() ?? '';
+      if (userRole.contains('operador')) {
+        context.go('/operador');
+      } else if (userRole.contains('gestor')) {
+        context.go('/gestor');
+      } else if (userRole.contains('auditor')) {
+        context.go('/auditor');
+      } else if (userRole.contains('nutri')) {
+        context.go('/nutricao');
+      } else if (userRole.contains('licita')) {
+        context.go('/licitacao');
+      } else if (userRole.contains('transport')) {
+        context.go('/transportadora');
+      } else if (userRole.contains('admin')) {
+        context.go('/admin');
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Credenciais inválidas ou mock não implementado para este perfil.'),
-            backgroundColor: Colors.redAccent,
-          ),
-        );
+        context.go('/operador');
       }
+    } else {
+      // Erro — exibe a mensagem real (ex: "Acesso revogado...")
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMsg),
+          backgroundColor: errorMsg.contains('revogado') ? Colors.orange : Colors.redAccent,
+          duration: const Duration(seconds: 4),
+        ),
+      );
     }
   }
 

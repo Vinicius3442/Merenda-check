@@ -57,19 +57,26 @@ export function useUsuarios() {
 
   async function resetarSenha(id, novaSenha) {
     if (!isSupabaseConfigured) {
-      // No modo mock, apenas simula sucesso
-      return { ok: true };
+      return { ok: true }; // modo mock: simula sucesso
     }
-    // Usa a função RPC/Edge ou atualização direta pelo Admin SDK
-    // Via supabase.auth.admin.updateUserById requer service_role key no backend
-    // Aqui usamos uma Edge Function ou update direto na tabela auth.users não é possível pelo client
-    // Solução: chamar a Edge Function 'reset-password-admin' se existir, senão usar updateUser
     try {
-      const { error: err } = await supabase.rpc('admin_reset_user_password', {
-        user_id: id,
-        new_password: novaSenha,
-      });
-      if (err) return { ok: false, error: err.message };
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return { ok: false, error: 'Sessão inválida. Faça login novamente.' };
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/reset-password-admin`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`,
+            'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+          },
+          body: JSON.stringify({ user_id: id, new_password: novaSenha }),
+        }
+      );
+      const result = await response.json();
+      if (!response.ok) return { ok: false, error: result.error || 'Erro ao resetar senha.' };
       return { ok: true };
     } catch (e) {
       return { ok: false, error: e.message };

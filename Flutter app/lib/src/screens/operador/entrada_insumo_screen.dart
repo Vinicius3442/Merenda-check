@@ -129,12 +129,21 @@ class _EntradaInsumoScreenState extends State<EntradaInsumoScreen> {
                   ),
                   child: InkWell(
                     onTap: () async {
-                      final scannedCode = await context.push('/operador/scanner');
+                      final scannedCode = await context.push<String>('/operador/scanner');
                       if (scannedCode != null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Lote $scannedCode lido com sucesso!')),
-                        );
-                        // Idealmente aqui setariamos o lote no _selectedLoteId se houvesse match
+                        final hash = scannedCode.replaceAll('merendacheck://lote/', '');
+                        final match = _lotesPendentes.where((l) => l['tx_hash'] == hash || l['id'] == hash).toList();
+                        
+                        if (match.isNotEmpty) {
+                          setState(() => _selectedLoteId = match.first['id']);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Lote escaneado e selecionado! Confirme o recebimento.'), backgroundColor: Colors.green),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Lote não encontrado ou não destinado a esta escola: $scannedCode'), backgroundColor: Colors.orange),
+                          );
+                        }
                       }
                     },
                     child: const Row(

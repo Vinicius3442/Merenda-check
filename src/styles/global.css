@@ -241,15 +241,16 @@ a {
 .glass-panel::before {
   content: '';
   position: absolute;
-  top: 0; left: -100%;
+  top: 0; left: 0;
   width: 50%; height: 100%;
   background: linear-gradient(to right, transparent, rgba(255,255,255,0.03), transparent);
-  transform: skewX(-20deg);
-  transition: all 0.7s;
+  transform: skewX(-20deg) translateX(-250%);
+  transition: transform 0.7s ease;
+  pointer-events: none;
 }
 
 .glass-panel:hover::before {
-  left: 150%;
+  transform: skewX(-20deg) translateX(300%);
 }
 
 .glass-panel:hover {

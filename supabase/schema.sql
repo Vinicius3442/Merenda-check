@@ -546,3 +546,27 @@ create trigger audit_lotes after insert or update or delete on public.lotes_tran
 create trigger audit_estoque after insert or update or delete on public.estoque for each row execute function public.log_audit_trigger();
 create trigger audit_movimentacoes after insert or update or delete on public.movimentacoes for each row execute function public.log_audit_trigger();
 create trigger audit_cardapios after insert or update or delete on public.cardapios for each row execute function public.log_audit_trigger();
+-- ============================================================
+-- 14. TABELA: fichas_tecnicas
+-- ============================================================
+create table if not exists public.fichas_tecnicas (
+  id uuid primary key default uuid_generate_v4(),
+  nome text not null,
+  tipo text not null,
+  rendimento text not null,
+  custo_base numeric(10,2) default 0,
+  ingredientes jsonb not null default '[]',
+  criado_em timestamptz default now(),
+  atualizado_em timestamptz default now()
+);
+
+alter table public.fichas_tecnicas enable row level security;
+create policy "Leitura de fichas" on public.fichas_tecnicas for select using (auth.role() = 'authenticated');
+create policy "Gestão de fichas" on public.fichas_tecnicas for all using (
+  exists (select 1 from public.usuarios u where u.auth_id = auth.uid() and u.role in ('admin', 'nutricao', 'gestor'))
+);
+
+create trigger fichas_atualizar_timestamp
+  before update on public.fichas_tecnicas
+  for each row execute function public.atualizar_timestamp();
+create trigger audit_fichas after insert or update or delete on public.fichas_tecnicas for each row execute function public.log_audit_trigger();

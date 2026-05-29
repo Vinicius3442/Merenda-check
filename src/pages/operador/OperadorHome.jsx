@@ -126,7 +126,7 @@ export default function OperadorHome() {
           ))}
         </div>
         <Link
-          to="/operador/entrada"
+          to="/operador/baixa"
           style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginLeft: 'auto', paddingLeft: 20, whiteSpace: 'nowrap' }}
         >
           Ver estoque completo →

@@ -103,6 +103,14 @@ class _LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Header
+                Center(
+                  child: Image.asset(
+                    'assets/logo.png',
+                    height: 80,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                const SizedBox(height: 24),
                 const Text(
                   'Acesso ao Sistema',
                   style: TextStyle(
@@ -205,24 +213,29 @@ class _LoginScreenState extends State<LoginScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: [
-                        SizedBox(
-                          height: 24,
-                          width: 24,
-                          child: Checkbox(
-                            value: _keepConnected,
-                            onChanged: (val) => setState(() => _keepConnected = val ?? false),
-                            activeColor: const Color(0xFF10b981),
-                            side: BorderSide(color: Colors.white.withOpacity(0.3)),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                    Flexible(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            height: 24,
+                            width: 24,
+                            child: Checkbox(
+                              value: _keepConnected,
+                              onChanged: (val) => setState(() => _keepConnected = val ?? false),
+                              activeColor: const Color(0xFF10b981),
+                              side: BorderSide(color: Colors.white.withOpacity(0.3)),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text('Manter conectado', style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 14)),
-                      ],
+                          const SizedBox(width: 8),
+                          const Flexible(
+                            child: Text('Manter conectado', style: TextStyle(color: Colors.white60, fontSize: 13), overflow: TextOverflow.ellipsis),
+                          ),
+                        ],
+                      ),
                     ),
-                    Text('Esqueceu a senha?', style: TextStyle(color: const Color(0xFF10b981), fontSize: 14, fontWeight: FontWeight.w600)),
+                    const Text('Esqueceu a senha?', style: TextStyle(color: Color(0xFF10b981), fontSize: 13, fontWeight: FontWeight.w600)),
                   ],
                 ),
                 const SizedBox(height: 40),
@@ -298,6 +311,7 @@ class _LoginScreenState extends State<LoginScreen> {
           hintStyle: TextStyle(color: Colors.white.withOpacity(0.3)),
           prefixIcon: Icon(icon, color: Colors.white.withOpacity(0.5)),
           border: InputBorder.none,
+          filled: false,
           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         ),
       ),

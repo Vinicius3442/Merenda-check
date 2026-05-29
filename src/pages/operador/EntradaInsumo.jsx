@@ -2,12 +2,15 @@ import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import Footer from '../../components/ui/Footer';
-import { useEstoque } from '../../hooks/useEstoque';
 import { useToast } from '../../contexts/ToastContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { useEstoque } from '../../hooks/useEstoque';
 
 export default function EntradaInsumo() {
   const { inserirLote } = useEstoque();
   const { showToast } = useToast();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
@@ -47,6 +50,9 @@ export default function EntradaInsumo() {
       lote: form.lote,
       volume_kg: parseFloat(form.volume_kg),
       validade: form.validade,
+      escola_id: user?.escola_id,
+      observacao: `Fornecedor: ${form.fornecedor} | ${form.observacao}`,
+      usuario_id: user?.id,
     });
     setLoading(false);
 

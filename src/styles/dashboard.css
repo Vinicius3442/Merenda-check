@@ -844,3 +844,64 @@
     padding-top: 12px;
   }
 }
+/* OVERRIDES MASSIVOS DE RESPONSIVIDADE MOBILE (SOLICITADOS PELO USUÁRIO) */
+@media (max-width: 768px) {
+  /* Forçar Grids a virarem 1 coluna */
+  .kpi-grid, 
+  .kpi-grid-4, 
+  .kpi-grid-5,
+  .kpi-grid-2,
+  div[style*="display: grid"],
+  div[style*="display:grid"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Esconder mapas ou gráficos super complexos se estourarem a tela */
+  .leaflet-container {
+    display: none !important;
+  }
+
+  /* Criar aviso de fallback para o mapa oculto */
+  .leaflet-container::before {
+    content: '??? Mapa indisponível na versão mobile (Complexo demais)';
+    display: block;
+    background: var(--bg-surface-elevated);
+    padding: 20px;
+    text-align: center;
+    border-radius: 12px;
+  }
+
+  /* Ocultar gráficos pesados no mobile (Recharts) */
+  .recharts-responsive-container,
+  .recharts-wrapper {
+    display: none !important;
+  }
+
+  /* Tabelas gigantes ganharem scroll horizontal ao invés de quebrarem a tela */
+  table, 
+  .table-container {
+    display: block !important;
+    max-width: 100vw !important;
+    overflow-x: auto !important;
+    white-space: nowrap;
+  }
+
+  /* Sidebar esmagando conteúdo? */
+  .dashboard-layout {
+    flex-direction: column !important;
+  }
+  
+  .sidebar {
+    width: 100% !important;
+    height: auto !important;
+    position: relative !important;
+  }
+
+  /* Ajustar painéis de vidro */
+  .glass-panel {
+    padding: 16px !important;
+    margin-bottom: 16px;
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+}

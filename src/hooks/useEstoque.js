@@ -42,16 +42,30 @@ export function useEstoque(escolaId = null) {
     setLoading(false);
   }
 
-  async function inserirLote({ nome, lote, volume_kg, validade, escola_id }) {
+  async function inserirLote({ nome, lote, volume_kg, validade, escola_id, observacao = 'Entrada via QR Code', usuario_id = null }) {
     if (!isSupabaseConfigured) {
       const novo = { id: Date.now(), lote, hash: '0xMOCK', nome, volume_kg, status: 'normal', eligible: true, validade };
       setEstoque((prev) => [novo, ...prev]);
       return { ok: true };
     }
-    const { error: err } = await supabase.from('estoque').insert([
+    const { data: novoItem, error: err } = await supabase.from('estoque').insert([
       { nome, lote, volume_kg, validade, escola_id, status: 'normal', eligible: true },
-    ]);
+    ]).select().single();
+    
     if (err) return { ok: false, error: err.message };
+
+    const { error: errMov } = await supabase.from('movimentacoes').insert([
+      {
+        estoque_id: novoItem.id,
+        escola_id,
+        tipo: 'entrada',
+        quantidade_kg: volume_kg,
+        observacao,
+        usuario_id,
+      },
+    ]);
+    
+    if (errMov) console.error('Erro ao gravar movimentação de entrada:', errMov);
     await fetchEstoque();
     return { ok: true };
   }

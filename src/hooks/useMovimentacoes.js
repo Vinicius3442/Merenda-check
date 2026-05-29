@@ -79,6 +79,28 @@ export function useMovimentacoes(escolaId = null) {
       setMovimentacoes((prev) => [nova, ...prev]);
       return { ok: true };
     }
+    // Buscar item atual
+    const { data: item, error: errFetch } = await supabase
+      .from('estoque')
+      .select('volume_kg')
+      .eq('id', estoque_id)
+      .single();
+
+    if (errFetch || !item) {
+      return { ok: false, error: errFetch?.message || 'Item não encontrado no estoque' };
+    }
+
+    const qt = parseFloat(quantidade_kg);
+    const novoVolume = Math.max(0, Number(item.volume_kg) - qt);
+    const novoStatus = novoVolume === 0 ? 'arquivado' : 'normal';
+
+    const { error: errUpdate } = await supabase
+      .from('estoque')
+      .update({ volume_kg: novoVolume, status: novoStatus, eligible: novoVolume > 0 })
+      .eq('id', estoque_id);
+
+    if (errUpdate) return { ok: false, error: errUpdate.message };
+
     const { error: err } = await supabase.from('movimentacoes').insert([{
       estoque_id: estoque_id || null,
       escola_id: escola_id || null,

@@ -168,16 +168,24 @@ export default function GestaoCardapios() {
       let error = null;
 
       if (existing?.id) {
-        const { error: errUpdate } = await supabase
+        const { error: errUpdate, data } = await supabase
           .from('cardapios')
           .update({ plano: semanaPlan })
-          .eq('id', existing.id);
+          .eq('id', existing.id)
+          .select();
         error = errUpdate;
+        if (!error && (!data || data.length === 0)) {
+          error = { code: '42501', message: 'Violação de política RLS: Você não tem permissão.' };
+        }
       } else {
-        const { error: errInsert } = await supabase
+        const { error: errInsert, data } = await supabase
           .from('cardapios')
-          .insert([{ escola_id: dbEscolaId, semana: semanaId, plano: semanaPlan }]);
+          .insert([{ escola_id: dbEscolaId, semana: semanaId, plano: semanaPlan }])
+          .select();
         error = errInsert;
+        if (!error && (!data || data.length === 0)) {
+          error = { code: '42501', message: 'Violação de política RLS: Você não tem permissão para inserir.' };
+        }
       }
 
       if (error) {

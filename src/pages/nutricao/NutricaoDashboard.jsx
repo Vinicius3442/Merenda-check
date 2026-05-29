@@ -140,7 +140,7 @@ export default function NutricaoDashboard() {
             </button>
             <button
               className="btn btn-primary"
-              onClick={() => mockSubmit({ successTitle: 'Solicitação Enviada', successMsg: 'Pedido de compra emergencial enviado ao setor de licitação.' })}
+              onClick={() => mockSubmit({ successTitle: 'Pedido Registrado', successMsg: 'Solicitação de compra registrada no mural do Almoxarifado Central.' })}
               disabled={loading}
             >
               {loading
@@ -247,12 +247,12 @@ export default function NutricaoDashboard() {
           
           {compraSolicitada ? (
             <div style={{ padding: 16, background: 'rgba(16,185,129,0.1)', borderLeft: '4px solid var(--alert-green)', borderRadius: '0 8px 8px 0', marginBottom: 20 }}>
-              <strong>Ação Tomada:</strong> O pedido emergencial de <strong>120kg de Carne Bovina</strong> foi encaminhado e está sob análise do setor de Licitação. O déficit projetado foi mitigado.
+              <strong>Ação Tomada:</strong> O pedido emergencial de <strong>120kg de Carne Bovina</strong> foi encaminhado para o Almoxarifado Central. O déficit será suprido.
             </div>
           ) : (
             <div style={{ padding: 16, background: 'rgba(245,158,11,0.1)', borderLeft: '4px solid var(--alert-yellow)', borderRadius: '0 8px 8px 0', marginBottom: 20 }}>
               <strong>Atenção:</strong> Há déficit projetado de <strong>120kg de Carne Bovina</strong> para o dia 22/04 (Cardápio: Estrogonofe).
-              Recomenda-se acionar Licitação ou alterar o cardápio.
+              Recomenda-se acionar o Almoxarifado Central ou alterar o cardápio.
             </div>
           )}
 
@@ -265,7 +265,7 @@ export default function NutricaoDashboard() {
                 className="btn btn-secondary"
                 onClick={() => {
                   setCompraSolicitada(true);
-                  mockSubmit({ successTitle: 'Solicitação Enviada', successMsg: 'Pedido encaminhado ao setor de Licitação com prioridade máxima.' });
+                  mockSubmit({ successTitle: 'Suprimento Solicitado', successMsg: 'A requisição do déficit foi registrada diretamente no sistema do Almoxarifado Central.' });
                 }}
                 disabled={loading}
               >

@@ -11,19 +11,35 @@ export default function EntradaInsumo() {
 
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
-    fornecedor: 'AgroSul Alimentos SA',
-    nome: 'Carne Moída Bovina - Int. Nacional',
-    volume_kg: '100',
-    validade: '2026-06-15',
+    fornecedor: '',
+    nome: '',
+    volume_kg: '',
+    validade: '',
     observacao: '',
-    lote: `#${Math.floor(Math.random() * 9000 + 1000)}-${String.fromCharCode(65 + Math.floor(Math.random() * 26))}`,
+    lote: '',
   });
+
+  const handleSimularScan = () => {
+    setForm({
+      fornecedor: 'AgroSul Alimentos SA',
+      nome: 'Carne Moída Bovina - Int. Nacional',
+      volume_kg: '100',
+      validade: '2026-06-15',
+      observacao: 'Lote íntegro, aferição de temperatura OK.',
+      lote: `#${Math.floor(Math.random() * 9000 + 1000)}-${String.fromCharCode(65 + Math.floor(Math.random() * 26))}`,
+    });
+    showToast('Lote Identificado', 'Dados do fornecedor importados via QR Code.', 'success');
+  };
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async () => {
+    if (!form.nome || !form.lote || !form.volume_kg) {
+      showToast('Campos Obrigatórios', 'Preencha ou escaneie o insumo.', 'error');
+      return;
+    }
     setLoading(true);
     const result = await inserirLote({
       nome: form.nome,
@@ -58,7 +74,9 @@ export default function EntradaInsumo() {
 
             <div className="glass-panel animate-slide-up" style={{ padding: 40 }}>
               {/* Scanner mockup */}
-              <div style={{
+              <div 
+                onClick={handleSimularScan}
+                style={{
                 width: '100%', height: 200, borderRadius: 20, border: '2px dashed var(--primary)',
                 display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                 background: 'rgba(5, 150, 105, 0.05)', color: 'var(--primary)', marginBottom: 30, cursor: 'pointer',

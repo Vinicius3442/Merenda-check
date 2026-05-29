@@ -3,9 +3,11 @@ import { Link } from 'react-router-dom';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import { useRefeicoes } from '../../hooks/useRefeicoes';
 import { useToast } from '../../contexts/ToastContext';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function RegistrarRefeicao() {
   const { registrarRefeicao } = useRefeicoes();
+  const { user } = useAuth();
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [quantidade, setQuantidade] = useState('');
@@ -63,7 +65,7 @@ export default function RegistrarRefeicao() {
 
               <div className="form-group">
                 <label className="form-label">Nome do Supervisor / Responsável Legal</label>
-                <input type="text" className="form-control" value="João Maria (123.456.789-00)" readOnly />
+                <input type="text" className="form-control" value={`${user?.name || 'Operador Local'}`} readOnly />
               </div>
 
               <div style={{ marginTop: 40 }}>

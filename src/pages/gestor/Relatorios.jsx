@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import { useToast } from '../../contexts/ToastContext';
+import { useMovimentacoes } from '../../hooks/useMovimentacoes';
+import { useAuth } from '../../contexts/AuthContext';
 
 function downloadFile(nomeArquivo, conteudo, tipo = 'text/csv;charset=utf-8') {
   const blob = new Blob(['\uFEFF' + conteudo], { type: tipo });
@@ -14,39 +16,7 @@ function downloadFile(nomeArquivo, conteudo, tipo = 'text/csv;charset=utf-8') {
   URL.revokeObjectURL(url);
 }
 
-// ── Dados mock para os relatórios ────────────────────────────────────────────
-const dadosSobra = [
-  { data: '15/05/2026', insumo: 'Carne Moída Bovina', baixa_kg: 45.0, sobra_kg: 3.2, perda_pct: '7,1%' },
-  { data: '15/05/2026', insumo: 'Arroz Agulhinha',    baixa_kg: 80.0, sobra_kg: 2.5, perda_pct: '3,1%' },
-  { data: '15/05/2026', insumo: 'Feijão Carioca',     baixa_kg: 30.0, sobra_kg: 0.8, perda_pct: '2,7%' },
-  { data: '14/05/2026', insumo: 'Carne Moída Bovina', baixa_kg: 42.0, sobra_kg: 4.1, perda_pct: '9,8%' },
-  { data: '14/05/2026', insumo: 'Macarrão Espaguete', baixa_kg: 25.0, sobra_kg: 1.2, perda_pct: '4,8%' },
-  { data: '13/05/2026', insumo: 'Arroz Agulhinha',    baixa_kg: 75.0, sobra_kg: 3.0, perda_pct: '4,0%' },
-];
-
-function gerarRelatorioSobra() {
-  const cabecalho = 'Data;Insumo;Baixa (kg);Sobra (kg);Perda (%)';
-  const linhas = dadosSobra.map(r =>
-    `${r.data};${r.insumo};${r.baixa_kg.toFixed(2).replace('.', ',')};${r.sobra_kg.toFixed(2).replace('.', ',')};${r.perda_pct}`
-  );
-  return [cabecalho, ...linhas].join('\n');
-}
-
-function gerarRelatorioConsumo(mes) {
-  const [ano, m] = mes.split('-');
-  const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-  const nomeMes = meses[parseInt(m) - 1] || m;
-
-  const cabecalho = 'Semana;Refeições Servidas;Custo Total (R$);Custo per Capita (R$);Índice de Adesão (%)';
-  const semanas = [
-    `Sem 1 ${nomeMes}/${ano};1.240;R$ 6.820,00;R$ 5,50;91%`,
-    `Sem 2 ${nomeMes}/${ano};1.310;R$ 7.205,00;R$ 5,50;94%`,
-    `Sem 3 ${nomeMes}/${ano};1.280;R$ 7.040,00;R$ 5,50;92%`,
-    `Sem 4 ${nomeMes}/${ano};1.195;R$ 6.572,50;R$ 5,50;89%`,
-  ];
-  const totais = `TOTAL;5.025;R$ 27.637,50;R$ 5,50;91,5%`;
-  return [cabecalho, ...semanas, totais].join('\n');
-}
+// As funções de exportação foram internalizadas no componente para acesso ao estado.
 
 function gerarCertificadoHTML() {
   const hoje = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
@@ -104,6 +74,8 @@ function gerarCertificadoHTML() {
 
 // ─────────────────────────────────────────────────────────────────────────────
 export default function Relatorios() {
+  const { user } = useAuth();
+  const { movimentacoes } = useMovimentacoes(user?.escola_id);
   const [mesConsumo, setMesConsumo] = useState('');
   const [loadingSobra, setLoadingSobra]   = useState(false);
   const [loadingConsumo, setLoadingConsumo] = useState(false);
@@ -112,20 +84,39 @@ export default function Relatorios() {
 
   const handleSobra = () => {
     setLoadingSobra(true);
-    const csv = gerarRelatorioSobra();
-    downloadFile('Auditoria-SobraLimpa-D0.csv', csv);
-    showToast('Download Iniciado', 'Relatório de Sobra Limpa exportado com sucesso (CSV).', 'success');
+    const cabecalho = 'Data;Tipo de Registro;Quantidade (kg);Escola;Observacao;Lote ID';
+    const sobrasReais = movimentacoes.filter(m => m.tipo === 'sobra' || m.tipo === 'baixa');
+    
+    if (sobrasReais.length === 0) {
+      showToast('Aviso', 'Nenhuma movimentação de sobra encontrada no banco de dados para esta escola.', 'warning');
+      setLoadingSobra(false);
+      return;
+    }
+
+    const linhas = sobrasReais.map(r => {
+      const d = new Date(r.criado_em).toLocaleDateString('pt-BR');
+      return `${d};${r.tipo};${parseFloat(r.quantidade_kg || 0).toFixed(2).replace('.', ',')};${r.escola?.nome || '—'};${r.observacao};${r.lote?.lote || '—'}`;
+    });
+    
+    const csv = [cabecalho, ...linhas].join('\n');
+    downloadFile('Auditoria-Movimentacoes-Real.csv', csv);
+    showToast('Download Iniciado', 'Relatório de Sobras exportado a partir do banco de dados.', 'success');
     setLoadingSobra(false);
   };
 
   const handleConsumo = () => {
-    // Para simplificar a demo, se não tiver mês, usa o mês atual
     const mesValido = mesConsumo || new Date().toISOString().slice(0, 7);
     
     setLoadingConsumo(true);
-    const csv = gerarRelatorioConsumo(mesValido);
-    downloadFile(`Consumo-${mesValido}.csv`, csv);
-    showToast('Relatório Gerado', `Evolução de consumo exportada com sucesso (CSV).`, 'success');
+    const cabecalho = 'Mes;Lote Usado;Quantidade Removida(kg);Tipo';
+    const linhas = movimentacoes.filter(m => m.criado_em.startsWith(mesValido)).map(m => {
+      return `${mesValido};${m.lote?.nome || m.observacao};${parseFloat(m.quantidade_kg || 0).toFixed(2).replace('.', ',')};${m.tipo}`;
+    });
+
+    const csvData = linhas.length > 0 ? [cabecalho, ...linhas].join('\n') : "Nenhum dado encontrado no banco para este mes.";
+
+    downloadFile(`Consumo-${mesValido}.csv`, csvData);
+    showToast('Relatório Gerado', `Evolução de consumo (via Banco) exportada com sucesso.`, 'success');
     setLoadingConsumo(false);
   };
 

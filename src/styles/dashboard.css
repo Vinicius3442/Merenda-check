@@ -787,3 +787,60 @@
 .show-mobile {
   display: none;
 }
+
+/* ============================================
+   CLASSES DE GRID DE NUTRIÇÃO E FICHA TÉCNICA
+   ============================================ */
+.meal-slot-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.15);
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.responsive-macro-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 24px;
+  align-items: center;
+}
+
+.responsive-two-cols {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 30px;
+  align-items: flex-start;
+}
+
+.responsive-form-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr auto;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+@media (max-width: 1024px) {
+  .responsive-two-cols {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .meal-slot-grid,
+  .responsive-macro-grid,
+  .responsive-form-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .meal-slot-grid > div {
+    border-left: none !important;
+    padding-left: 0 !important;
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 12px;
+  }
+}

@@ -120,12 +120,12 @@ export default function AuditorEscolas() {
                     className="btn btn-secondary"
                     style={{ width: '100%', padding: 10, fontSize: '0.8rem' }}
                     onClick={() => mockSubmit({
-                      successTitle: 'Remanejamento Sugerido pela IA',
-                      successMsg: `Excesso detectado na ${escola.nome} — remanejamento sugerido para unidade próxima.`,
+                      successTitle: 'Inspeção Agendada',
+                      successMsg: `Ordem de serviço gerada para inspeção in loco na unidade ${escola.nome}.`,
                     })}
                     disabled={loadingSubmit}
                   >
-                    <i className="fa-solid fa-truck-arrow-right"></i> Sugerir Remanejamento IA
+                    <i className="fa-solid fa-clipboard-user"></i> Solicitar Auditoria Local
                   </button>
                 ) : (
                   <button

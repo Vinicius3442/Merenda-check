@@ -1,12 +1,7 @@
 import { Link } from 'react-router-dom';
 import DashboardLayout from '../../components/layout/DashboardLayout';
-
-// Resumo de estoque crítico para visão rápida do operador
-const estoqueResumo = [
-  { nome: 'Carne Moída Bovina', restante: '15 kg', alerta: 'Vence em 3 dias', status: 'danger', icon: 'fa-drumstick-bite' },
-  { nome: 'Arroz Agulhinha',    restante: '120 kg', alerta: 'Estoque normal', status: 'ok',     icon: 'fa-bowl-rice' },
-  { nome: 'Polpa de Morango',   restante: '0 kg',   alerta: 'Esgotado',       status: 'warning', icon: 'fa-jar' },
-];
+import { useAuth } from '../../contexts/AuthContext';
+import { useEstoque } from '../../hooks/useEstoque';
 
 const actions = [
   {
@@ -50,6 +45,33 @@ const actions = [
 const statusColor = { danger: 'var(--alert-red)', warning: 'var(--alert-yellow)', ok: 'var(--primary)' };
 
 export default function OperadorHome() {
+  const { user } = useAuth();
+  const { estoque } = useEstoque(user?.escola_id);
+
+  const ativos = estoque.filter(e => e.status !== 'arquivado');
+
+  const calcularStatus = (item) => {
+    if (!item.volume_kg || parseFloat(item.volume_kg) <= 0) return { alerta: 'Esgotado', status: 'warning', icon: 'fa-box-open' };
+    
+    if (item.validade) {
+      const dias = Math.ceil((new Date(item.validade) - new Date()) / 86400000);
+      if (dias < 0) return { alerta: 'Vencido', status: 'danger', icon: 'fa-triangle-exclamation' };
+      if (dias <= 7) return { alerta: `Vence em ${dias} dias`, status: 'danger', icon: 'fa-hourglass-half' };
+    }
+    
+    return { alerta: 'Estoque normal', status: 'ok', icon: 'fa-check-circle' };
+  };
+
+  const estoqueResumoDinamico = ativos.slice(0, 3).map(item => ({
+    nome: item.nome,
+    restante: `${parseFloat(item.volume_kg).toFixed(1)} kg`,
+    ...calcularStatus(item)
+  }));
+
+  if (estoqueResumoDinamico.length === 0) {
+    estoqueResumoDinamico.push({ nome: 'Nenhum item', restante: '0 kg', alerta: 'Estoque Vazio', status: 'warning', icon: 'fa-box-open' });
+  }
+
   return (
     <DashboardLayout>
       <div className="header-dash animate-fade-in" style={{ 
@@ -80,7 +102,7 @@ export default function OperadorHome() {
           </span>
         </div>
         <div style={{ display: 'flex', gap: 24, flex: 1, flexWrap: 'wrap' }}>
-          {estoqueResumo.map((item) => (
+          {estoqueResumoDinamico.map((item) => (
             <div key={item.nome} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <i
                 className={`fa-solid ${item.icon}`}

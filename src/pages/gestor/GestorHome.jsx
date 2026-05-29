@@ -6,6 +6,7 @@ import LogisticsMap from '../../components/ui/LogisticsMap';
 import { useDashboardStats } from '../../hooks/useDashboardStats';
 import { useAuth } from '../../contexts/AuthContext';
 import { useMockSubmit } from '../../hooks/useMockSubmit';
+import { useEstoque } from '../../hooks/useEstoque';
 
 const ACOES_GESTOR = [
   {
@@ -59,17 +60,22 @@ export default function GestorHome() {
   const { user } = useAuth();
   const { loading: submitting, mockSubmit } = useMockSubmit();
   const { kpis, chartData, loading } = useDashboardStats('gestor', user?.escola_id);
+  const { estoque } = useEstoque(user?.escola_id);
   const [toastMsg, setToastMsg] = useState('');
   const [loteResolvido, setLoteResolvido] = useState(false);
   const [assinouPrestacao, setAssinouPrestacao] = useState(false);
 
-  // Trigger default system alert upon loading to alert user of the 3-day critical expiry
+  // Acha o primeiro lote urgente (crítico) no banco
+  const loteCritico = estoque?.find(item => item.status === 'urgente' && item.volume_kg > 0);
+
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setToastMsg('⚠️ ALERTA FIFO: Lote crítico #BOV-4820 de Carne Moída vence em 3 dias! Priorize no cardápio de Segunda-feira.');
-    }, 1500);
-    return () => clearTimeout(timer);
-  }, []);
+    if (loteCritico && !loteResolvido) {
+      const timer = setTimeout(() => {
+        setToastMsg(`⚠️ ALERTA FIFO: Lote crítico ${loteCritico.lote} de ${loteCritico.nome} vence logo! Priorize o consumo.`);
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [loteCritico, loteResolvido]);
 
 
   return (
@@ -220,7 +226,7 @@ export default function GestorHome() {
         
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24 }}>
           
-          {/* Alerta Lote Crítico Card */}
+          {loteCritico ? (
           <div className="glass-panel" style={{ padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', border: loteResolvido ? '1px solid rgba(16, 185, 129, 0.25)' : '1px solid rgba(239, 68, 68, 0.25)' }}>
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
@@ -233,18 +239,18 @@ export default function GestorHome() {
                     ⚠️ Risco de Perda FIFO Crítico
                   </span>
                 )}
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Lote #BOV-4820</span>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Lote {loteCritico.lote}</span>
               </div>
               
               <h3 style={{ fontFamily: 'Outfit', fontSize: '1.2rem', margin: '0 0 8px 0', color: 'var(--text-main)' }}>
-                Carne Moída Bovina (Patinho)
+                {loteCritico.nome}
               </h3>
               
               <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', lineHeight: '1.5', margin: '0 0 16px 0' }}>
                 {loteResolvido ? (
                   <>Este lote foi <strong style={{ color: 'var(--alert-green)' }}>realocado com sucesso</strong> no cardápio de Segunda-feira. Zero desperdício garantido.</>
                 ) : (
-                  <>O algoritmo FIFO detectou que <strong>50kg</strong> deste insumo armazenados no depósito central estão a exatamente <strong style={{ color: 'var(--alert-red)' }}>3 dias do vencimento (25/05/2026)</strong>.</>
+                  <>O algoritmo FIFO detectou que <strong>{parseFloat(loteCritico.volume_kg).toFixed(1)}kg</strong> deste insumo estão prestes a vencer <strong style={{ color: 'var(--alert-red)' }}>({loteCritico.validade ? new Date(loteCritico.validade).toLocaleDateString('pt-BR') : 'Data Indefinida'})</strong>.</>
                 )}
               </p>
 
@@ -254,11 +260,20 @@ export default function GestorHome() {
                   border: '1px solid var(--border-subtle)', marginBottom: 20, fontSize: '0.82rem'
                 }}>
                   <strong style={{ color: 'var(--text-main)', display: 'block', marginBottom: 4 }}>Ação FIFO Automatizada Recomendada:</strong>
-                  Priorizar uso no cardápio de <strong>Segunda-feira</strong> (Picadinho de Carne Moída) em substituição a lotes mais novos.
+                  Priorizar uso imediato em substituição a lotes mais novos.
                 </div>
               )}
             </div>
           </div>
+          ) : (
+          <div className="glass-panel" style={{ padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', border: '1px solid rgba(16, 185, 129, 0.25)', textAlign: 'center' }}>
+            <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(16,185,129,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', color: 'var(--alert-green)', marginBottom: 16 }}>
+              <i className="fa-solid fa-shield-check"></i>
+            </div>
+            <h3 style={{ fontFamily: 'Outfit', fontSize: '1.3rem', color: 'var(--text-main)', marginBottom: 8 }}>Estoque Saudável</h3>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>O algoritmo não identificou lotes com risco iminente de vencimento na sua unidade.</p>
+          </div>
+          )}
 
           {/* Métricas de Otimização FIFO Card */}
           <div className="glass-panel" style={{ padding: 24, display: 'flex', flexDirection: 'column', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
@@ -304,12 +319,12 @@ export default function GestorHome() {
               </div>
             </div>
 
-            {!loteResolvido && (
+            {(!loteResolvido && loteCritico) && (
               <button 
                 className="btn btn-primary"
                 onClick={() => {
                   setLoteResolvido(true);
-                  mockSubmit({ successTitle: 'Cardápio Atualizado', successMsg: 'Lote crítico #BOV-4820 foi priorizado no cardápio de segunda-feira!' });
+                  mockSubmit({ successTitle: 'Cardápio Atualizado', successMsg: `Lote crítico ${loteCritico.lote} foi priorizado no sistema.` });
                 }}
                 style={{
                   width: '100%',

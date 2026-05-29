@@ -6,9 +6,12 @@ import Footer from '../../components/ui/Footer';
 import { useToast } from '../../contexts/ToastContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { useEstoque } from '../../hooks/useEstoque';
+import { useLotesTransporte } from '../../hooks/useLotesTransporte';
+import { supabase } from '../../lib/supabase';
 
 export default function EntradaInsumo() {
   const { inserirLote } = useEstoque();
+  const { confirmarEntrega } = useLotesTransporte();
   const { showToast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -47,30 +50,35 @@ export default function EntradaInsumo() {
         const code = jsQR(imageData.data, imageData.width, imageData.height);
         
         if (code) {
-          showToast('QR Code Lido!', 'Decodificando dados criptografados do romaneio...', 'success');
+          showToast('QR Code Lido!', 'Buscando dados no servidor...', 'info');
+          const hashLimpo = code.data.replace('merendacheck://lote/', '');
           
-          try {
-            // Tenta dar parse no JSON, ou usa o própio texto como lote (hash)
-            let qrData = code.data;
-            if (qrData.startsWith('{')) {
-              const parsed = JSON.parse(qrData);
-              setForm({
-                fornecedor: parsed.fornecedor || 'Fornecedor Identificado',
-                nome: parsed.itens?.[0]?.descricao || '',
-                volume_kg: parsed.itens?.[0]?.qtd?.toString() || '',
-                validade: parsed.itens?.[0]?.validade || '',
-                observacao: `Motorista: ${parsed.motorista} | Placa: ${parsed.placa}`,
-                lote: parsed.txHash || code.data,
-              });
-            } else {
-              // Fallback para apenas o hash
-              setForm(prev => ({ ...prev, lote: code.data }));
-            }
-          } catch (err) {
-             setForm(prev => ({ ...prev, lote: code.data }));
-          }
+          supabase.from('lotes_transporte')
+            .select('*, fornecedores(nome)')
+            .eq('tx_hash', hashLimpo)
+            .single()
+            .then(({ data, error }) => {
+              if (error || !data) {
+                showToast('Erro', 'Lote não encontrado no sistema.', 'error');
+                setForm(prev => ({ ...prev, lote: hashLimpo }));
+              } else {
+                setForm({
+                  fornecedor: data.fornecedores?.nome || 'Fornecedor Desconhecido',
+                  nome: data.itens?.[0]?.descricao || 'Vários itens',
+                  volume_kg: data.itens?.[0]?.qtd?.toString() || '',
+                  validade: data.itens?.[0]?.validade || '',
+                  observacao: `Motorista: ${data.motorista} | Placa: ${data.placa}`,
+                  lote: hashLimpo,
+                });
+                // Guarda o ID do lote para confirmar a entrega no submit
+                if (fileInputRef.current) {
+                  fileInputRef.current.dataset.loteId = data.id;
+                }
+                showToast('Sucesso!', 'Dados do Romaneio importados e preenchidos.', 'success');
+              }
+            });
         } else {
-          showToast('Erro de Leitura', 'Nenhum QR Code válido encontrado na imagem.', 'error');
+          showToast('Erro', 'Nenhum QR Code encontrado na imagem.', 'error');
         }
       };
       img.src = event.target.result;
@@ -98,12 +106,17 @@ export default function EntradaInsumo() {
       observacao: `Fornecedor: ${form.fornecedor} | ${form.observacao}`,
       usuario_id: user?.id,
     });
-    setLoading(false);
-
+    
     if (result.ok) {
+      const loteId = fileInputRef.current?.dataset?.loteId;
+      if (loteId) {
+        await confirmarEntrega(loteId);
+      }
+      setLoading(false);
       showToast('Entrada Processada', 'Estoque sincronizado com sucesso.', 'success');
       setTimeout(() => navigate('/operador'), 1500);
     } else {
+      setLoading(false);
       showToast('Erro ao Registrar', result.error || 'Tente novamente.', 'error');
     }
   };

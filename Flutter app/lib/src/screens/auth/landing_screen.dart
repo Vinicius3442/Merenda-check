@@ -120,7 +120,7 @@ class _LandingScreenState extends State<LandingScreen> {
                     children: [
                       Row(
                         children: [
-                          Image.asset('assets/images/logo.png', width: 32, height: 32, errorBuilder: (_,__,___) => const Icon(Icons.shield, color: Color(0xFF10B981))),
+                          Image.asset('assets/logo.png', width: 32, height: 32, errorBuilder: (_,__,___) => const Icon(Icons.shield, color: Color(0xFF10B981))),
                           const SizedBox(width: 8),
                           const Text('Merenda Check', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'Outfit')),
                         ],
@@ -218,7 +218,7 @@ class _LandingScreenState extends State<LandingScreen> {
                       border: Border.all(color: Colors.white.withOpacity(0.1)),
                       boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.5), blurRadius: 30, offset: const Offset(0, 15))],
                       image: const DecorationImage(
-                        image: AssetImage('assets/images/merenda.jpeg'),
+                        image: AssetImage('assets/merenda.jpeg'),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -278,10 +278,12 @@ class _LandingScreenState extends State<LandingScreen> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: const [
                                   Icon(Icons.check_circle, color: Color(0xFF10B981), size: 40),
                                   SizedBox(height: 10),
-                                  Text('Mensagem Enviada!', style: TextStyle(color: Color(0xFF10B981), fontWeight: FontWeight.bold, fontSize: 16)),
+                                  Text('Mensagem Enviada!', style: TextStyle(color: Color(0xFF10B981), fontWeight: FontWeight.bold, fontSize: 16), textAlign: TextAlign.center),
                                 ],
                               ),
                             )

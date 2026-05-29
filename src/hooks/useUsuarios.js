@@ -23,7 +23,7 @@ export function useUsuarios() {
 
     const { data, error: err } = await supabase
       .from('usuarios')
-      .select('id, nome, email, role, status, escolas(nome)')
+      .select('id, nome, email, role, status, avatar_url, escolas(nome)')
       .order('nome');
 
     if (err) {
@@ -37,6 +37,7 @@ export function useUsuarios() {
         role: u.role,
         escola: u.escolas?.nome || 'Todas',
         status: u.status,
+        avatar_url: u.avatar_url,
       }));
       setUsuarios(mapped);
     }

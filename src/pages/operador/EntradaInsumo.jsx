@@ -11,7 +11,6 @@ export default function EntradaInsumo() {
   const { showToast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({

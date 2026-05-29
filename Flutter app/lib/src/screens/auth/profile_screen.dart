@@ -41,13 +41,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
           })
           .eq('id', auth.user!.id);
 
+      auth.updateUser(name: _nameController.text.trim(), avatarUrl: _avatarController.text.trim().isEmpty ? null : _avatarController.text.trim());
+
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Perfil atualizado! Por favor, recarregue o app para ver todas as alterações globais.'), backgroundColor: Color(0xFF10B981)),
+        SnackBar(
+          content: Row(
+            children: const [
+              Icon(Icons.check_circle, color: Colors.white),
+              SizedBox(width: 12),
+              Text('Perfil atualizado com sucesso!', style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Outfit')),
+            ],
+          ),
+          backgroundColor: const Color(0xFF10B981),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          margin: const EdgeInsets.all(16),
+          elevation: 10,
+        ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro ao atualizar perfil: $e'), backgroundColor: Colors.red),
+        SnackBar(
+          content: Row(
+            children: const [
+              Icon(Icons.error_outline, color: Colors.white),
+              SizedBox(width: 12),
+              Expanded(child: Text('Falha ao atualizar perfil', style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Outfit'))),
+            ],
+          ),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          margin: const EdgeInsets.all(16),
+        ),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);

@@ -62,6 +62,20 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  void updateUser({String? name, String? avatarUrl}) {
+    if (_user != null) {
+      _user = UserModel(
+        id: _user!.id,
+        name: name ?? _user!.name,
+        role: _user!.role,
+        initials: _user!.initials,
+        escolaId: _user!.escolaId,
+        avatarUrl: avatarUrl ?? _user!.avatarUrl,
+      );
+      notifyListeners();
+    }
+  }
+
   Future<bool> login(String email, String password) async {
     try {
       final response = await Supabase.instance.client.auth.signInWithPassword(

@@ -150,15 +150,19 @@ export default function GestaoUsuarios() {
                   <tr key={u.id} style={{ opacity: u.status === 'inativo' ? 0.5 : 1 }}>
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <div style={{
-                          width: 34, height: 34, borderRadius: 10,
-                          background: 'linear-gradient(135deg, var(--primary), var(--primary-dark))',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          color: '#fff', fontWeight: 800, fontSize: '0.8rem', flexShrink: 0,
-                          fontFamily: 'Outfit',
-                        }}>
-                          {(u.nome || '').split(' ').filter(Boolean).map(n => n[0]).slice(0, 2).join('').toUpperCase() || '??'}
-                        </div>
+                        {u.avatar_url ? (
+                          <img src={u.avatar_url} alt="Avatar" style={{ width: 34, height: 34, borderRadius: 10, objectFit: 'cover', flexShrink: 0 }} />
+                        ) : (
+                          <div style={{
+                            width: 34, height: 34, borderRadius: 10,
+                            background: 'linear-gradient(135deg, var(--primary), var(--primary-dark))',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            color: '#fff', fontWeight: 800, fontSize: '0.8rem', flexShrink: 0,
+                            fontFamily: 'Outfit',
+                          }}>
+                            {(u.nome || '').split(' ').filter(Boolean).map(n => n[0]).slice(0, 2).join('').toUpperCase() || '??'}
+                          </div>
+                        )}
                         <span style={{ fontWeight: 700, color: '#f1f5f9', fontSize: '0.9rem' }}>{u.nome}</span>
                       </div>
                     </td>

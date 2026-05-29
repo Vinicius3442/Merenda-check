@@ -24,7 +24,7 @@ class _GestaoUsuariosScreenState extends State<GestaoUsuariosScreen> {
     try {
       final response = await Supabase.instance.client
           .from('usuarios')
-          .select('id, nome, email, role, status, escolas(nome)')
+          .select('id, nome, email, role, status, avatar_url, escolas(nome)')
           .order('nome');
 
       setState(() {
@@ -124,10 +124,18 @@ class _GestaoUsuariosScreenState extends State<GestaoUsuariosScreen> {
                     ),
                     child: Row(
                       children: [
-                        CircleAvatar(
-                          backgroundColor: roleColor.withOpacity(0.1),
-                          child: Icon(Icons.person, color: roleColor),
-                        ),
+                        u['avatar_url'] != null && u['avatar_url'].toString().isNotEmpty
+                            ? CircleAvatar(
+                                backgroundImage: NetworkImage(u['avatar_url']),
+                                backgroundColor: const Color(0xFF1E293B),
+                              )
+                            : CircleAvatar(
+                                backgroundColor: roleColor.withOpacity(0.1),
+                                child: Text(
+                                  (u['nome'] ?? 'U').toString().substring(0, 1).toUpperCase(),
+                                  style: TextStyle(color: roleColor, fontWeight: FontWeight.bold),
+                                ),
+                              ),
                         const SizedBox(width: 16),
                         Expanded(
                           child: Column(

@@ -44,16 +44,21 @@ class BaseLayout extends StatelessWidget {
           if (actions != null) ...actions!,
           Padding(
             padding: const EdgeInsets.only(right: 12.0),
-            child: CircleAvatar(
-              backgroundColor: const Color(0xFF10B981).withOpacity(0.2),
-              child: Text(
-                user?.initials ?? 'U',
-                style: const TextStyle(
-                  color: Color(0xFF10B981),
-                  fontWeight: FontWeight.bold,
+            child: user?.avatarUrl != null && user!.avatarUrl!.isNotEmpty
+              ? CircleAvatar(
+                  backgroundImage: NetworkImage(user.avatarUrl!),
+                  backgroundColor: const Color(0xFF1E293B),
+                )
+              : CircleAvatar(
+                  backgroundColor: const Color(0xFF10B981).withOpacity(0.2),
+                  child: Text(
+                    user?.initials ?? 'U',
+                    style: const TextStyle(
+                      color: Color(0xFF10B981),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-              ),
-            ),
           ),
         ],
       ),

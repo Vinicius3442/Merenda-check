@@ -174,9 +174,13 @@ export default function Sidebar() {
         onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.4)'; e.currentTarget.style.borderColor = 'rgba(16,185,129,0.2)'; }}
         onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.2)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.03)'; }}
       >
-        <div style={{ width: 42, height: 42, borderRadius: 12, background: 'var(--primary)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1rem', boxShadow: '0 4px 10px rgba(16,185,129,0.3)', flexShrink: 0 }}>
-          {user?.initials || 'MC'}
-        </div>
+        {user?.avatar_url ? (
+          <img src={user.avatar_url} alt="Avatar" style={{ width: 42, height: 42, borderRadius: 12, objectFit: 'cover', boxShadow: '0 4px 10px rgba(16,185,129,0.3)', flexShrink: 0 }} />
+        ) : (
+          <div style={{ width: 42, height: 42, borderRadius: 12, background: 'var(--primary)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1rem', boxShadow: '0 4px 10px rgba(16,185,129,0.3)', flexShrink: 0 }}>
+            {user?.initials || 'MC'}
+          </div>
+        )}
         <div style={{ minWidth: 0, flex: 1 }}>
           <h4 style={{ fontSize: '0.9rem', margin: 0, color: 'var(--text-main)', fontWeight: 700,
             overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>

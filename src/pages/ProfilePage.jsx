@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 
 export default function ProfilePage() {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const [loading, setLoading] = useState(false);
   const [nome, setNome] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
@@ -28,7 +28,9 @@ export default function ProfilePage() {
         
       if (error) throw error;
       
-      alert('Perfil atualizado com sucesso! Recarregue a página para ver as alterações aplicadas globalmente.');
+      updateUser({ name: nome, avatar_url: avatarUrl });
+      
+      alert('Perfil atualizado com sucesso!');
     } catch (e) {
       console.error(e);
       alert(`Erro ao atualizar perfil: ${e.message}`);

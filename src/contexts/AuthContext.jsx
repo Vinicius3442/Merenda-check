@@ -188,8 +188,15 @@ export function AuthProvider({ children }) {
     setAuth({ user: null, role: null, isAuthenticated: false });
   }, []);
 
+  const updateUser = useCallback((newUserData) => {
+    setAuth((prev) => ({
+      ...prev,
+      user: { ...prev.user, ...newUserData }
+    }));
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ ...auth, login, logout, loading, authError, isSupabaseConfigured }}>
+    <AuthContext.Provider value={{ ...auth, login, logout, updateUser, loading, authError, isSupabaseConfigured }}>
       {children}
     </AuthContext.Provider>
   );

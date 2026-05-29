@@ -1,15 +1,24 @@
 import { Link } from 'react-router-dom';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import LogisticsMap from '../../components/ui/LogisticsMap';
-
-const entregas = [
-  { rota: 'R-14 Norte', escola: 'EMEF João Silva', horario: '09:30', status: 'Em Trânsito', cor: 'var(--primary)', bg: 'rgba(16,185,129,0.12)' },
-  { rota: 'R-15 Leste', escola: 'CEI Pequeninos', horario: '11:00', status: 'Carregando', cor: 'var(--alert-yellow)', bg: 'rgba(251,191,36,0.12)' },
-  { rota: 'R-08 Sul', escola: 'EMEI Girassol', horario: '13:30', status: 'Pendente', cor: 'var(--alert-blue)', bg: 'rgba(96,165,250,0.12)' },
-  { rota: 'R-22 Centro', escola: 'EMEF Oswaldo Cruz', horario: '15:00', status: 'Entregue', cor: 'var(--alert-green)', bg: 'rgba(52,211,153,0.12)' },
-];
+import { useLotesTransporte } from '../../hooks/useLotesTransporte';
 
 export default function TransportadoraHome() {
+  const { lotes, loading } = useLotesTransporte();
+
+  const entregues = lotes.filter(l => l.status === 'entregue').length;
+  const emTransito = lotes.filter(l => l.status === 'em_transito').length;
+  const totalMes = lotes.length;
+
+  const entregasDinâmicas = lotes.slice(0, 10).map((l, idx) => ({
+    id: l.id,
+    rota: l.placa || `R-${idx+1}`,
+    escola: l.escola_destino?.nome || 'Destino Indefinido',
+    horario: new Date(l.criado_em).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+    status: l.status === 'entregue' ? 'Entregue' : l.status === 'em_transito' ? 'Em Trânsito' : 'Carregando',
+    cor: l.status === 'entregue' ? 'var(--alert-green)' : l.status === 'em_transito' ? 'var(--primary)' : 'var(--alert-yellow)',
+    bg: l.status === 'entregue' ? 'rgba(52,211,153,0.12)' : l.status === 'em_transito' ? 'rgba(16,185,129,0.12)' : 'rgba(251,191,36,0.12)',
+  }));
   return (
     <DashboardLayout>
       {/* Header */}
@@ -36,17 +45,17 @@ export default function TransportadoraHome() {
       <div className="kpi-grid" style={{ marginBottom: 36 }}>
         <div className="kpi-card" style={{ borderLeft: '4px solid var(--primary)' }}>
           <i className="fa-solid fa-truck-fast kpi-icon"></i>
-          <div className="kpi-value" style={{ color: 'var(--primary)' }}>14</div>
-          <div className="kpi-label">Entregas Hoje</div>
+          <div className="kpi-value" style={{ color: 'var(--primary)' }}>{lotes.length}</div>
+          <div className="kpi-label">Lotes Processados</div>
           <p style={{ margin: '8px 0 0', fontSize: '0.82rem', color: 'var(--alert-yellow)', display: 'flex', alignItems: 'center', gap: 6 }}>
-            <i className="fa-solid fa-clock"></i> 2 pendentes
+            <i className="fa-solid fa-clock"></i> {emTransito} em trânsito
           </p>
         </div>
 
         <div className="kpi-card" style={{ borderLeft: '4px solid var(--alert-blue)' }}>
           <i className="fa-solid fa-satellite-dish kpi-icon"></i>
-          <div className="kpi-value" style={{ color: 'var(--alert-blue)' }}>4</div>
-          <div className="kpi-label">Veículos em Rota</div>
+          <div className="kpi-value" style={{ color: 'var(--alert-blue)' }}>{emTransito}</div>
+          <div className="kpi-label">Veículos Monitorados</div>
           <p style={{ margin: '8px 0 0', fontSize: '0.82rem', color: 'var(--alert-green)', display: 'flex', alignItems: 'center', gap: 6 }}>
             <i className="fa-solid fa-circle" style={{ fontSize: '0.5rem' }}></i> GPS Ativo
           </p>
@@ -54,10 +63,10 @@ export default function TransportadoraHome() {
 
         <div className="kpi-card" style={{ borderLeft: '4px solid var(--alert-green)' }}>
           <i className="fa-solid fa-cubes kpi-icon"></i>
-          <div className="kpi-value" style={{ color: 'var(--alert-green)' }}>142</div>
-          <div className="kpi-label">Lotes Emitidos (Mês)</div>
+          <div className="kpi-value" style={{ color: 'var(--alert-green)' }}>{totalMes}</div>
+          <div className="kpi-label">Lotes Emitidos (Geral)</div>
           <p style={{ margin: '8px 0 0', fontSize: '0.82rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: 6 }}>
-            <i className="fa-solid fa-link"></i> 100% integridade criptográfica
+            <i className="fa-solid fa-link"></i> 100% integridade blockchain
           </p>
         </div>
       </div>
@@ -94,8 +103,10 @@ export default function TransportadoraHome() {
               </tr>
             </thead>
             <tbody>
-              {entregas.map((e) => (
-                <tr key={e.rota}>
+              {loading ? (
+                <tr><td colSpan="4" style={{ textAlign: 'center', padding: 20 }}>Carregando dados...</td></tr>
+              ) : entregasDinâmicas.map((e) => (
+                <tr key={e.id}>
                   <td>
                     <span style={{ fontFamily: 'monospace', fontWeight: 700, color: 'var(--primary)', fontSize: '0.85rem' }}>{e.rota}</span>
                   </td>
@@ -114,6 +125,9 @@ export default function TransportadoraHome() {
                   </td>
                 </tr>
               ))}
+              {entregasDinâmicas.length === 0 && !loading && (
+                <tr><td colSpan="4" style={{ textAlign: 'center', padding: 20 }}>Nenhum lote registrado.</td></tr>
+              )}
             </tbody>
           </table>
         </div>
@@ -122,7 +136,7 @@ export default function TransportadoraHome() {
           padding: '11px 24px', borderTop: '1px solid rgba(255,255,255,0.06)',
           fontSize: '0.78rem', color: 'var(--text-muted)', display: 'flex', justifyContent: 'space-between'
         }}>
-          <span><i className="fa-solid fa-circle-info" style={{ marginRight: 6 }}></i>{entregas.length} rotas programadas hoje</span>
+          <span><i className="fa-solid fa-circle-info" style={{ marginRight: 6 }}></i>{entregasDinâmicas.length} rotas programadas / finalizadas</span>
           <span style={{ color: 'var(--alert-green)' }}><i className="fa-solid fa-satellite" style={{ marginRight: 6 }}></i>Rastreio Satelital Ativo</span>
         </div>
       </div>

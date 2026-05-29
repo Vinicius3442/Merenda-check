@@ -110,6 +110,7 @@ export default function SobraLimpa() {
                 </button>
               </div>
       </div>
+      </div>
     </DashboardLayout>
   );
 }

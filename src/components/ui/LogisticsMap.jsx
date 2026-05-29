@@ -100,17 +100,6 @@ export default function LogisticsMap() {
           localStorage.setItem('merenda_route_anomaly_escola', r.escolaKey);
           localStorage.setItem('merenda_route_anomaly_detalhes', `Veículo ${r.placa} do motorista ${r.motorista} está há 3 horas em trânsito em uma rota estimada de 40 minutos para ${r.escolaNome}.`);
           
-          // Adiciona também na lista de eventos de auditoria geral
-          const auditLogs = JSON.parse(localStorage.getItem('merenda_audit_trail') || '[]');
-          auditLogs.unshift({
-            id: `audit-route-${Date.now()}`,
-            timestamp: new Date().toISOString(),
-            evento: 'Anomalia Crítica de Rota',
-            usuario: 'Rastreamento GPS Automático',
-            detalhes: `Desvio logístico grave detectado na placa ${r.placa}. Rota estimada: ${r.tempoEstimado}min | Tempo transcorrido: 3h 20min (200min).`
-          });
-          localStorage.setItem('merenda_audit_trail', JSON.stringify(auditLogs));
-
           // Despachar evento para atualizar o resto da tela
           window.dispatchEvent(new Event('merenda_alert_sync'));
         } else {

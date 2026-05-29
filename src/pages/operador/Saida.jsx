@@ -168,6 +168,7 @@ export default function Saida() {
                 </button>
               </div>
       </div>
+      </div>
     </DashboardLayout>
   );
 }

@@ -191,6 +191,7 @@ export default function BaixaInsumo() {
                 </div>
               )}
       </div>
+      </div>
     </DashboardLayout>
   );
 }

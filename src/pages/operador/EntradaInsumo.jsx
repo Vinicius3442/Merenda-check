@@ -54,13 +54,30 @@ export default function EntradaInsumo() {
           const hashLimpo = code.data.replace('merendacheck://lote/', '');
           
           supabase.from('lotes_transporte')
-            .select('*, fornecedores(nome)')
+            .select('*, fornecedores(nome, status_ceis)')
             .eq('tx_hash', hashLimpo)
             .single()
             .then(({ data, error }) => {
               if (error || !data) {
                 showToast('Erro', 'Lote não encontrado no sistema.', 'error');
                 setForm(prev => ({ ...prev, lote: hashLimpo }));
+              } else if (data.fornecedores?.status_ceis && data.fornecedores.status_ceis !== 'Limpo') {
+                showToast(
+                  'Assinatura Digital Revogada', 
+                  `Lote Bloqueado. O fornecedor "${data.fornecedores.nome}" está suspenso ou inidôneo no CEIS (Status: ${data.fornecedores.status_ceis}). A recepção desta carga foi impedida.`, 
+                  'error'
+                );
+                setForm({
+                  fornecedor: data.fornecedores.nome,
+                  nome: '',
+                  volume_kg: '',
+                  validade: '',
+                  observacao: `[BLOQUEADO - COMPLIANCE CEIS: ${data.fornecedores.status_ceis}]`,
+                  lote: '',
+                });
+                if (fileInputRef.current) {
+                  delete fileInputRef.current.dataset.loteId;
+                }
               } else {
                 setForm({
                   fornecedor: data.fornecedores?.nome || 'Fornecedor Desconhecido',

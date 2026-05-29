@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../widgets/base_layout.dart';
+import '../../widgets/safe_avatar.dart';
 
 class GestaoUsuariosScreen extends StatefulWidget {
   const GestaoUsuariosScreen({super.key});
@@ -124,26 +125,18 @@ class _GestaoUsuariosScreenState extends State<GestaoUsuariosScreen> {
                     ),
                     child: Row(
                       children: [
-                        Builder(builder: (context) {
-                          final avatar = u['avatar_url']?.toString() ?? '';
-                          final isCorsBlocked = avatar.contains('randomuser.me');
-                          
-                          if (avatar.isNotEmpty && !isCorsBlocked) {
-                            return CircleAvatar(
-                              backgroundImage: NetworkImage(avatar),
-                              backgroundColor: const Color(0xFF1E293B),
-                              onBackgroundImageError: (_, __) {},
-                            );
-                          }
-                          
-                          return CircleAvatar(
-                            backgroundColor: roleColor.withOpacity(0.1),
-                            child: Text(
-                              (u['nome'] ?? 'U').toString().substring(0, 1).toUpperCase(),
-                              style: TextStyle(color: roleColor, fontWeight: FontWeight.bold),
-                            ),
-                          );
-                        }),
+                        SafeAvatar(
+                          imageUrl: u['avatar_url']?.toString() ?? '',
+                          initials: () {
+                            final parts = (u['nome'] ?? 'U').toString().split(' ').where((p) => p.isNotEmpty).toList();
+                            if (parts.length >= 2) {
+                              return '${parts[0][0]}${parts[parts.length - 1][0]}'.toUpperCase();
+                            }
+                            return (u['nome'] ?? 'U').toString().substring(0, 1).toUpperCase();
+                          }(),
+                          roleColor: roleColor,
+                          radius: 18,
+                        ),
                         const SizedBox(width: 16),
                         Expanded(
                           child: Column(
@@ -151,9 +144,12 @@ class _GestaoUsuariosScreenState extends State<GestaoUsuariosScreen> {
                             children: [
                               Row(
                                 children: [
-                                  Text(
-                                    u['nome'] ?? 'Sem Nome',
-                                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14, fontFamily: 'Outfit'),
+                                  Flexible(
+                                    child: Text(
+                                      u['nome'] ?? 'Sem Nome',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14, fontFamily: 'Outfit'),
+                                    ),
                                   ),
                                   const SizedBox(width: 8),
                                   Container(

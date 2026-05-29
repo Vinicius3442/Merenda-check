@@ -24,6 +24,37 @@ export default function Fornecedores() {
     else showToast('Erro de Permissão (RLS)', `Bloqueado. Você precisa ser 'admin' no Supabase para isso. Erro: ${res.error}`, 'error');
   };
 
+  const handleExportarCSV = () => {
+    if (fornecedores.length === 0) {
+      showToast('Sem dados', 'Nenhum fornecedor disponível para exportação.', 'info');
+      return;
+    }
+
+    const cabecalho = ['Nome', 'CNPJ', 'Categoria', 'UF', 'Contato', 'Status CEIS'];
+    const linhas = fornecedores.map(f => [
+      `"${(f.nome || '').replace(/"/g, '""')}"`,
+      `"${f.cnpj || ''}"`,
+      `"${f.categoria || ''}"`,
+      `"${f.uf || ''}"`,
+      `"${(f.contato || '').replace(/"/g, '""')}"`,
+      `"${f.status_ceis || ''}"`
+    ]);
+
+    const conteudoCSV = [cabecalho.join(','), ...linhas.map(l => l.join(','))].join('\n');
+    
+    // Adiciona BOM UTF-8 para compatibilidade perfeita com acentuação no Excel
+    const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), conteudoCSV], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `relatorio-compliance-fornecedores-${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    showToast('Download Iniciado', 'O relatório de compliance foi exportado.', 'success');
+  };
+
   return (
     <DashboardLayout>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
@@ -38,7 +69,7 @@ export default function Fornecedores() {
             </p>
           </div>
           <div>
-            <button className="btn btn-secondary"><i className="fa-solid fa-download"></i> Relatório de Compliance</button>
+            <button className="btn btn-secondary" onClick={handleExportarCSV}><i className="fa-solid fa-download"></i> Relatório de Compliance</button>
           </div>
         </div>
 

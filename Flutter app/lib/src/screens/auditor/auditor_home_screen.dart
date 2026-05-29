@@ -134,7 +134,7 @@ class _AuditorHomeScreenState extends State<AuditorHomeScreen> {
                   style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16, fontFamily: 'Outfit'),
                 ),
                 TextButton(
-                  onPressed: () => context.go('/auditor/investigar'),
+                  onPressed: () => context.push('/auditor/investigar'),
                   child: const Text('Ver todos', style: TextStyle(color: Color(0xFF10B981), fontSize: 13)),
                 ),
               ],
@@ -198,7 +198,7 @@ class _AuditorHomeScreenState extends State<AuditorHomeScreen> {
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton.icon(
-                          onPressed: () => context.go('/auditor/investigar?escola=${Uri.encodeComponent(alert.school)}&alerta=${Uri.encodeComponent(alert.type)}'),
+                          onPressed: () => context.push('/auditor/investigar?escola=${Uri.encodeComponent(alert.school)}&alerta=${Uri.encodeComponent(alert.type)}'),
                           icon: const Icon(Icons.search, size: 14, color: Color(0xFF10B981)),
                           label: const Text('Investigar Alerta', style: TextStyle(color: Color(0xFF10B981), fontSize: 12, fontWeight: FontWeight.bold)),
                           style: TextButton.styleFrom(
@@ -260,7 +260,7 @@ class _AuditorHomeScreenState extends State<AuditorHomeScreen> {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () => context.go(route),
+          onTap: () => context.push(route),
           borderRadius: BorderRadius.circular(16),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 20.0),

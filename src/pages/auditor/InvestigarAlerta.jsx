@@ -5,6 +5,8 @@ import 'leaflet/dist/leaflet.css';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import { useRastreabilidade } from '../../hooks/useRastreabilidade';
 import { useMockSubmit } from '../../hooks/useMockSubmit';
+import { useAuth } from '../../contexts/AuthContext';
+import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 
 // Coordenadas geográficas reais em São Paulo
 const COORDS = {
@@ -47,6 +49,7 @@ function TimelineItem({ item }) {
 }
 
 export default function InvestigarAlerta() {
+  const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const escolaKey = searchParams.get('escola') || 'cei-pequeninos';
   const escolaNome = searchParams.get('nome') || 'Unidade Desconhecida';
@@ -202,6 +205,23 @@ export default function InvestigarAlerta() {
   const statusColor = isRisk ? 'var(--alert-red)' : isWarning ? 'var(--alert-yellow)' : 'var(--alert-green)';
   const statusIcon = isRisk ? 'fa-triangle-exclamation' : isWarning ? 'fa-circle-exclamation' : 'fa-circle-check';
 
+  const handleIniciarProcesso = async () => {
+    if (isSupabaseConfigured && user) {
+      try {
+        await supabase.from('audit_trail').insert({
+          usuario_id: user.id,
+          usuario_email: user.email,
+          acao: 'INSERT_PROCESSO_ADMINISTRATIVO',
+          tabela_afetada: 'alertas',
+          detalhes: `Processo iniciado contra a escola ${escolaNome} por desvio ou anomalia.`
+        });
+      } catch (e) {
+        console.error('Falha ao auditar processo administrativo', e);
+      }
+    }
+    mockSubmit({ successTitle: 'Processo Iniciado', successMsg: `Processo Administrativo aberto contra ${escolaNome} e registrado na Rastreabilidade TI.` });
+  };
+
   return (
     <DashboardLayout>
       {/* Classe CSS extra de Sirene na Página inteira */}
@@ -253,7 +273,7 @@ export default function InvestigarAlerta() {
           <button
             className={`btn ${anomalyActive ? 'btn-danger' : 'btn-danger'}`}
             style={anomalyActive ? { background: 'var(--alert-red)', borderColor: 'var(--alert-red)', boxShadow: '0 4px 15px rgba(239, 68, 68, 0.4)' } : {}}
-            onClick={() => mockSubmit({ successTitle: 'Processo Iniciado', successMsg: `Processo Administrativo aberto contra ${escolaNome}.` })}
+            onClick={handleIniciarProcesso}
             disabled={loading}
           >
             {loading ? <i className="fa-solid fa-circle-notch fa-spin"></i> : <i className="fa-solid fa-folder-open"></i>} Iniciar Processo Administrativo

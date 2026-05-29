@@ -25,6 +25,7 @@ import Termos from './pages/public/Termos';
 import GestorHome from './pages/gestor/GestorHome';
 import GestorEstoque from './pages/gestor/GestorEstoque';
 import Relatorios from './pages/gestor/Relatorios';
+import AprovarCardapio from './pages/gestor/AprovarCardapio';
 
 // Auditor
 import AuditorHome from './pages/auditor/AuditorHome';
@@ -41,6 +42,7 @@ import SolicitarCompra from './pages/nutricao/SolicitarCompra';
 // Licitação
 import EmpenhosSaldo from './pages/licitacao/EmpenhosSaldo';
 import Fornecedores from './pages/licitacao/Fornecedores';
+import LicitacaoSolicitacoes from './pages/licitacao/LicitacaoSolicitacoes';
 
 // Admin
 import GestaoUsuarios from './pages/admin/GestaoUsuarios';
@@ -109,6 +111,7 @@ export default function App() {
         <Route path="/gestor" element={<ProtectedRoute><GestorHome /></ProtectedRoute>} />
         <Route path="/gestor/estoque" element={<ProtectedRoute><GestorEstoque /></ProtectedRoute>} />
         <Route path="/gestor/relatorios" element={<ProtectedRoute><Relatorios /></ProtectedRoute>} />
+        <Route path="/gestor/cardapios" element={<ProtectedRoute><AprovarCardapio /></ProtectedRoute>} />
 
         {/* Auditor */}
         <Route path="/auditor" element={<ProtectedRoute><AuditorHome /></ProtectedRoute>} />
@@ -125,6 +128,7 @@ export default function App() {
         {/* Licitação */}
         <Route path="/licitacao" element={<ProtectedRoute><EmpenhosSaldo /></ProtectedRoute>} />
         <Route path="/licitacao/fornecedores" element={<ProtectedRoute><Fornecedores /></ProtectedRoute>} />
+        <Route path="/licitacao/solicitacoes" element={<ProtectedRoute><LicitacaoSolicitacoes /></ProtectedRoute>} />
 
         {/* Admin */}
         <Route path="/admin" element={<ProtectedRoute><GestaoUsuarios /></ProtectedRoute>} />

@@ -82,8 +82,13 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> logout() async {
-    await Supabase.instance.client.auth.signOut();
-    _user = null;
-    notifyListeners();
+    try {
+      await Supabase.instance.client.auth.signOut();
+    } catch (e) {
+      debugPrint('Logout API error (e.g., 403): $e');
+    } finally {
+      _user = null;
+      notifyListeners();
+    }
   }
 }

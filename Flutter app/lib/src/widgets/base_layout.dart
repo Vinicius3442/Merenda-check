@@ -29,6 +29,7 @@ class BaseLayout extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color(0xFF1E293B),
         elevation: 0,
+        leading: context.canPop() ? BackButton(onPressed: () => context.pop()) : null,
         title: Text(
           title,
           style: const TextStyle(

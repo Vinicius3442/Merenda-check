@@ -15,7 +15,7 @@ const MENUS = {
     { to: '/gestor',              icon: 'fa-house',           label: 'Visão Geral' },
     { to: '/gestor/estoque',      icon: 'fa-boxes-stacked',   label: 'Estoque Local' },
     { to: '/gestor/relatorios',   icon: 'fa-file-invoice',    label: 'Relatórios' },
-    { to: '/nutricao/cardapios',  icon: 'fa-calendar-check',  label: 'Aprovar Cardápio' },
+    { to: '/gestor/cardapios',    icon: 'fa-calendar-check',  label: 'Aprovar Cardápio' },
     { to: '/auditor/escolas',     icon: 'fa-triangle-exclamation', label: 'Ver Alertas' },
     { to: '/auditor/rastrear',    icon: 'fa-code-branch',     label: 'Rastreabilidade' },
   ],
@@ -35,6 +35,7 @@ const MENUS = {
   licitacao: [
     { to: '/licitacao',               icon: 'fa-file-signature', label: 'Contratos e Empenhos' },
     { to: '/licitacao/fornecedores',  icon: 'fa-truck',          label: 'Fornecedores (Sanções)' },
+    { to: '/licitacao/solicitacoes',  icon: 'fa-cart-shopping',  label: 'Pedidos de Compra' },
   ],
   admin: [
     { to: '/admin',          icon: 'fa-users-gear',    label: 'Gestão de Usuários' },

@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import Footer from '../../components/ui/Footer';
 import { useEstoque } from '../../hooks/useEstoque';

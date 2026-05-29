@@ -158,7 +158,7 @@ class _NutricaoDashboardScreenState extends State<NutricaoDashboardScreen> {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () => context.go(route),
+          onTap: () => context.push(route),
           borderRadius: BorderRadius.circular(16),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 20.0),

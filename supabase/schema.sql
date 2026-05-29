@@ -470,3 +470,5 @@ create policy "Gestão de solicitacoes de compra" on public.solicitacoes_compra 
   exists (select 1 from public.usuarios u where u.auth_id = auth.uid() and u.role in ('admin', 'licitacao', 'gestor'))
 );
 
+-- Adiciona status aos cardapios
+alter table public.cardapios add column if not exists status text default 'pendente' check (status in ('pendente', 'aprovado', 'rejeitado'));

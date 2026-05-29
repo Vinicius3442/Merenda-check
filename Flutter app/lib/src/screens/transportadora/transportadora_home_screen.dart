@@ -52,7 +52,7 @@ class TransportadoraHomeScreen extends StatelessWidget {
                   ),
                 ),
                 ElevatedButton.icon(
-                  onPressed: () => context.go('/transportadora/emitir-lote'),
+                  onPressed: () => context.push('/transportadora/emitir-lote'),
                   icon: const Icon(Icons.add, size: 16),
                   label: const Text('Emitir Lote'),
                   style: ElevatedButton.styleFrom(

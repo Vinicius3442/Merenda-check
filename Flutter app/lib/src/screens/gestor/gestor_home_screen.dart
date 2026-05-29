@@ -296,7 +296,7 @@ class _GestorHomeScreenState extends State<GestorHomeScreen> {
 
   Widget _buildActionRow(BuildContext context, IconData icon, String title, String desc, String route, Color color) {
     return InkWell(
-      onTap: () => context.go(route),
+      onTap: () => context.push(route),
       borderRadius: BorderRadius.circular(16),
       child: Container(
         padding: const EdgeInsets.all(16),

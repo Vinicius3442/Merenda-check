@@ -74,12 +74,13 @@ export default function GestaoCardapios() {
       }
 
       try {
-        const { data, error } = await supabase
-          .from('cardapios')
-          .select('plano')
-          .eq('escola_id', escolaId === 'geral' ? null : escolaId)
-          .eq('semana', semanaId)
-          .maybeSingle();
+        let query = supabase.from('cardapios').select('plano').eq('semana', semanaId);
+        if (escolaId === 'geral') {
+          query = query.is('escola_id', null);
+        } else {
+          query = query.eq('escola_id', escolaId);
+        }
+        const { data, error } = await query.maybeSingle();
 
         if (error) {
           if (error.code !== '42P01') {
@@ -158,12 +159,13 @@ export default function GestaoCardapios() {
     try {
       const dbEscolaId = escolaId === 'geral' ? null : escolaId;
 
-      const { data: existing, error: errCheck } = await supabase
-        .from('cardapios')
-        .select('id')
-        .eq('escola_id', dbEscolaId)
-        .eq('semana', semanaId)
-        .maybeSingle();
+      let queryCheck = supabase.from('cardapios').select('id').eq('semana', semanaId);
+      if (dbEscolaId === null) {
+        queryCheck = queryCheck.is('escola_id', null);
+      } else {
+        queryCheck = queryCheck.eq('escola_id', dbEscolaId);
+      }
+      const { data: existing, error: errCheck } = await queryCheck.maybeSingle();
 
       let error = null;
 

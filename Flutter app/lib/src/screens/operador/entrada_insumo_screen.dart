@@ -155,7 +155,7 @@ class _EntradaInsumoScreenState extends State<EntradaInsumoScreen> {
                 const SizedBox(height: 24),
                 
                 DropdownButtonFormField<String>(
-                  value: _selectedLoteId,
+                  initialValue: _selectedLoteId,
                   decoration: const InputDecoration(labelText: 'Romaneio em Trânsito', border: OutlineInputBorder()),
                   validator: (v) => v == null ? 'Selecione um lote' : null,
                   isExpanded: true,

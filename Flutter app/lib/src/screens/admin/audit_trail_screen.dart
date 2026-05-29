@@ -47,8 +47,9 @@ class _AuditTrailScreenState extends State<AuditTrailScreen> {
         final actionStr = '${row['acao']}_${row['tabela_afetada'].toString().toUpperCase()}';
         
         Color tColor = const Color(0xFF3B82F6);
-        if (row['acao'] == 'DELETE') tColor = const Color(0xFFEF4444);
-        else if (row['acao'] == 'UPDATE') tColor = const Color(0xFFF59E0B);
+        if (row['acao'] == 'DELETE') {
+          tColor = const Color(0xFFEF4444);
+        } else if (row['acao'] == 'UPDATE') tColor = const Color(0xFFF59E0B);
         else if (row['acao'] == 'INSERT') tColor = const Color(0xFF10B981);
 
         return AuditLog(

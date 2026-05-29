@@ -447,3 +447,26 @@ insert into public.contatos (nome, email, mensagem, lido) values
   ('Ana Paula', 'ana.escola@gov.br', 'Gostaria de agendar uma demonstração do sistema para a nossa rede de creches.', false),
   ('Prefeito João', 'gabinete@prefeitura.gov.br', 'O portal de transparência está excelente. Quero estender o uso para o almoxarifado central.', true)
 on conflict do nothing;
+
+-- ============================================================
+-- 13. TABELA: solicitacoes_compra
+-- ============================================================
+create table if not exists public.solicitacoes_compra (
+  id uuid primary key default uuid_generate_v4(),
+  escola_id uuid references public.escolas(id),
+  item text not null,
+  quantidade numeric(10,3) not null,
+  unidade text default 'kg',
+  motivo text,
+  status text default 'pendente' check (status in ('pendente', 'aprovado', 'rejeitado', 'concluido')),
+  solicitante_id uuid references public.usuarios(id),
+  criado_em timestamptz default now()
+);
+
+alter table public.solicitacoes_compra enable row level security;
+create policy "Leitura de solicitacoes de compra" on public.solicitacoes_compra for select using (auth.role() = 'authenticated');
+create policy "Inserção de solicitacoes de compra" on public.solicitacoes_compra for insert with check (auth.role() = 'authenticated');
+create policy "Gestão de solicitacoes de compra" on public.solicitacoes_compra for update using (
+  exists (select 1 from public.usuarios u where u.auth_id = auth.uid() and u.role in ('admin', 'licitacao', 'gestor'))
+);
+

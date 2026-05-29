@@ -30,7 +30,7 @@ const MENUS = {
     { to: '/nutricao/cardapios',  icon: 'fa-calendar-days',   label: 'Gestão de Cardápios' },
     { to: '/nutricao/fichas',     icon: 'fa-clipboard-list',  label: 'Fichas Técnicas' },
     { to: '/gestor/relatorios',   icon: 'fa-file-arrow-down', label: 'Relatório FNDE' },
-    { to: '/licitacao',           icon: 'fa-paper-plane',     label: 'Solicitar Compra' },
+    { to: '/nutricao/solicitar-compra', icon: 'fa-paper-plane',     label: 'Solicitar Compra' },
   ],
   licitacao: [
     { to: '/licitacao',               icon: 'fa-file-signature', label: 'Contratos e Empenhos' },

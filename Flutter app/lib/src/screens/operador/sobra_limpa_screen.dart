@@ -100,7 +100,7 @@ class _SobraLimpaScreenState extends State<SobraLimpaScreen> {
                 const SizedBox(height: 24),
                 
                 DropdownButtonFormField<String>(
-                  value: _selectedEstoqueId,
+                  initialValue: _selectedEstoqueId,
                   decoration: const InputDecoration(labelText: 'Lote / Insumo', border: OutlineInputBorder()),
                   validator: (v) => v == null ? 'Selecione um lote' : null,
                   isExpanded: true,

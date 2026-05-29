@@ -18,7 +18,6 @@ class AppTheme {
         primary: primaryColor,
         secondary: primaryDark,
         error: errorColor,
-        background: const Color(0xFF0F172A),
         surface: const Color(0xFF1E293B), // Slightly lighter slate
       ),
       appBarTheme: const AppBarTheme(

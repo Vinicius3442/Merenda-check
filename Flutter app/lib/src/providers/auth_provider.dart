@@ -64,10 +64,16 @@ class AuthProvider extends ChangeNotifier {
 
   Future<bool> login(String email, String password) async {
     try {
-      await Supabase.instance.client.auth.signInWithPassword(
+      final response = await Supabase.instance.client.auth.signInWithPassword(
         email: email,
         password: password,
       );
+      
+      // Aguarda carregar o perfil ANTES de retornar sucesso para evitar o bug do "duplo login"
+      if (response.session != null) {
+        await _fetchUserProfile(response.session!.user.id);
+      }
+      
       return true;
     } catch (e) {
       debugPrint('Login error: $e');

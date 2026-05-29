@@ -68,7 +68,7 @@ class _RegistrarRefeicaoScreenState extends State<RegistrarRefeicaoScreen> {
                 const SizedBox(height: 24),
                 
                 DropdownButtonFormField<String>(
-                  value: _turno,
+                  initialValue: _turno,
                   decoration: const InputDecoration(labelText: 'Turno', border: OutlineInputBorder()),
                   items: const [
                     DropdownMenuItem(value: 'cafe', child: Text('Café da Manhã')),

@@ -209,60 +209,91 @@ export default function GestaoCardapios() {
 
   return (
     <DashboardLayout>
-      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', paddingBottom: 40 }}>
         
         {loadingDb && (
           <div style={{
             position: 'fixed', top: 24, right: 24, zIndex: 1000,
-            background: 'var(--bg-surface-elevated)', color: '#fff', padding: '16px 24px',
-            borderRadius: 12, boxShadow: '0 8px 30px rgba(0,0,0,0.3)',
+            background: 'linear-gradient(135deg, rgba(15,23,42,0.9), rgba(30,41,59,0.95))',
+            color: '#fff', padding: '16px 24px',
+            borderRadius: 16, boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
             display: 'flex', alignItems: 'center', gap: 12,
-            fontFamily: 'Outfit', fontWeight: 600, border: '1px solid rgba(255,255,255,0.1)'
+            fontFamily: 'Outfit', fontWeight: 600, border: '1px solid rgba(255,255,255,0.1)',
+            backdropFilter: 'blur(10px)'
           }}>
-            <i className="fa-solid fa-circle-notch fa-spin" style={{ color: 'var(--primary)' }}></i>
-            Carregando do servidor...
+            <i className="fa-solid fa-circle-notch fa-spin" style={{ color: 'var(--primary)', fontSize: '1.2rem' }}></i>
+            Sincronizando Servidor...
           </div>
         )}
 
-        <div className="header-dash animate-fade-in">
+        <div className="header-dash animate-fade-in" style={{ 
+          marginBottom: 30, 
+          padding: '24px 32px', 
+          background: 'linear-gradient(90deg, rgba(16,185,129,0.1) 0%, rgba(15,23,42,0) 100%)',
+          borderRadius: 24,
+          border: '1px solid rgba(16,185,129,0.1)',
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          flexWrap: 'wrap', gap: 20
+        }}>
           <div>
-            <h1 style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <i className="fa-solid fa-calendar-days" style={{ color: 'var(--primary)' }}></i>
-              Gestão Integrada de Cardápios
+            <h1 style={{ display: 'flex', alignItems: 'center', gap: 14, fontSize: '2.2rem', margin: 0 }}>
+              <div style={{
+                width: 50, height: 50, borderRadius: 14,
+                background: 'linear-gradient(135deg, var(--primary), #059669)',
+                color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: '0 10px 20px rgba(16,185,129,0.3)'
+              }}>
+                <i className="fa-solid fa-calendar-days"></i>
+              </div>
+              <span style={{ background: 'linear-gradient(to right, #fff, #94a3b8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                Gestão de Cardápios
+              </span>
             </h1>
-            <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>
-              Planejamento de nutrição balanceada. Valores per capita atualizados instantaneamente conforme receitas do banco TACO.
+            <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', margin: '12px 0 0 0', maxWidth: 600, lineHeight: 1.5 }}>
+              Planejamento nutricional inteligente com validação PNAE em tempo real. Valores per capita sincronizados com a base TACO.
             </p>
           </div>
           <div>
-            <button className="btn btn-primary" onClick={dispararSalvar} disabled={saving}>
+            <button 
+              className="btn btn-primary" 
+              onClick={dispararSalvar} 
+              disabled={saving}
+              style={{
+                padding: '14px 28px', fontSize: '1.05rem', fontWeight: 700, borderRadius: 14,
+                boxShadow: '0 10px 25px rgba(16,185,129,0.4)',
+                transform: saving ? 'scale(0.98)' : 'none',
+                transition: 'all 0.2s'
+              }}
+            >
               {saving ? (
-                <><i className="fa-solid fa-circle-notch fa-spin"></i> Salvando...</>
+                <><i className="fa-solid fa-circle-notch fa-spin"></i> Processando...</>
               ) : (
-                <><i className="fa-solid fa-cloud-arrow-up"></i> Salvar Semana Vigente</>
+                <><i className="fa-solid fa-cloud-arrow-up"></i> Publicar Semana</>
               )}
             </button>
           </div>
         </div>
 
         {/* Informações da Semana */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 30, alignItems: 'start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: 32, alignItems: 'start' }}>
           
-          {/* Planejador Semanal e Seletores */}
-          <div className="glass-panel animate-slide-up" style={{ padding: 24 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <h3 style={{ fontFamily: 'Outfit', margin: 0 }}>Semana 17 Letiva (18 a 22 Mai)</h3>
-              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                <i className="fa-solid fa-wallet" style={{ color: 'var(--primary)', marginRight: 6 }}></i>
-                Custo de hoje: <strong style={{ color: 'var(--text-main)' }}>R$ {totalCusto.toFixed(2)}</strong> per capita
-              </span>
+          {/* Planejador Semanal */}
+          <div className="glass-panel animate-slide-up" style={{ padding: 32, borderRadius: 24, border: '1px solid rgba(255,255,255,0.06)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+              <h3 style={{ fontFamily: 'Outfit', margin: 0, fontSize: '1.4rem', color: 'var(--text-main)' }}>Semana 17 Letiva</h3>
+              <div style={{ 
+                background: 'rgba(59,130,246,0.1)', color: '#60a5fa', padding: '8px 16px', borderRadius: 20,
+                fontSize: '0.9rem', fontWeight: 700, border: '1px solid rgba(59,130,246,0.2)'
+              }}>
+                <i className="fa-solid fa-wallet" style={{ marginRight: 8 }}></i>
+                Custo: R$ {totalCusto.toFixed(2)} / aluno
+              </div>
             </div>
 
             {/* Abas dos Dias */}
-            <div style={{ display: 'flex', gap: 8, borderBottom: '1px solid var(--border-subtle)', paddingBottom: 12, marginBottom: 24, overflowX: 'auto' }}>
+            <div style={{ display: 'flex', gap: 10, paddingBottom: 20, marginBottom: 28, borderBottom: '1px solid rgba(255,255,255,0.05)', overflowX: 'auto' }}>
               {diasSemana.map(dia => {
                 const isActive = selectedDay === dia.id;
-                // Calcular calorias para a badge pequena do dia
                 const plan = semanaPlan[dia.id];
                 const calDia = 
                   (RECIPES_DB.desjejum.find(r => r.id === plan.desjejum)?.calorias || 0) +
@@ -275,21 +306,26 @@ export default function GestaoCardapios() {
                     key={dia.id}
                     onClick={() => setSelectedDay(dia.id)}
                     style={{
-                      flex: 1, padding: '12px 8px', borderRadius: 8,
-                      background: isActive ? 'var(--primary)' : 'var(--bg-surface-elevated)',
-                      color: isActive ? '#fff' : 'var(--text-main)',
-                      border: isActive ? '1px solid var(--primary)' : '1px solid var(--border-subtle)',
-                      fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s',
-                      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, minWidth: 100
+                      flex: 1, minWidth: 80, padding: '14px 8px', borderRadius: 16,
+                      background: isActive ? 'linear-gradient(135deg, var(--primary), #059669)' : 'rgba(255,255,255,0.03)',
+                      color: isActive ? '#fff' : 'var(--text-muted)',
+                      border: isActive ? 'none' : '1px solid rgba(255,255,255,0.05)',
+                      boxShadow: isActive ? '0 10px 20px rgba(16,185,129,0.3)' : 'none',
+                      fontWeight: 700, cursor: 'pointer', transition: 'all 0.3s',
+                      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
                     }}
+                    onMouseEnter={e => { if(!isActive) e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
+                    onMouseLeave={e => { if(!isActive) e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
                   >
-                    <span style={{ fontSize: '0.82rem', opacity: isActive ? 0.9 : 0.6 }}>{dia.label.split('-')[0]}</span>
-                    <span style={{ fontSize: '0.9rem', color: isActive ? '#fff' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <span style={{ fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: 1, opacity: isActive ? 1 : 0.7 }}>
+                      {dia.label.split('-')[0].substring(0,3)}
+                    </span>
+                    <span style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: 6, color: isActive ? '#fff' : 'inherit' }}>
                       🔥 {calDia}
                       <span style={{
-                        width: 6, height: 6, borderRadius: '50%',
-                        background: confDia ? '#10b981' : '#f59e0b',
-                        display: 'inline-block'
+                        width: 8, height: 8, borderRadius: '50%',
+                        background: confDia ? '#10b981' : '#ef4444',
+                        boxShadow: confDia ? '0 0 8px #10b981' : '0 0 8px #ef4444'
                       }} />
                     </span>
                   </button>
@@ -297,256 +333,162 @@ export default function GestaoCardapios() {
               })}
             </div>
 
-            {/* Meal Slots (Desjejum, Almoço, Lanche) */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {/* Meal Slots */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
               
-              {/* DESJEJUM */}
-              <div style={{
-                background: 'var(--bg-surface-elevated)', padding: 20, borderRadius: 12,
-                border: '1px solid var(--border-subtle)', transition: 'border 0.2s'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <div style={{ width: 36, height: 36, borderRadius: 8, background: 'rgba(96,165,250,0.1)', color: '#60a5fa', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <i className="fa-solid fa-mug-saucer"></i>
+              {/* Função Auxiliar para Renderizar Refeição */}
+              {[
+                { type: 'desjejum', icon: 'fa-mug-hot', color: '#3b82f6', bg: 'rgba(59,130,246,0.1)', title: 'Desjejum', rec: recDesjejum, db: RECIPES_DB.desjejum },
+                { type: 'almoco', icon: 'fa-bowl-food', color: '#10b981', bg: 'rgba(16,185,129,0.1)', title: 'Almoço', rec: recAlmoco, db: RECIPES_DB.almoco },
+                { type: 'lanche', icon: 'fa-apple-whole', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', title: 'Lanche da Tarde', rec: recLanche, db: RECIPES_DB.lanche }
+              ].map(meal => (
+                <div key={meal.type} style={{
+                  background: 'rgba(15,23,42,0.4)', padding: 24, borderRadius: 20,
+                  border: '1px solid rgba(255,255,255,0.04)',
+                  position: 'relative', overflow: 'hidden'
+                }}>
+                  <div style={{ position: 'absolute', top: 0, left: 0, width: 4, height: '100%', background: meal.color }} />
+                  
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+                    <div style={{ display: 'flex', gap: 16 }}>
+                      <div style={{ 
+                        width: 48, height: 48, borderRadius: 14, 
+                        background: meal.bg, color: meal.color, 
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', flexShrink: 0 
+                      }}>
+                        <i className={`fa-solid ${meal.icon}`}></i>
+                      </div>
+                      <div>
+                        <h4 style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 1 }}>{meal.title}</h4>
+                        <h3 style={{ margin: '4px 0 0 0', fontSize: '1.1rem', color: 'var(--text-main)', fontFamily: 'Outfit', lineHeight: 1.3 }}>{meal.rec.nome}</h3>
+                      </div>
                     </div>
-                    <div>
-                      <h4 style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Café da Manhã · Desjejum</h4>
-                      <h3 style={{ margin: 0, fontSize: '1.05rem', color: 'var(--text-main)', fontFamily: 'Outfit' }}>{recDesjejum.nome}</h3>
+                    <div style={{ background: meal.bg, color: meal.color, padding: '6px 12px', borderRadius: 12, fontSize: '0.85rem', fontWeight: 800 }}>
+                      🔥 {meal.rec.calorias}
                     </div>
                   </div>
-                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#60a5fa' }}>🔥 {recDesjejum.calorias} kcal</span>
-                </div>
-                <div className="meal-slot-grid">
-                  <div className="form-group" style={{ margin: 0 }}>
-                    <label className="form-label" style={{ fontSize: '0.75rem', marginBottom: 4 }}>Alterar Receita Recomendada</label>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 20, alignItems: 'center' }}>
                     <select
                       className="form-control"
-                      value={planoDiaAtivo.desjejum}
-                      onChange={(e) => handleRecipeChange('desjejum', e.target.value)}
-                      style={{ background: 'var(--bg-base)', border: '1px solid var(--border-subtle)', color: 'var(--text-main)', fontSize: '0.85rem' }}
+                      value={planoDiaAtivo[meal.type]}
+                      onChange={(e) => handleRecipeChange(meal.type, e.target.value)}
+                      style={{ 
+                        background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', 
+                        color: 'var(--text-main)', fontSize: '0.9rem', borderRadius: 12, padding: '12px 16px',
+                        cursor: 'pointer', appearance: 'none', width: '100%'
+                      }}
                     >
-                      {RECIPES_DB.desjejum.map(r => (
+                      {meal.db.map(r => (
                         <option key={r.id} value={r.id}>{r.nome} ({r.calorias} kcal)</option>
                       ))}
                     </select>
-                  </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', borderLeft: '1px solid var(--border-subtle)', paddingLeft: 12 }}>
-                    C: {recDesjejum.carboidratos}g · P: {recDesjejum.proteinas}g · L: {recDesjejum.lipideos}g
-                  </div>
-                </div>
-              </div>
-
-              {/* ALMOÇO */}
-              <div style={{
-                background: 'var(--bg-surface-elevated)', padding: 20, borderRadius: 12,
-                border: '1px solid var(--border-subtle)', transition: 'border 0.2s'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <div style={{ width: 36, height: 36, borderRadius: 8, background: 'rgba(16,185,129,0.1)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <i className="fa-solid fa-bowl-rice"></i>
-                    </div>
-                    <div>
-                      <h4 style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Refeição Principal · Almoço</h4>
-                      <h3 style={{ margin: 0, fontSize: '1.05rem', color: 'var(--text-main)', fontFamily: 'Outfit' }}>{recAlmoco.nome}</h3>
+                    <div style={{ 
+                      display: 'flex', gap: 12, fontSize: '0.75rem', color: 'var(--text-muted)', 
+                      background: 'rgba(255,255,255,0.03)', padding: '10px 16px', borderRadius: 12 
+                    }}>
+                      <span title="Carboidratos"><strong>C:</strong> {meal.rec.carboidratos}g</span>
+                      <span title="Proteínas"><strong>P:</strong> {meal.rec.proteinas}g</span>
+                      <span title="Lipídeos"><strong>L:</strong> {meal.rec.lipideos}g</span>
                     </div>
                   </div>
-                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--primary)' }}>🔥 {recAlmoco.calorias} kcal</span>
                 </div>
-                <div className="meal-slot-grid">
-                  <div className="form-group" style={{ margin: 0 }}>
-                    <label className="form-label" style={{ fontSize: '0.75rem', marginBottom: 4 }}>Alterar Receita Recomendada</label>
-                    <select
-                      className="form-control"
-                      value={planoDiaAtivo.almoco}
-                      onChange={(e) => handleRecipeChange('almoco', e.target.value)}
-                      style={{ background: 'var(--bg-base)', border: '1px solid var(--border-subtle)', color: 'var(--text-main)', fontSize: '0.85rem' }}
-                    >
-                      {RECIPES_DB.almoco.map(r => (
-                        <option key={r.id} value={r.id}>{r.nome} ({r.calorias} kcal)</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', borderLeft: '1px solid var(--border-subtle)', paddingLeft: 12 }}>
-                    C: {recAlmoco.carboidratos}g · P: {recAlmoco.proteinas}g · L: {recAlmoco.lipideos}g
-                  </div>
-                </div>
-              </div>
-
-              {/* LANCHE */}
-              <div style={{
-                background: 'var(--bg-surface-elevated)', padding: 20, borderRadius: 12,
-                border: '1px solid var(--border-subtle)', transition: 'border 0.2s'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <div style={{ width: 36, height: 36, borderRadius: 8, background: 'rgba(251,191,36,0.1)', color: '#fbbf24', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <i className="fa-solid fa-apple-whole"></i>
-                    </div>
-                    <div>
-                      <h4 style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Lanche da Tarde · Merenda</h4>
-                      <h3 style={{ margin: 0, fontSize: '1.05rem', color: 'var(--text-main)', fontFamily: 'Outfit' }}>{recLanche.nome}</h3>
-                    </div>
-                  </div>
-                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#fbbf24' }}>🔥 {recLanche.calorias} kcal</span>
-                </div>
-                <div className="meal-slot-grid">
-                  <div className="form-group" style={{ margin: 0 }}>
-                    <label className="form-label" style={{ fontSize: '0.75rem', marginBottom: 4 }}>Alterar Receita Recomendada</label>
-                    <select
-                      className="form-control"
-                      value={planoDiaAtivo.lanche}
-                      onChange={(e) => handleRecipeChange('lanche', e.target.value)}
-                      style={{ background: 'var(--bg-base)', border: '1px solid var(--border-subtle)', color: 'var(--text-main)', fontSize: '0.85rem' }}
-                    >
-                      {RECIPES_DB.lanche.map(r => (
-                        <option key={r.id} value={r.id}>{r.nome} ({r.calorias} kcal)</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', borderLeft: '1px solid var(--border-subtle)', paddingLeft: 12 }}>
-                    C: {recLanche.carboidratos}g · P: {recLanche.proteinas}g · L: {recLanche.lipideos}g
-                  </div>
-                </div>
-              </div>
-
+              ))}
             </div>
           </div>
 
           {/* Painel PNAE de Conformidade Nutricional */}
-          <div className="glass-panel animate-slide-up delay-100" style={{ padding: 24, border: isDiaTotalmenteConforme ? '1px solid rgba(16,185,129,0.3)' : '1px solid rgba(245,158,11,0.3)' }}>
+          <div className="glass-panel animate-slide-up delay-100" style={{ 
+            padding: 32, borderRadius: 24, 
+            border: isDiaTotalmenteConforme ? '1px solid rgba(16,185,129,0.3)' : '1px solid rgba(245,158,11,0.3)',
+            boxShadow: isDiaTotalmenteConforme ? 'inset 0 0 40px rgba(16,185,129,0.05)' : 'inset 0 0 40px rgba(245,158,11,0.05)'
+          }}>
             
             {/* Header Conformidade */}
-            <div style={{ textAlign: 'center', marginBottom: 24, paddingBottom: 16, borderBottom: '1px solid var(--border-subtle)' }}>
+            <div style={{ textAlign: 'center', marginBottom: 32, paddingBottom: 24, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
               <div style={{
-                width: 60, height: 60, borderRadius: '50%',
+                width: 70, height: 70, borderRadius: '50%',
                 background: isDiaTotalmenteConforme ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)',
                 color: isDiaTotalmenteConforme ? 'var(--primary)' : 'var(--alert-yellow)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                margin: '0 auto 12px auto', fontSize: '1.8rem',
+                margin: '0 auto 16px auto', fontSize: '2rem',
                 border: isDiaTotalmenteConforme ? '2px solid var(--primary)' : '2px solid var(--alert-yellow)',
-                boxShadow: isDiaTotalmenteConforme ? '0 0 15px rgba(16,185,129,0.3)' : '0 0 15px rgba(245,158,11,0.3)'
+                boxShadow: isDiaTotalmenteConforme ? '0 0 20px rgba(16,185,129,0.4)' : '0 0 20px rgba(245,158,11,0.4)'
               }}>
-                <i className={`fa-solid ${isDiaTotalmenteConforme ? 'fa-square-check' : 'fa-triangle-exclamation'}`}></i>
+                <i className={`fa-solid ${isDiaTotalmenteConforme ? 'fa-shield-check' : 'fa-triangle-exclamation'}`}></i>
               </div>
-              <h3 style={{ fontFamily: 'Outfit', fontSize: '1.25rem', color: 'var(--text-main)', margin: '0 0 4px 0' }}>
-                {isDiaTotalmenteConforme ? 'Cardápio Aprovado PNAE' : 'Cardápio Fora das Diretrizes'}
+              <h3 style={{ fontFamily: 'Outfit', fontSize: '1.4rem', color: 'var(--text-main)', margin: '0 0 8px 0' }}>
+                {isDiaTotalmenteConforme ? 'Conformidade FNDE Atingida' : 'Desvio Nutricional Detectado'}
               </h3>
-              <p style={{ margin: 0, fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+              <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
                 {isDiaTotalmenteConforme 
-                  ? 'Os níveis nutricionais estão dentro das bandas de tolerância de ±10% do FNDE.' 
-                  : 'Atenção: Um ou mais nutrientes estão fora do intervalo estipulado de tolerância.'}
+                  ? 'Os níveis nutricionais do dia estão perfeitamente ajustados dentro das margens exigidas pelo PNAE.' 
+                  : 'Atenção: Revise o cardápio. Um ou mais nutrientes estão fora do intervalo estipulado de tolerância.'}
               </p>
             </div>
 
             {/* Nutrientes Comparação */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
               
-              {/* Calorias */}
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: 6 }}>
-                  <span><strong>Energia Escolar:</strong> {totalCalorias} kcal</span>
-                  <span style={{ color: cCal === 'compliant' ? 'var(--primary)' : 'var(--alert-yellow)', fontWeight: 700 }}>
-                    {cCal === 'compliant' ? 'Em Conformidade (1150 kcal ±10%)' : cCal === 'low' ? 'Abaixo do Limite' : 'Acima do Limite'}
-                  </span>
-                </div>
-                <div style={{ height: 10, background: 'rgba(255,255,255,0.05)', borderRadius: 5, overflow: 'hidden', position: 'relative' }}>
-                  {/* Tolerância Band Visualized */}
-                  <div style={{ position: 'absolute', left: '80%', width: '20%', height: '100%', background: 'rgba(16,185,129,0.08)' }} />
-                  <div style={{
-                    width: `${Math.min((totalCalorias / PNAE_TARGETS.calorias.max) * 100, 100)}%`,
-                    height: '100%',
-                    background: cCal === 'compliant' ? 'linear-gradient(90deg, #10b981, #059669)' : 'linear-gradient(90deg, #f59e0b, #d97706)',
-                    borderRadius: 5
-                  }} />
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: 4 }}>
-                  <span>Mínimo: 1035 kcal</span>
-                  <span>Ideal: 1150 kcal</span>
-                  <span>Máximo: 1265 kcal</span>
-                </div>
-              </div>
-
-              {/* Carboidratos */}
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: 6 }}>
-                  <span><strong>Carboidratos:</strong> {totalCarboidratos}g</span>
-                  <span style={{ color: cCarb === 'compliant' ? '#60a5fa' : 'var(--alert-yellow)', fontWeight: 700 }}>
-                    {cCarb === 'compliant' ? 'Conforme PNAE' : 'Desvio Detectado'}
-                  </span>
-                </div>
-                <div style={{ height: 8, background: 'rgba(255,255,255,0.05)', borderRadius: 4, overflow: 'hidden' }}>
-                  <div style={{
-                    width: `${Math.min((totalCarboidratos / PNAE_TARGETS.carboidratos.max) * 100, 100)}%`,
-                    height: '100%',
-                    background: cCarb === 'compliant' ? '#60a5fa' : '#f59e0b',
-                    borderRadius: 4
-                  }} />
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: 4 }}>
-                  <span>Min: 150g</span>
-                  <span>Ideal: 172g</span>
-                  <span>Max: 200g</span>
-                </div>
-              </div>
-
-              {/* Proteínas */}
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: 6 }}>
-                  <span><strong>Proteínas:</strong> {totalProteinas.toFixed(1)}g</span>
-                  <span style={{ color: cProt === 'compliant' ? 'var(--primary)' : 'var(--alert-yellow)', fontWeight: 700 }}>
-                    {cProt === 'compliant' ? 'Conforme PNAE' : 'Desvio Detectado'}
-                  </span>
-                </div>
-                <div style={{ height: 8, background: 'rgba(255,255,255,0.05)', borderRadius: 4, overflow: 'hidden' }}>
-                  <div style={{
-                    width: `${Math.min((totalProteinas / PNAE_TARGETS.proteinas.max) * 100, 100)}%`,
-                    height: '100%',
-                    background: cProt === 'compliant' ? '#34d399' : '#f59e0b',
-                    borderRadius: 4
-                  }} />
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: 4 }}>
-                  <span>Min: 28g</span>
-                  <span>Ideal: 35g</span>
-                  <span>Max: 45g</span>
-                </div>
-              </div>
-
-              {/* Lipídeos */}
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: 6 }}>
-                  <span><strong>Lipídeos:</strong> {totalLipideos.toFixed(1)}g</span>
-                  <span style={{ color: cLip === 'compliant' ? '#fbbf24' : 'var(--alert-yellow)', fontWeight: 700 }}>
-                    {cLip === 'compliant' ? 'Conforme PNAE' : 'Desvio Detectado'}
-                  </span>
-                </div>
-                <div style={{ height: 8, background: 'rgba(255,255,255,0.05)', borderRadius: 4, overflow: 'hidden' }}>
-                  <div style={{
-                    width: `${Math.min((totalLipideos / PNAE_TARGETS.lipideos.max) * 100, 100)}%`,
-                    height: '100%',
-                    background: cLip === 'compliant' ? '#fbbf24' : '#f59e0b',
-                    borderRadius: 4
-                  }} />
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: 4 }}>
-                  <span>Min: 25g</span>
-                  <span>Ideal: 32g</span>
-                  <span>Max: 38g</span>
-                </div>
-              </div>
+              {[
+                { label: 'Energia', val: totalCalorias, target: PNAE_TARGETS.calorias, status: cCal, unit: 'kcal' },
+                { label: 'Carboidratos', val: totalCarboidratos, target: PNAE_TARGETS.carboidratos, status: cCarb, unit: 'g' },
+                { label: 'Proteínas', val: totalProteinas.toFixed(1), target: PNAE_TARGETS.proteinas, status: cProt, unit: 'g' },
+                { label: 'Lipídeos', val: totalLipideos.toFixed(1), target: PNAE_TARGETS.lipideos, status: cLip, unit: 'g' }
+              ].map(nutri => {
+                const isCompliant = nutri.status === 'compliant';
+                const percent = Math.min((nutri.val / nutri.target.max) * 100, 100);
+                const color = isCompliant ? '#10b981' : '#f59e0b';
+                
+                return (
+                  <div key={nutri.label}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginBottom: 8, alignItems: 'flex-end' }}>
+                      <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>{nutri.label} <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>({nutri.val} {nutri.unit})</span></span>
+                      <span style={{ 
+                        color: color, fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: 0.5,
+                        background: `${color}15`, padding: '4px 8px', borderRadius: 8
+                      }}>
+                        {isCompliant ? 'Conforme' : 'Desvio'}
+                      </span>
+                    </div>
+                    <div style={{ height: 12, background: 'rgba(0,0,0,0.3)', borderRadius: 6, overflow: 'hidden', position: 'relative', boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.5)' }}>
+                      {/* Tolerance Band */}
+                      <div style={{ 
+                        position: 'absolute', 
+                        left: `${(nutri.target.min / nutri.target.max) * 100}%`, 
+                        width: `${((nutri.target.max - nutri.target.min) / nutri.target.max) * 100}%`, 
+                        height: '100%', background: 'rgba(255,255,255,0.08)' 
+                      }} />
+                      
+                      <div style={{
+                        width: `${percent}%`, height: '100%',
+                        background: `linear-gradient(90deg, ${color}80, ${color})`,
+                        borderRadius: 6, transition: 'width 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+                        boxShadow: `0 0 10px ${color}80`
+                      }} />
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: 6, fontFamily: 'monospace' }}>
+                      <span>MIN: {nutri.target.min}</span>
+                      <span style={{ color: color }}>ATUAL: {nutri.val}</span>
+                      <span>MAX: {nutri.target.max}</span>
+                    </div>
+                  </div>
+                );
+              })}
 
             </div>
 
             {/* Informações Regulatórias FNDE */}
             <div style={{
-              marginTop: 24, padding: 14, background: 'rgba(255,255,255,0.02)',
-              borderRadius: 8, border: '1px solid var(--border-subtle)', fontSize: '0.78rem',
-              color: 'var(--text-muted)', lineHeight: '1.4'
+              marginTop: 32, padding: 20, background: 'linear-gradient(135deg, rgba(16,185,129,0.05), rgba(16,185,129,0.01))',
+              borderRadius: 16, border: '1px solid rgba(16,185,129,0.1)', fontSize: '0.85rem',
+              color: 'var(--text-main)', lineHeight: '1.5', display: 'flex', gap: 16, alignItems: 'flex-start'
             }}>
-              <i className="fa-solid fa-circle-info" style={{ color: 'var(--primary)', marginRight: 6 }}></i>
-              O Fundo Nacional de Desenvolvimento da Educação (FNDE) preconiza que a alimentação em período integral supra pelo menos 70% das necessidades diárias dos escolares.
+              <i className="fa-solid fa-graduation-cap" style={{ color: 'var(--primary)', fontSize: '1.5rem', marginTop: 2 }}></i>
+              <div>
+                <strong style={{ display: 'block', marginBottom: 4 }}>Diretrizes PNAE 2026</strong>
+                O Fundo Nacional de Desenvolvimento da Educação (FNDE) preconiza que a alimentação em período integral supra pelo menos 70% das necessidades diárias, promovendo saúde preventiva nas escolas.
+              </div>
             </div>
 
           </div>
@@ -557,4 +499,3 @@ export default function GestaoCardapios() {
     </DashboardLayout>
   );
 }
-

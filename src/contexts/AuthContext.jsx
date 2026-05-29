@@ -138,8 +138,11 @@ export function AuthProvider({ children }) {
         role: data.role,
         isAuthenticated: true,
       });
+
+      return data.role; // Retorna a role para o login usar
     } catch (err) {
       console.error('[Auth] Exceção crítica na resolução do perfil:', err);
+      return 'operador';
     } finally {
       setLoading(false);
     }
@@ -172,34 +175,8 @@ export function AuthProvider({ children }) {
       return { ok: false, error: error.message };
     }
 
-    // Buscar a role para redirecionar de forma ultra resiliente
-    let userRole = 'operador';
-    try {
-      const { data: profile } = await supabase
-        .from('usuarios')
-        .select('role')
-        .eq('auth_id', data.user.id)
-        .maybeSingle();
-
-      if (profile?.role) {
-        userRole = profile.role;
-      } else if (data.user.email) {
-        const { data: emailProfile } = await supabase
-          .from('usuarios')
-          .select('role')
-          .eq('email', data.user.email)
-          .maybeSingle();
-
-        if (emailProfile?.role) {
-          userRole = emailProfile.role;
-        } else {
-          const prefix = data.user.email.split('@')[0];
-          userRole = prefix === 'admin' ? 'admin' : (prefix === 'nutricao' ? 'nutricao' : (prefix === 'gestor' ? 'gestor' : (prefix === 'auditor' ? 'auditor' : (prefix === 'licitacao' ? 'licitacao' : (prefix === 'transportadora' ? 'transportadora' : 'operador')))));
-        }
-      }
-    } catch (err) {
-      console.error('[Auth] Erro ao obter role para redirecionamento:', err);
-    }
+    // Aguarda carregar o perfil ANTES de retornar sucesso para evitar o bug do "duplo login"
+    const userRole = await fetchUserProfile(data.user.id);
 
     return { ok: true, role: userRole };
   }, []);

@@ -3,6 +3,11 @@
    ============================================ */
 
 /* ---- Header ---- */
+
+.hide{
+  display: none;
+}
+
 .landing-header {
   position: fixed;
   top: 24px; left: 50%;

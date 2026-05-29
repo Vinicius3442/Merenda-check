@@ -222,7 +222,7 @@ export default function LandingPage() {
       </section>
 
       {/* CTA / Contato */}
-      <section className="cta-section" id="cta">
+      <section className="cta-section" class="hide" id="cta">
         <div className="cta-card glass-panel animate-slide-up" style={{ display: 'flex', flexDirection: 'column', gap: '40px', maxWidth: '800px', padding: '40px' }}>
           <div>
             <h2>Transforme a <span className="text-gradient">Merenda Escolar</span></h2>

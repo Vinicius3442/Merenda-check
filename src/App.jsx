@@ -36,6 +36,7 @@ import InvestigarAlerta from './pages/auditor/InvestigarAlerta';
 import NutricaoDashboard from './pages/nutricao/NutricaoDashboard';
 import GestaoCardapios from './pages/nutricao/GestaoCardapios';
 import FichaTecnica from './pages/nutricao/FichaTecnica';
+import SolicitarCompra from './pages/nutricao/SolicitarCompra';
 
 // Licitação
 import EmpenhosSaldo from './pages/licitacao/EmpenhosSaldo';
@@ -119,6 +120,7 @@ export default function App() {
         <Route path="/nutricao" element={<ProtectedRoute><NutricaoDashboard /></ProtectedRoute>} />
         <Route path="/nutricao/cardapios" element={<ProtectedRoute><GestaoCardapios /></ProtectedRoute>} />
         <Route path="/nutricao/fichas" element={<ProtectedRoute><FichaTecnica /></ProtectedRoute>} />
+        <Route path="/nutricao/solicitar-compra" element={<ProtectedRoute><SolicitarCompra /></ProtectedRoute>} />
 
         {/* Licitação */}
         <Route path="/licitacao" element={<ProtectedRoute><EmpenhosSaldo /></ProtectedRoute>} />

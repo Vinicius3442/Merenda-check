@@ -97,7 +97,7 @@ class _FichaTecnicaScreenState extends State<FichaTecnicaScreen> {
                     padding: const EdgeInsets.only(right: 8.0),
                     child: ChoiceChip(
                       label: Text(
-                        recipe.name.split(' ').take(3).join(' ') + '...',
+                        '${recipe.name.split(' ').take(3).join(' ')}...',
                         style: TextStyle(
                           color: isSelected ? Colors.white : Colors.white70,
                           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,

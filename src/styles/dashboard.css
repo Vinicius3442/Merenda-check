@@ -905,3 +905,8 @@
     box-sizing: border-box;
   }
 }
+
+/* Hide scrollbar for sidebar menu */
+.menu { scrollbar-width: none; -ms-overflow-style: none; }
+.menu::-webkit-scrollbar { display: none; }
+

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import 'providers/auth_provider.dart';
 import 'screens/auth/login_screen.dart';
+import 'screens/auth/profile_screen.dart';
 import 'screens/operador/operador_home_screen.dart';
 import 'screens/operador/entrada_insumo_screen.dart';
 import 'screens/operador/baixa_insumo_screen.dart';
@@ -65,6 +66,11 @@ final router = GoRouter(
     GoRoute(
       path: '/login',
       builder: (context, state) => const LoginScreen(),
+    ),
+    // Profile
+    GoRoute(
+      path: '/profile',
+      builder: (context, state) => const ProfileScreen(),
     ),
     // Operador
     GoRoute(

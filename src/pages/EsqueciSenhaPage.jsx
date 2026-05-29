@@ -2,15 +2,31 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import BgMesh from '../components/ui/BgMesh';
 import Footer from '../components/ui/Footer';
+import { supabase } from '../lib/supabase';
 
 export default function EsqueciSenhaPage() {
   const [email, setEmail] = useState('');
   const [enviado, setEnviado] = useState(false);
+  const [erro, setErro] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email) return;
-    setEnviado(true);
+    
+    setLoading(true);
+    setErro(null);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + '/login',
+      });
+      if (error) throw error;
+      setEnviado(true);
+    } catch (err) {
+      setErro(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -49,15 +65,21 @@ export default function EsqueciSenhaPage() {
                     />
                   </div>
 
+                  {erro && (
+                    <div style={{ color: 'var(--alert-red)', marginBottom: 16, fontSize: '0.9rem', padding: '10px', background: 'rgba(244,63,94,0.1)', borderRadius: 6 }}>
+                      {erro}
+                    </div>
+                  )}
+
                   <button
                     type="submit"
-                    disabled={!email}
+                    disabled={!email || loading}
                     style={{
                       width: '100%',
                       padding: '15px 20px',
                       borderRadius: 7,
                       border: 'none',
-                      cursor: email ? 'pointer' : 'not-allowed',
+                      cursor: email && !loading ? 'pointer' : 'not-allowed',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -65,14 +87,14 @@ export default function EsqueciSenhaPage() {
                       fontSize: '1rem',
                       fontWeight: 700,
                       fontFamily: 'inherit',
-                      background: email ? 'var(--primary)' : 'var(--bg-surface-elevated)',
-                      color: email ? '#fff' : 'var(--text-muted)',
-                      boxShadow: email ? '0 2px 12px rgba(16,185,129,0.3)' : 'none',
+                      background: email && !loading ? 'var(--primary)' : 'var(--bg-surface-elevated)',
+                      color: email && !loading ? '#fff' : 'var(--text-muted)',
+                      boxShadow: email && !loading ? '0 2px 12px rgba(16,185,129,0.3)' : 'none',
                       transition: 'all 0.2s',
                     }}
                   >
-                    <i className="fa-solid fa-paper-plane"></i>
-                    Enviar Link de Recuperação
+                    {loading ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-paper-plane"></i>}
+                    {loading ? 'Enviando...' : 'Enviar Link de Recuperação'}
                   </button>
                 </form>
               </>

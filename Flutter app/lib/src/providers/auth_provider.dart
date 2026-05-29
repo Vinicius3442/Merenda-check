@@ -40,7 +40,7 @@ class AuthProvider extends ChangeNotifier {
     try {
       final data = await Supabase.instance.client
           .from('usuarios')
-          .select('id, nome, role, iniciais, escola_id')
+          .select('id, nome, role, iniciais, escola_id, avatar_url')
           .eq('auth_id', authId)
           .maybeSingle();
 
@@ -51,6 +51,7 @@ class AuthProvider extends ChangeNotifier {
           role: data['role'],
           initials: data['iniciais'],
           escolaId: data['escola_id'],
+          avatarUrl: data['avatar_url'],
         );
       }
     } catch (e) {

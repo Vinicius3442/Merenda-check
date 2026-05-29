@@ -53,7 +53,7 @@ export function AuthProvider({ children }) {
       // 1. Tentar buscar por auth_id
       let { data, error } = await supabase
         .from('usuarios')
-        .select('id, nome, role, iniciais, email, escola_id')
+        .select('id, nome, role, iniciais, email, escola_id, avatar_url')
         .eq('auth_id', authId)
         .maybeSingle();
 
@@ -68,7 +68,7 @@ export function AuthProvider({ children }) {
           // Buscar perfil pelo email
           const { data: emailData, error: emailErr } = await supabase
             .from('usuarios')
-            .select('id, nome, role, iniciais, email, escola_id')
+            .select('id, nome, role, iniciais, email, escola_id, avatar_url')
             .eq('email', authUser.email)
             .maybeSingle();
 
@@ -134,7 +134,7 @@ export function AuthProvider({ children }) {
       }
 
       setAuth({
-        user: { id: data.id, name: data.nome, role: data.role, initials: data.iniciais, email: data.email, escola_id: data.escola_id },
+        user: { id: data.id, name: data.nome, role: data.role, initials: data.iniciais, email: data.email, escola_id: data.escola_id, avatar_url: data.avatar_url },
         role: data.role,
         isAuthenticated: true,
       });

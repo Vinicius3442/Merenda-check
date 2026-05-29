@@ -68,17 +68,22 @@ class BaseLayout extends StatelessWidget {
                   bottom: BorderSide(color: Color(0xFF10B981), width: 1),
                 ),
               ),
-              currentAccountPicture: CircleAvatar(
-                backgroundColor: const Color(0xFF10B981),
-                child: Text(
-                  user?.initials ?? 'U',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 24,
+              currentAccountPicture: user?.avatarUrl != null && user!.avatarUrl!.isNotEmpty 
+                ? CircleAvatar(
+                    backgroundImage: NetworkImage(user.avatarUrl!),
+                    backgroundColor: const Color(0xFF1E293B),
+                  )
+                : CircleAvatar(
+                    backgroundColor: const Color(0xFF10B981),
+                    child: Text(
+                      user?.initials ?? 'U',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
+                      ),
+                    ),
                   ),
-                ),
-              ),
               accountName: Text(
                 user?.name ?? 'Usuário',
                 style: const TextStyle(
@@ -108,6 +113,16 @@ class BaseLayout extends StatelessWidget {
             // Logout Option
             const Divider(color: Colors.white10),
             ListTile(
+              leading: const Icon(Icons.person, color: Colors.white70),
+              title: const Text(
+                'Meu Perfil',
+                style: TextStyle(color: Colors.white70, fontWeight: FontWeight.w600),
+              ),
+              onTap: () {
+                Navigator.of(context).pop();
+                context.push('/profile');
+              },
+            ),
               leading: const Icon(Icons.logout, color: Colors.redAccent),
               title: const Text(
                 'Sair do Sistema',

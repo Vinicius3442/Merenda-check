@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../providers/auth_provider.dart';
 
 class RoleItem {
@@ -36,12 +37,34 @@ class _LoginScreenState extends State<LoginScreen> {
     RoleItem('admin', Icons.dns, 'SysAdmin', const Color(0xFFef4444)),
   ];
 
-  void _handleRoleSelect(String key) {
+  void _handleRoleSelect(String roleKey) {
     setState(() {
-      _selectedRole = key;
-      _emailController.text = '$key@merendacheck.gov.br';
+      _selectedRole = roleKey;
+      _emailController.text = '$roleKey@merendacheck.gov.br';
       _senhaController.text = 'Merenda@2026';
     });
+  }
+
+  Future<void> _resetPassword() async {
+    final String email = _emailController.text.trim();
+    if (email.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Por favor, informe seu e-mail institucional.'), backgroundColor: Colors.red),
+      );
+      return;
+    }
+
+    try {
+      await Supabase.instance.client.auth.resetPasswordForEmail(email);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Link de recuperação enviado para o seu e-mail!'), backgroundColor: Color(0xFF10B981)),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao enviar link: $e'), backgroundColor: Colors.red),
+      );
+    }
   }
 
   void _login() async {
@@ -235,7 +258,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         ],
                       ),
                     ),
-                    const Text('Esqueceu a senha?', style: TextStyle(color: Color(0xFF10b981), fontSize: 13, fontWeight: FontWeight.w600)),
+                    GestureDetector(
+                      onTap: _resetPassword,
+                      child: const Text('Esqueceu a senha?', style: TextStyle(color: Color(0xFF10b981), fontSize: 13, fontWeight: FontWeight.w600)),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 40),

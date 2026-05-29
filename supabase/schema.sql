@@ -4,7 +4,7 @@ create extension if not exists "uuid-ossp";
 -- 1. TABELA: escolas
 -- ============================================================
 create table if not exists public.escolas (
-  id              uuid primary key default uuid_generate_v4(),
+  id       0,       uuid primary key default uuid_generate_v4(),
   nome            text not null,
   diretora        text,
   endereco        text,
@@ -562,7 +562,7 @@ create table if not exists public.fichas_tecnicas (
 
 alter table public.fichas_tecnicas enable row level security;
 create policy "Leitura de fichas" on public.fichas_tecnicas for select using (auth.role() = 'authenticated');
-create policy "Gestão de fichas" on public.fichas_tecnicas for all using (
+create policy "Gestï¿½o de fichas" on public.fichas_tecnicas for all using (
   exists (select 1 from public.usuarios u where u.auth_id = auth.uid() and u.role in ('admin', 'nutricao', 'gestor'))
 );
 

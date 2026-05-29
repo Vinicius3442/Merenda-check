@@ -124,18 +124,26 @@ class _GestaoUsuariosScreenState extends State<GestaoUsuariosScreen> {
                     ),
                     child: Row(
                       children: [
-                        u['avatar_url'] != null && u['avatar_url'].toString().isNotEmpty
-                            ? CircleAvatar(
-                                backgroundImage: NetworkImage(u['avatar_url']),
-                                backgroundColor: const Color(0xFF1E293B),
-                              )
-                            : CircleAvatar(
-                                backgroundColor: roleColor.withOpacity(0.1),
-                                child: Text(
-                                  (u['nome'] ?? 'U').toString().substring(0, 1).toUpperCase(),
-                                  style: TextStyle(color: roleColor, fontWeight: FontWeight.bold),
-                                ),
-                              ),
+                        Builder(builder: (context) {
+                          final avatar = u['avatar_url']?.toString() ?? '';
+                          final isCorsBlocked = avatar.contains('randomuser.me');
+                          
+                          if (avatar.isNotEmpty && !isCorsBlocked) {
+                            return CircleAvatar(
+                              backgroundImage: NetworkImage(avatar),
+                              backgroundColor: const Color(0xFF1E293B),
+                              onBackgroundImageError: (_, __) {},
+                            );
+                          }
+                          
+                          return CircleAvatar(
+                            backgroundColor: roleColor.withOpacity(0.1),
+                            child: Text(
+                              (u['nome'] ?? 'U').toString().substring(0, 1).toUpperCase(),
+                              style: TextStyle(color: roleColor, fontWeight: FontWeight.bold),
+                            ),
+                          );
+                        }),
                         const SizedBox(width: 16),
                         Expanded(
                           child: Column(

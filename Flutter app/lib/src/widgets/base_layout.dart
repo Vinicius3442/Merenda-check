@@ -240,7 +240,7 @@ class BaseLayout extends StatelessWidget {
       onTap: () {
         Navigator.of(context).pop(); // Close drawer
         if (!isSelected) {
-          context.go(route);
+          context.push(route);
         }
       },
     );

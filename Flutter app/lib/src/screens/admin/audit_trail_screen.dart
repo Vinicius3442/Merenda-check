@@ -42,7 +42,8 @@ class _AuditTrailScreenState extends State<AuditTrailScreen> {
 
       final List<AuditLog> fetchedLogs = (response as List).map((row) {
         final date = DateTime.tryParse(row['criado_em'] ?? '');
-        final dateStr = date != null ? '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}' : '-';
+        final localDate = date?.toLocal();
+        final dateStr = localDate != null ? '${localDate.day.toString().padLeft(2, '0')}/${localDate.month.toString().padLeft(2, '0')}/${localDate.year} ${localDate.hour.toString().padLeft(2, '0')}:${localDate.minute.toString().padLeft(2, '0')}' : '-';
         
         final actionStr = '${row['acao']}_${row['tabela_afetada'].toString().toUpperCase()}';
         

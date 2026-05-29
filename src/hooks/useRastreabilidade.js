@@ -2,15 +2,8 @@ import { useState, useEffect } from 'react';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { mockTimelines } from '../data/mockData';
 
-// Mapeamento simples de slug para ID real de escolas baseadas no seed
-const ESCOLA_MAP = {
-  'cei-pequeninos': '11111111-1111-1111-1111-111111111111',
-  'emei-margarida': '22222222-2222-2222-2222-222222222222',
-  'emef-joao-silva': '33333333-3333-3333-3333-333333333333'
-};
-
-export function useRastreabilidade(escolaKey) {
-  const [timeline, setTimeline] = useState(mockTimelines[escolaKey] || []);
+export function useRastreabilidade(escolaId) {
+  const [timeline, setTimeline] = useState(mockTimelines['cei-pequeninos'] || []);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -22,7 +15,6 @@ export function useRastreabilidade(escolaKey) {
 
       setLoading(true);
       try {
-        const escolaId = ESCOLA_MAP[escolaKey];
         if (!escolaId) {
           setLoading(false);
           return;
@@ -116,11 +108,10 @@ export function useRastreabilidade(escolaKey) {
         // Ordenar por data decrescente
         dynamicEvents.sort((a, b) => b.rawDate - a.rawDate);
 
-        // Se houver eventos reais no banco, usamos eles. Senão, faz fallback pro mock.
         if (dynamicEvents.length > 0) {
           setTimeline(dynamicEvents);
         } else {
-          setTimeline(mockTimelines[escolaKey] || []);
+          setTimeline(mockTimelines['cei-pequeninos'] || []);
         }
 
       } catch (err) {
@@ -131,7 +122,7 @@ export function useRastreabilidade(escolaKey) {
     }
 
     fetchTimeline();
-  }, [escolaKey]);
+  }, [escolaId]);
 
   return { timeline, loading };
 }

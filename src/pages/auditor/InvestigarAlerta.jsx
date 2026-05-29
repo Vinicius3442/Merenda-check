@@ -75,8 +75,8 @@ export default function InvestigarAlerta() {
 
   // Inicializar o mapa do Leaflet de auditoria
   useEffect(() => {
-    // Apenas instanciar o mapa se a escola pesquisada for a do trajeto (CEI Pequeninos)
-    if (!mapContainer.current || escolaKey !== 'cei-pequeninos') return;
+    // Instanciar o mapa para demonstração visual da rota
+    if (!mapContainer.current) return;
 
     if (mapInstance.current) {
       mapInstance.current.remove();
@@ -116,7 +116,7 @@ export default function InvestigarAlerta() {
       iconSize: [30, 30],
       iconAnchor: [15, 15]
     });
-    L.marker(COORDS.ceiPequeninos, { icon: iconEscola }).addTo(map).bindPopup('<b>CEI Pequeninos</b><br/>Destino da Carga');
+    L.marker(COORDS.ceiPequeninos, { icon: iconEscola }).addTo(map).bindPopup(`<b>${escolaNome}</b><br/>Destino da Carga`);
 
     // Desenhar rota planejada
     const polylinePlan = L.polyline([COORDS.cdCentral, [-23.5530, -46.6480], [-23.5590, -46.6540], COORDS.ceiPequeninos], {
@@ -278,8 +278,7 @@ export default function InvestigarAlerta() {
       </div>
 
       {/* Rastreamento Leaflet Ativo Dedicado da Carga */}
-      {escolaKey === 'cei-pequeninos' && (
-        <div className="glass-panel animate-slide-up" style={{ padding: 24, marginBottom: 30, border: anomalyActive ? '1px solid var(--alert-red)' : '1px solid var(--border-subtle)' }}>
+      <div className="glass-panel animate-slide-up" style={{ padding: 24, marginBottom: 30, border: anomalyActive ? '1px solid var(--alert-red)' : '1px solid var(--border-subtle)' }}>
           <h3 style={{ fontFamily: 'Outfit', fontSize: '1.1rem', margin: '0 0 16px 0', display: 'flex', alignItems: 'center', gap: 10, color: anomalyActive ? 'var(--alert-red)' : 'var(--text-main)' }}>
             <i className="fa-solid fa-satellite" style={{ animation: anomalyActive ? 'pulseTruckAlert 2s infinite' : 'none' }}></i>
             {anomalyActive ? 'Rastreamento de Desvio em Tempo Real (Manifesto Digital)' : 'Rastreamento de Carga Oficial'}
@@ -295,7 +294,6 @@ export default function InvestigarAlerta() {
             </div>
           )}
         </div>
-      )}
 
       {/* Full Timeline */}
       <div className="glass-panel" style={{ padding: 30 }}>

@@ -120,6 +120,7 @@ export default function EntradaInsumo() {
                 </button>
               </div>
       </div>
+      </div>
     </DashboardLayout>
   );
 }

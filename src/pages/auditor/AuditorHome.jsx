@@ -190,7 +190,7 @@ export default function AuditorHome() {
       desc: 'Veículo inativo/desviado há mais de 3 horas em rota de 40min.',
       data: 'Agora',
       acao: 'Investigar',
-      timelineKey: 'cei-pequeninos'
+      escolaId: 'cei-pequeninos'
     });
   }
 
@@ -325,7 +325,7 @@ export default function AuditorHome() {
                   <td style={{ color: '#64748b', fontSize: '0.82rem', whiteSpace: 'nowrap' }}>{a.data}</td>
                   <td>
                     <Link
-                      to={`/auditor/investigar?escola=${a.timelineKey}&nome=${encodeURIComponent(a.escola)}&tipo=${encodeURIComponent(a.tipo)}`}
+                      to={`/auditor/investigar?escola=${a.escolaId}&nome=${encodeURIComponent(a.escola)}&tipo=${encodeURIComponent(a.tipo)}`}
                       className={`btn ${a.gravidade === 'danger' ? 'btn-danger' : 'btn-primary'}`}
                       style={{ padding: '7px 12px', fontSize: '0.8rem', whiteSpace: 'nowrap' }}
                     >

@@ -30,6 +30,7 @@ export function useAlertas(escolaId = null) {
       const mapped = (data || []).map((a) => ({
         id: a.id,
         escola: a.escolas?.nome || '—',
+        escolaId: a.escola_id,
         tipo: a.tipo,
         gravidade: a.gravidade,
         desc: a.descricao,

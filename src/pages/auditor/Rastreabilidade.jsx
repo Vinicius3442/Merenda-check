@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import { useRastreabilidade } from '../../hooks/useRastreabilidade';
+import { useEscolas } from '../../hooks/useEscolas';
 
 function TimelineItem({ item }) {
   return (
@@ -45,30 +46,24 @@ export default function Rastreabilidade() {
   const presetLote = searchParams.get('lote');
   const presetNome = searchParams.get('nome');
 
-  const escolaOptions = [
-    { key: 'cei-pequeninos', label: 'CEI Pequeninos', badge: 'badge-danger', badgeText: 'Alerta Crítico' },
-    { key: 'emei-margarida', label: 'EMEI Margarida', badge: 'badge-warning', badgeText: 'Atenção' },
-    { key: 'emef-joao-silva', label: 'EMEF João Silva', badge: 'badge-success', badgeText: 'Conforme' },
-  ];
+  const { escolas, loading: escolasLoading } = useEscolas();
+  const escolaOptions = escolas.map(e => ({
+    key: e.id,
+    label: e.nome,
+    badge: e.badgeClass,
+    badgeText: e.badgeText
+  }));
 
-  // Se houver uma escola associada no query string, carregar ela. Caso contrário, cei-pequeninos.
-  const [selectedKey, setSelectedKey] = useState('cei-pequeninos');
+  const [selectedKey, setSelectedKey] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     if (presetEscola) {
       setSelectedKey(presetEscola);
-    } else if (presetLote) {
-      // Mapear lote específico para uma escola fictícia para garantir que a timeline mostre dados
-      if (presetLote.includes('5103-B')) {
-        setSelectedKey('emei-margarida');
-      } else if (presetLote.includes('4801-X')) {
-        setSelectedKey('emef-joao-silva');
-      } else {
-        setSelectedKey('cei-pequeninos');
-      }
+    } else if (escolas.length > 0 && !selectedKey) {
+      setSelectedKey(escolas[0].id);
     }
-  }, [presetEscola, presetLote]);
+  }, [presetEscola, escolas, selectedKey]);
 
   useEffect(() => {
     if (presetLote) {
@@ -115,25 +110,29 @@ export default function Rastreabilidade() {
         <h3 style={{ fontFamily: 'Outfit', marginBottom: 16, fontSize: '1rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 1 }}>
           <i className="fa-solid fa-school" style={{ marginRight: 8 }}></i> Selecionar Unidade Escolar
         </h3>
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          {escolaOptions.map((opt) => (
-            <button
-              key={opt.key}
-              onClick={() => setSelectedKey(opt.key)}
-              style={{
-                padding: '12px 20px', borderRadius: 12, cursor: 'pointer',
-                background: selectedKey === opt.key ? 'rgba(5, 150, 105, 0.1)' : 'var(--bg-surface-elevated)',
-                border: selectedKey === opt.key ? '2px solid var(--primary)' : '2px solid var(--border-subtle)',
-                color: 'var(--text-main)', transition: 'all 0.2s', fontFamily: 'Outfit', fontWeight: 600,
-                display: 'flex', alignItems: 'center', gap: 10,
-              }}
-            >
-              <i className="fa-solid fa-school" style={{ color: selectedKey === opt.key ? 'var(--primary)' : 'var(--text-muted)' }}></i>
-              {opt.label}
-              <span className={`badge ${opt.badge}`} style={{ fontSize: '0.7rem', padding: '4px 8px' }}>{opt.badgeText}</span>
-            </button>
-          ))}
-        </div>
+        {escolasLoading ? (
+          <div style={{ padding: 10 }}><i className="fa-solid fa-circle-notch fa-spin"></i> Carregando escolas...</div>
+        ) : (
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            {escolaOptions.map((opt) => (
+              <button
+                key={opt.key}
+                onClick={() => setSelectedKey(opt.key)}
+                style={{
+                  padding: '12px 20px', borderRadius: 12, cursor: 'pointer',
+                  background: selectedKey === opt.key ? 'rgba(5, 150, 105, 0.1)' : 'var(--bg-surface-elevated)',
+                  border: selectedKey === opt.key ? '2px solid var(--primary)' : '2px solid var(--border-subtle)',
+                  color: 'var(--text-main)', transition: 'all 0.2s', fontFamily: 'Outfit', fontWeight: 600,
+                  display: 'flex', alignItems: 'center', gap: 10,
+                }}
+              >
+                <i className="fa-solid fa-school" style={{ color: selectedKey === opt.key ? 'var(--primary)' : 'var(--text-muted)' }}></i>
+                {opt.label}
+                <span className={`badge ${opt.badge}`} style={{ fontSize: '0.7rem', padding: '4px 8px' }}>{opt.badgeText}</span>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Active escola header */}

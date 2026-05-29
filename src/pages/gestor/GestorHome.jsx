@@ -7,6 +7,7 @@ import { useDashboardStats } from '../../hooks/useDashboardStats';
 import { useAuth } from '../../contexts/AuthContext';
 import { useMockSubmit } from '../../hooks/useMockSubmit';
 import { useEstoque } from '../../hooks/useEstoque';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const ACOES_GESTOR = [
   {
@@ -76,7 +77,32 @@ export default function GestorHome() {
       return () => clearTimeout(timer);
     }
   }, [loteCritico, loteResolvido]);
+  const [aiInsight, setAiInsight] = useState('Analisando tendências com IA...');
+  const [aiPredito, setAiPredito] = useState(chartData.predito);
 
+  useEffect(() => {
+    async function fetchAI() {
+      try {
+        const genAI = new GoogleGenerativeAI('AIzaSyAjaFR-pdgdnkaArQbDgzgPmvH03cOnHLY');
+        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+        const prompt = `Você é um assistente de IA de nutrição escolar. Dados de consumo real das últimas semanas: [${chartData.real.join(',')}]. Faça uma predição em quilos para as próximas 5 semanas. Retorne APENAS um JSON: {"predicoes": [val1, val2, val3, val4, val5], "insight": "Sua análise curta aqui."}`;
+        
+        const result = await model.generateContent(prompt);
+        let text = result.response.text();
+        text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+        const data = JSON.parse(text);
+        
+        if (data.predicoes) setAiPredito(data.predicoes);
+        if (data.insight) setAiInsight(data.insight);
+      } catch(e) {
+        console.error('Erro Gemini:', e);
+        setAiInsight('As predições abaixo usam nosso algoritmo offline (IA indisponível no momento).');
+      }
+    }
+    if (chartData.real && chartData.real.length > 0) {
+      fetchAI();
+    }
+  }, [chartData.real]);
 
   return (
     <DashboardLayout>
@@ -268,7 +294,7 @@ export default function GestorHome() {
           ) : (
           <div className="glass-panel" style={{ padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', border: '1px solid rgba(16, 185, 129, 0.25)', textAlign: 'center' }}>
             <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(16,185,129,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', color: 'var(--alert-green)', marginBottom: 16 }}>
-              <i className="fa-solid fa-shield-check"></i>
+              <i className="fa-solid fa-shield-halved"></i>
             </div>
             <h3 style={{ fontFamily: 'Outfit', fontSize: '1.3rem', color: 'var(--text-main)', marginBottom: 8 }}>Estoque Saudável</h3>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>O algoritmo não identificou lotes com risco iminente de vencimento na sua unidade.</p>
@@ -290,20 +316,24 @@ export default function GestorHome() {
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: 4 }}>
                   <span>Aproveitamento Estimado</span>
-                  <span style={{ color: 'var(--alert-green)', fontWeight: 'bold' }}>100%</span>
+                  <span style={{ color: (!loteCritico || loteResolvido) ? 'var(--alert-green)' : 'var(--alert-yellow)', fontWeight: 'bold' }}>
+                    {(!loteCritico || loteResolvido) ? '100%' : '55% (Risco de Perda)'}
+                  </span>
                 </div>
                 <div style={{ width: '100%', height: 6, background: 'rgba(255,255,255,0.05)', borderRadius: 3, overflow: 'hidden' }}>
-                  <div style={{ width: '100%', height: '100%', background: 'var(--alert-green)' }} />
+                  <div style={{ width: (!loteCritico || loteResolvido) ? '100%' : '55%', height: '100%', background: (!loteCritico || loteResolvido) ? 'var(--alert-green)' : 'var(--alert-yellow)', transition: 'width 0.5s' }} />
                 </div>
               </div>
 
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: 4 }}>
                   <span>Refeições Atendidas (Estimado)</span>
-                  <span style={{ color: 'var(--alert-blue)', fontWeight: 'bold' }}>250 refeições</span>
+                  <span style={{ color: 'var(--alert-blue)', fontWeight: 'bold' }}>
+                    {loteCritico ? Math.floor(loteCritico.volume_kg * 4) : 0} refeições
+                  </span>
                 </div>
                 <div style={{ width: '100%', height: 6, background: 'rgba(255,255,255,0.05)', borderRadius: 3, overflow: 'hidden' }}>
-                  <div style={{ width: '85%', height: '100%', background: 'var(--alert-blue)' }} />
+                  <div style={{ width: loteCritico ? '85%' : '0%', height: '100%', background: 'var(--alert-blue)', transition: 'width 0.5s' }} />
                 </div>
               </div>
 
@@ -344,17 +374,22 @@ export default function GestorHome() {
         </div>
       </div>
 
-      {/* Gráficos e Mapa */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24, position: 'relative', zIndex: 1 }}>
+      {/* Gráficos e Mapa Separados para ocupar toda a largura e não espremer */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 32, position: 'relative', zIndex: 1 }}>
         <div className="glass-panel animate-slide-up delay-200" style={{ overflow: 'hidden' }}>
-          <div style={{ padding: '24px 24px 0' }}>
-            <h3 style={{ fontFamily: 'Outfit', marginBottom: 4 }}>
-              <i className="fa-solid fa-brain" style={{ color: 'var(--alert-blue)', marginRight: 10 }}></i>
-              Predição de Consumo Semanal
-            </h3>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Modelo calibrado com catracas faciais e cardápio planejado.</p>
+          <div style={{ padding: '24px 24px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div>
+              <h3 style={{ fontFamily: 'Outfit', marginBottom: 8 }}>
+                <i className="fa-solid fa-brain" style={{ color: 'var(--alert-blue)', marginRight: 10 }}></i>
+                Predição de Consumo com Google Gemini
+              </h3>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', maxWidth: 600 }}>{aiInsight}</p>
+            </div>
+            <div style={{ background: 'rgba(59, 130, 246, 0.1)', padding: '6px 12px', borderRadius: 8, color: 'var(--alert-blue)', fontSize: '0.8rem', fontWeight: 'bold' }}>
+              <i className="fa-solid fa-sparkles"></i> IA Ativa
+            </div>
           </div>
-          <PredictiveChart labels={chartData.labels} real={chartData.real} predito={chartData.predito} />
+          <PredictiveChart labels={chartData.labels} real={chartData.real} predito={aiPredito} />
         </div>
 
         <div className="animate-slide-up delay-300">

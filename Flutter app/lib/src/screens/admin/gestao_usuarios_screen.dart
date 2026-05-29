@@ -1,15 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../widgets/base_layout.dart';
-
-class SystemUser {
-  final String name;
-  final String role;
-  final String email;
-  final String school;
-  final bool isActive;
-
-  SystemUser(this.name, this.role, this.email, this.school, this.isActive);
-}
 
 class GestaoUsuariosScreen extends StatefulWidget {
   const GestaoUsuariosScreen({super.key});
@@ -19,22 +10,42 @@ class GestaoUsuariosScreen extends StatefulWidget {
 }
 
 class _GestaoUsuariosScreenState extends State<GestaoUsuariosScreen> {
-  final List<SystemUser> _users = [
-    SystemUser('Ana Paula Silva', 'Gestor', 'gestor@merendacheck.gov.br', 'E. M. Monteiro Lobato', true),
-    SystemUser('Carlos Souza', 'Operador', 'operador@merendacheck.gov.br', 'E. M. Monteiro Lobato', true),
-    SystemUser('Mariana Santos', 'Nutrição', 'nutricao@merendacheck.gov.br', 'Dep. Alimentação Escolar', true),
-    SystemUser('Júlio Fagundes', 'Auditor', 'auditor@merendacheck.gov.br', 'Auditoria Geral Municipal', true),
-  ];
-
+  List<dynamic> _users = [];
+  bool _isLoading = true;
   String _searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUsers();
+  }
+
+  Future<void> _fetchUsers() async {
+    try {
+      final response = await Supabase.instance.client
+          .from('usuarios')
+          .select('id, nome, email, role, status, escolas(nome)')
+          .order('nome');
+
+      setState(() {
+        _users = response as List<dynamic>;
+        _isLoading = false;
+      });
+    } catch (e) {
+      debugPrint('Erro ao carregar usuários: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final filteredUsers = _users.where((u) {
-      final nameLower = u.name.toLowerCase();
-      final roleLower = u.role.toLowerCase();
-      final emailLower = u.email.toLowerCase();
-      final schoolLower = u.school.toLowerCase();
+      final nameLower = (u['nome'] ?? '').toLowerCase();
+      final roleLower = (u['role'] ?? '').toLowerCase();
+      final emailLower = (u['email'] ?? '').toLowerCase();
+      final schoolLower = (u['escolas'] != null ? u['escolas']['nome'] : 'Sem Vínculo').toLowerCase();
       final queryLower = _searchQuery.toLowerCase();
       return nameLower.contains(queryLower) ||
           roleLower.contains(queryLower) ||
@@ -88,15 +99,18 @@ class _GestaoUsuariosScreenState extends State<GestaoUsuariosScreen> {
 
             // Accounts List
             Expanded(
-              child: ListView.builder(
+              child: _isLoading 
+                ? const Center(child: CircularProgressIndicator(color: Color(0xFF10B981)))
+                : ListView.builder(
                 itemCount: filteredUsers.length,
                 itemBuilder: (context, index) {
                   final u = filteredUsers[index];
-                  final roleColor = u.role == 'Gestor'
+                  final String roleName = u['role'].toString().toUpperCase();
+                  final roleColor = roleName == 'GESTOR'
                       ? const Color(0xFF3B82F6)
-                      : u.role == 'Nutrição'
+                      : roleName == 'NUTRICAO'
                           ? const Color(0xFF10B981)
-                          : u.role == 'Auditor'
+                          : roleName == 'AUDITOR'
                               ? const Color(0xFFEAB308)
                               : const Color(0xFF8B5CF6);
 
@@ -122,7 +136,7 @@ class _GestaoUsuariosScreenState extends State<GestaoUsuariosScreen> {
                               Row(
                                 children: [
                                   Text(
-                                    u.name,
+                                    u['nome'] ?? 'Sem Nome',
                                     style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14, fontFamily: 'Outfit'),
                                   ),
                                   const SizedBox(width: 8),
@@ -133,7 +147,7 @@ class _GestaoUsuariosScreenState extends State<GestaoUsuariosScreen> {
                                       borderRadius: BorderRadius.circular(6),
                                     ),
                                     child: Text(
-                                      u.role,
+                                      roleName,
                                       style: TextStyle(color: roleColor, fontSize: 9, fontWeight: FontWeight.bold),
                                     ),
                                   ),
@@ -141,12 +155,12 @@ class _GestaoUsuariosScreenState extends State<GestaoUsuariosScreen> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                u.email,
+                                u['email'] ?? 'Sem E-mail',
                                 style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 11),
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                u.school,
+                                u['escolas'] != null ? u['escolas']['nome'] : 'Sem Vínculo Escolar',
                                 style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 12),
                               ),
                             ],
@@ -155,7 +169,7 @@ class _GestaoUsuariosScreenState extends State<GestaoUsuariosScreen> {
                         IconButton(
                           onPressed: () {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Configurar permissões de "${u.name}"...')),
+                              SnackBar(content: Text('Configurar permissões de "${u['nome']}"...')),
                             );
                           },
                           icon: const Icon(Icons.settings, color: Colors.white38),

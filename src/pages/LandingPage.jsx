@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import BgMesh from '../components/ui/BgMesh';
 import PublicFooter from '../components/ui/PublicFooter';
 import { supabase } from '../lib/supabase';
+import emailjs from '@emailjs/browser';
 import '../styles/landing.css';
 
 export default function LandingPage() {
@@ -17,24 +18,17 @@ export default function LandingPage() {
     setEnviando(true);
     
     try {
-      // Usando API REST do EmailJS para evitar instalação de dependência
-      const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          service_id: 'service_merenda', // SUBSTITUA POR SUA CHAVE
-          template_id: 'template_contato', // SUBSTITUA POR SUA CHAVE
-          user_id: 'USER_PUBLIC_KEY', // SUBSTITUA POR SUA CHAVE
-          template_params: {
-            from_name: contatoNome,
-            from_email: contatoEmail,
-            message: contatoMensagem,
-          }
-        })
-      });
+      await emailjs.send(
+        'service_dzli1jr',
+        'template_bq1r32m',
+        {
+          from_name: contatoNome,
+          from_email: contatoEmail,
+          message: contatoMensagem,
+        },
+        'tSRfpA16QKlRch5It'
+      );
 
-      // Independente de sucesso real (pois as chaves são mockup), vamos simular sucesso
-      // Se tiver erro 400 por chave invalida, a gente ignora e finge que deu certo pro usuário final.
       setEnviado(true);
       setContatoNome('');
       setContatoEmail('');
@@ -222,8 +216,8 @@ export default function LandingPage() {
       </section>
 
       {/* CTA / Contato */}
-      <section className="cta-section hide" id="cta">
-        <div className="cta-card glass-panel animate-slide-up" style={{ display: 'flex', flexDirection: 'column', gap: '40px', maxWidth: '800px', padding: '40px' }}>
+      <section className="cta-section" id="cta">
+        <div className="cta-card glass-panel animate-slide-up" style={{ display: 'flex', flexDirection: 'column', gap: '40px', maxWidth: '800px', padding: '40px', margin: '0 auto' }}>
           <div>
             <h2>Transforme a <span className="text-gradient">Merenda Escolar</span></h2>
             <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', maxWidth: 600, margin: '0 auto', lineHeight: 1.7 }}>

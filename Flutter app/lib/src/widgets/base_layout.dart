@@ -123,6 +123,7 @@ class BaseLayout extends StatelessWidget {
                 context.push('/profile');
               },
             ),
+            ListTile(
               leading: const Icon(Icons.logout, color: Colors.redAccent),
               title: const Text(
                 'Sair do Sistema',

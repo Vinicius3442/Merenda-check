@@ -94,17 +94,6 @@ export default function ProfilePage() {
             </button>
           </div>
         </div>
-
-        <div className="glass-panel animate-slide-up delay-100" style={{ padding: 40 }}>
-          <h3 style={{ marginBottom: 20, fontFamily: 'Outfit' }}><i className="fa-solid fa-palette" style={{ color: 'var(--primary)', marginRight: 10 }}></i> Aparência</h3>
-          <div className="form-group">
-            <label className="form-label">Tema da Interface</label>
-            <select className="form-control" defaultValue="dark">
-              <option value="dark">Escuro (Padrão)</option>
-              <option value="light">Claro</option>
-            </select>
-          </div>
-        </div>
       </div>
     </DashboardLayout>
   );

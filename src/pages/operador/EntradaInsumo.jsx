@@ -1,6 +1,5 @@
 import { useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
-import BgMesh from '../../components/ui/BgMesh';
+import DashboardLayout from '../../components/layout/DashboardLayout';
 import Footer from '../../components/ui/Footer';
 import { useEstoque } from '../../hooks/useEstoque';
 import { useToast } from '../../contexts/ToastContext';
@@ -8,6 +7,7 @@ import { useToast } from '../../contexts/ToastContext';
 export default function EntradaInsumo() {
   const { inserirLote } = useEstoque();
   const { showToast } = useToast();
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
@@ -35,28 +35,26 @@ export default function EntradaInsumo() {
 
     if (result.ok) {
       showToast('Entrada Processada', 'Estoque sincronizado com sucesso.', 'success');
+      setTimeout(() => navigate('/operador'), 1500);
     } else {
       showToast('Erro ao Registrar', result.error || 'Tente novamente.', 'error');
     }
   };
 
   return (
-    <>
-      <BgMesh />
-      <div className="app-container">
-        <main className="app-main" style={{ paddingTop: 60 }}>
-          <div className="wizard-container">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 40 }}>
-              <Link to="/operador" className="btn btn-secondary"><i className="fa-solid fa-arrow-left"></i> Voltar</Link>
-              <img src="/logo.png" alt="Merenda Check" className="logo-img" />
-            </div>
+    <DashboardLayout>
+      <div className="wizard-container" style={{ maxWidth: 900, margin: '0 auto' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 40 }}>
+          <button className="btn btn-secondary" onClick={() => navigate('/operador')}><i className="fa-solid fa-arrow-left"></i> Voltar</button>
+          <img src="/logo.png" alt="Merenda Check" className="logo-img" style={{ height: 40 }} />
+        </div>
 
-            <div className="header-dash animate-fade-in">
-              <div>
-                <h1>Recepção de Insumo</h1>
-                <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>Escaneie a QR Code do Romaneio de transporte para importar os dados do lote automaticamente.</p>
-              </div>
-            </div>
+        <div className="header-dash animate-fade-in">
+          <div>
+            <h1 style={{ display: 'flex', alignItems: 'center', gap: 12 }}><i className="fa-solid fa-qrcode" style={{ color: 'var(--primary)' }}></i> Recepção de Insumo</h1>
+            <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>Escaneie a QR Code do Romaneio de transporte para importar os dados do lote automaticamente.</p>
+          </div>
+        </div>
 
             <div className="glass-panel animate-slide-up" style={{ padding: 40 }}>
               {/* Scanner mockup */}
@@ -103,11 +101,7 @@ export default function EntradaInsumo() {
                   {loading ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Processando...</> : <><i className="fa-solid fa-check"></i> Confirmar Entrada</>}
                 </button>
               </div>
-            </div>
-          </div>
-          <Footer />
-        </main>
       </div>
-    </>
+    </DashboardLayout>
   );
 }

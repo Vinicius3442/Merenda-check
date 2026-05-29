@@ -183,6 +183,8 @@ export default function GestaoCardapios() {
       if (error) {
         if (error.code === '42P01') {
           showToast('Salvo Resiliente', 'Cardápio salvo localmente! (Tabela do banco ausente, ativando fallback).', 'warning');
+        } else if (error.code === '42501' || error.message?.includes('policy')) {
+          showToast('Salvo Localmente (Sem Permissão)', 'O sistema detectou que você não possui privilégios de gravação para o banco central, mas salvou o planejamento temporariamente em seu navegador.', 'warning');
         } else {
           showToast('Erro ao Salvar', `Erro de gravação: ${error.message}`, 'error');
         }
@@ -236,7 +238,7 @@ export default function GestaoCardapios() {
         </div>
 
         {/* Informações da Semana */}
-        <div className="cardapio-grid-layout">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 30, alignItems: 'start' }}>
           
           {/* Planejador Semanal e Seletores */}
           <div className="glass-panel animate-slide-up" style={{ padding: 24 }}>

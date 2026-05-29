@@ -197,8 +197,15 @@ export default function GestaoUsuarios() {
                           <button
                             className="btn btn-danger"
                             style={{ padding: '5px 10px', fontSize: '0.8rem' }}
-                            title="Revogar Acesso"
-                            onClick={() => atualizarStatus(u.id, 'inativo')}
+                            onClick={() => {
+                              const motivo = window.prompt("Por favor, digite a justificativa para revogar o acesso deste usuário (Obrigatório):");
+                              if (motivo && motivo.trim() !== "") {
+                                atualizarStatus(u.id, 'inativo');
+                                showToast('Acesso Revogado', `Usuário bloqueado. Motivo: ${motivo}`, 'warning');
+                              } else if (motivo !== null) {
+                                showToast('Erro', 'Justificativa é obrigatória para bloqueio.', 'error');
+                              }
+                            }}
                           >
                             <i className="fa-solid fa-ban"></i>
                           </button>

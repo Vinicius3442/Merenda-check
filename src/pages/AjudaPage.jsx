@@ -76,7 +76,6 @@ const CONTATOS = [
   { icon: 'fa-headset',     label: 'Suporte Técnico',      valor: '0800 123 4567',            sub: 'Seg a Sex, 08h–18h' },
   { icon: 'fa-envelope',    label: 'E-mail',                valor: 'suporte@merendacheck.gov', sub: 'Resposta em até 24h' },
   { icon: 'fa-bullhorn',    label: 'Ouvidoria',             valor: '/ouvidoria',               sub: 'Denúncias e sugestões', link: '/ouvidoria' },
-  { icon: 'fa-file-circle-question', label: 'Manual do Usuário', valor: 'manual-merenda.pdf', sub: 'Versão 3.2 — Mai/2026' },
 ];
 
 export default function AjudaPage() {
@@ -239,21 +238,6 @@ export default function AjudaPage() {
               </div>
             </div>
           ))}
-
-          {/* Card dica rápida */}
-          <div className="glass-panel" style={{
-            padding: '20px 22px', marginTop: 8,
-            background: 'linear-gradient(135deg, rgba(16,185,129,0.1), rgba(16,185,129,0.03))',
-            border: '1px solid rgba(16,185,129,0.2)',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-              <i className="fa-solid fa-lightbulb" style={{ color: 'var(--alert-yellow)' }}></i>
-              <strong style={{ fontSize: '0.9rem' }}>Dica rápida</strong>
-            </div>
-            <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
-              O mascote no canto inferior da tela oferece dicas contextuais sobre a página atual. Passe o mouse sobre ele!
-            </p>
-          </div>
 
           {/* Versão do sistema */}
           <div style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.78rem', paddingTop: 8 }}>

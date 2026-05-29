@@ -15,13 +15,13 @@ export default function Fornecedores() {
   const handleSuspender = async (id, nome) => {
     const res = await atualizarStatusCEIS(id, 'Suspenso');
     if (res.ok) showToast('Sanção Aplicada', `${nome} foi suspenso no sistema CEIS. QR Codes do fornecedor revogados.`, 'warning');
-    else showToast('Erro', res.error || 'Não foi possível aplicar a sanção.', 'error');
+    else showToast('Erro de Permissão (RLS)', `Bloqueado. Você precisa ser 'admin' para isso. Erro: ${res.error}`, 'error');
   };
 
   const handleRevogar = async (id, nome) => {
     const res = await atualizarStatusCEIS(id, 'Limpo');
     if (res.ok) showToast('Sanção Revogada', `${nome} reativado no sistema.`, 'success');
-    else showToast('Erro', res.error || 'Não foi possível revogar a sanção.', 'error');
+    else showToast('Erro de Permissão (RLS)', `Bloqueado. Você precisa ser 'admin' no Supabase para isso. Erro: ${res.error}`, 'error');
   };
 
   return (

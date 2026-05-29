@@ -251,13 +251,6 @@ export default function InvestigarAlerta() {
         </div>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <button
-            className="btn btn-secondary"
-            onClick={() => mockSubmit({ successTitle: 'Relatório Gerado', successMsg: 'Documento PDF exportado e arquivado para o SEI.' })}
-            disabled={loading}
-          >
-            <i className="fa-solid fa-file-pdf"></i> Exportar Extrato (PDF)
-          </button>
-          <button
             className={`btn ${anomalyActive ? 'btn-danger' : 'btn-danger'}`}
             style={anomalyActive ? { background: 'var(--alert-red)', borderColor: 'var(--alert-red)', boxShadow: '0 4px 15px rgba(239, 68, 68, 0.4)' } : {}}
             onClick={() => mockSubmit({ successTitle: 'Processo Iniciado', successMsg: `Processo Administrativo aberto contra ${escolaNome}.` })}

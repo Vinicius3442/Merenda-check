@@ -125,10 +125,21 @@ export default function EmitirLote() {
                 <tbody>
                   {items.map(item => (
                     <tr key={item.id} style={{ borderTop: '1px solid var(--border-subtle)' }}>
-                      <td style={{ padding: 10 }}>{item.descricao}</td>
-                      <td style={{ padding: 10, fontWeight: 700 }}>{item.qtd}</td>
-                      <td style={{ padding: 10 }}>{item.unidade}</td>
-                      <td style={{ padding: 10, color: 'var(--alert-yellow)' }}>{item.validade}</td>
+                      <td style={{ padding: 10 }}>
+                        <input type="text" className="form-control" value={item.descricao} onChange={e => setItems(prev => prev.map(i => i.id === item.id ? { ...i, descricao: e.target.value } : i))} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: '#fff' }} placeholder="Ex: Arroz Agulhinha" />
+                      </td>
+                      <td style={{ padding: 10 }}>
+                        <input type="number" className="form-control" value={item.qtd} onChange={e => setItems(prev => prev.map(i => i.id === item.id ? { ...i, qtd: e.target.value } : i))} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: '#fff', width: 60 }} />
+                      </td>
+                      <td style={{ padding: 10 }}>
+                        <select className="form-control" value={item.unidade} onChange={e => setItems(prev => prev.map(i => i.id === item.id ? { ...i, unidade: e.target.value } : i))} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: '#fff' }}>
+                          <option value="kg" style={{ color: '#000' }}>kg</option>
+                          <option value="unidade" style={{ color: '#000' }}>unidade</option>
+                        </select>
+                      </td>
+                      <td style={{ padding: 10 }}>
+                        <input type="date" className="form-control" value={item.validade} onChange={e => setItems(prev => prev.map(i => i.id === item.id ? { ...i, validade: e.target.value } : i))} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: 'var(--alert-yellow)' }} />
+                      </td>
                     </tr>
                   ))}
                 </tbody>

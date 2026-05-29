@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import { useMockSubmit } from '../../hooks/useMockSubmit';
@@ -7,6 +8,19 @@ export default function AuditorEscolas() {
   const { loading: loadingSubmit, mockSubmit } = useMockSubmit();
   const { escolas, loading } = useEscolas();
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortOrder, setSortOrder] = useState('pior');
+
+  const processedEscolas = escolas
+    .filter(e => 
+      e.nome.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      (e.diretora && e.diretora.toLowerCase().includes(searchQuery.toLowerCase()))
+    )
+    .sort((a, b) => {
+      if (sortOrder === 'pior') return a.health - b.health;
+      if (sortOrder === 'melhor') return b.health - a.health;
+      return a.nome.localeCompare(b.nome);
+    });
 
   return (
     <DashboardLayout>
@@ -25,12 +39,17 @@ export default function AuditorEscolas() {
       <div className="controls-bar animate-slide-up">
         <div className="search-bar">
           <i className="fa-solid fa-search"></i>
-          <input type="text" placeholder="Nome da Escola, ID ou Gestor..." />
+          <input 
+            type="text" 
+            placeholder="Nome da Escola ou Gestor..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
-        <select className="form-control" style={{ width: 'auto' }}>
-          <option>Ordenar por: Pior Desempenho (Risco)</option>
-          <option>Ordenar por: Melhor Desempenho</option>
-          <option>Ordem Alfabética</option>
+        <select className="form-control" style={{ width: 'auto' }} value={sortOrder} onChange={e => setSortOrder(e.target.value)}>
+          <option value="pior">Ordenar por: Pior Desempenho (Risco)</option>
+          <option value="melhor">Ordenar por: Melhor Desempenho</option>
+          <option value="alfa">Ordem Alfabética</option>
         </select>
       </div>
 
@@ -41,7 +60,7 @@ export default function AuditorEscolas() {
         </div>
       ) : (
         <div className="school-grid animate-slide-up delay-100">
-          {escolas.map((escola) => (
+          {processedEscolas.map((escola) => (
             <div key={escola.id} className={`glass-panel school-card ${escola.healthClass}`} style={escola.health < 70 ? { borderWidth: 2 } : {}}>
               <div className="school-header">
                 <div>

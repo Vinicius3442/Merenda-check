@@ -379,16 +379,15 @@
   border-top: 1px solid rgba(255,255,255,0.1);
   overflow: visible !important;
   margin-top: 30px;
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
   will-change: transform;
   transform: translateZ(0);
   backface-visibility: hidden;
 }
 
 .workflow-card:hover {
-  transform: translateY(-2px) !important;
+  transform: translateY(-4px) !important;
   border-top-color: var(--primary) !important;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4) !important;
 }
 
 .workflow-num {

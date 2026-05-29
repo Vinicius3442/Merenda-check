@@ -93,7 +93,7 @@ export function AuthProvider({ children }) {
             // Se absolutamente nenhum perfil existir com este e-mail, criar um perfil dinâmico!
             console.log('[Auth] Perfil inexistente no banco. Criando perfil padrão para:', authUser.email);
             const prefix = authUser.email.split('@')[0];
-            const role = prefix === 'admin' ? 'admin' : (prefix === 'nutricao' ? 'nutricao' : (prefix === 'gestor' ? 'gestor' : (prefix === 'auditor' ? 'auditor' : 'operador')));
+            const role = prefix === 'admin' ? 'admin' : (prefix === 'nutricao' ? 'nutricao' : (prefix === 'gestor' ? 'gestor' : (prefix === 'auditor' ? 'auditor' : (prefix === 'transportadora' ? 'transportadora' : (prefix === 'licitacao' ? 'licitacao' : 'operador')))));
             const nome = prefix.charAt(0).toUpperCase() + prefix.slice(1);
             const iniciais = nome.substring(0, 2).toUpperCase();
 

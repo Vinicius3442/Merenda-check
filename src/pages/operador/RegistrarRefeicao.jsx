@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import BgMesh from '../../components/ui/BgMesh';
-import Footer from '../../components/ui/Footer';
+import DashboardLayout from '../../components/layout/DashboardLayout';
 import { useRefeicoes } from '../../hooks/useRefeicoes';
 import { useToast } from '../../contexts/ToastContext';
 
@@ -29,22 +28,19 @@ export default function RegistrarRefeicao() {
   };
 
   return (
-    <>
-      <BgMesh />
-      <div className="app-container">
-        <main className="app-main" style={{ paddingTop: 60 }}>
-          <div className="wizard-container" style={{ maxWidth: 700 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 40 }}>
-              <Link to="/operador" className="btn btn-secondary"><i className="fa-solid fa-arrow-left"></i> Voltar</Link>
-              <img src="/logo.png" alt="Merenda Check" className="logo-img" />
-            </div>
+    <DashboardLayout>
+      <div className="wizard-container" style={{ maxWidth: 700, margin: '0 auto' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 40 }}>
+          <Link to="/operador" className="btn btn-secondary"><i className="fa-solid fa-arrow-left"></i> Voltar</Link>
+          <img src="/logo.png" alt="Merenda Check" className="logo-img" style={{ height: 40 }} />
+        </div>
 
-            <div className="header-dash animate-fade-in">
-              <div>
-                <h1>Apontamento Manual</h1>
-                <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>Utilize este recurso em caso de falha da roleta biométrica do refeitório.</p>
-              </div>
-            </div>
+        <div className="header-dash animate-fade-in">
+          <div>
+            <h1 style={{ display: 'flex', alignItems: 'center', gap: 12 }}><i className="fa-solid fa-users" style={{ color: 'var(--primary)' }}></i> Apontamento Manual</h1>
+            <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>Utilize este recurso em caso de falha da roleta biométrica do refeitório.</p>
+          </div>
+        </div>
 
             <div className="glass-panel animate-slide-up" style={{ padding: 40 }}>
               <div style={{ textAlign: 'center', marginBottom: 30 }}>
@@ -80,11 +76,7 @@ export default function RegistrarRefeicao() {
                   {loading ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Processando...</> : <><i className="fa-solid fa-cloud-arrow-up"></i> Confirmar Quantidade</>}
                 </button>
               </div>
-            </div>
-          </div>
-          <Footer />
-        </main>
       </div>
-    </>
+    </DashboardLayout>
   );
 }

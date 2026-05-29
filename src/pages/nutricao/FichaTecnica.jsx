@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import { tacoDatabase, calcularNutrientes } from '../../data/tacoDatabase';
+import { useFichas } from '../../hooks/useFichas';
+import { useToast } from '../../contexts/ToastContext';
 
 // Receitas iniciais com referência a IDs da Tabela TACO e gramaturas por porção
 const RECEITAS_INICIAIS = [
@@ -47,14 +49,8 @@ const RECEITAS_INICIAIS = [
 ];
 
 export default function FichaTecnica() {
-  const [receitas, setReceitas] = useState(() => {
-    const saved = localStorage.getItem('receitas_taco');
-    return saved ? JSON.parse(saved) : RECEITAS_INICIAIS;
-  });
-
-  useEffect(() => {
-    localStorage.setItem('receitas_taco', JSON.stringify(receitas));
-  }, [receitas]);
+  const { fichas: receitas, loading, salvarFicha } = useFichas();
+  const { showToast } = useToast();
 
   const [showNovaReceita, setShowNovaReceita] = useState(false);
   const [novaRecForm, setNovaRecForm] = useState({ nome: '', tipo: 'Almoço Escolar', rendimento: '1 Porção (100g)' });
@@ -66,10 +62,10 @@ export default function FichaTecnica() {
   const [mostrarAutocomplete, setMostrarAutocomplete] = useState(false);
 
   // Receita Ativa
-  const receitaAtiva = receitas.find(r => r.id === selectedRecId) || receitas[0];
+  const receitaAtiva = receitas.find(r => r.id === selectedRecId) || receitas[0] || { id: 'dummy', nome: 'Carregando...', ingredientes: [], custoBase: 0, rendimento: '...' };
 
   // Obter detalhes nutricionais para cada ingrediente da receita ativa
-  const ingredientesCalculados = receitaAtiva.ingredientes.map(ing => {
+  const ingredientesCalculados = (receitaAtiva.ingredientes || []).map(ing => {
     const macros = calcularNutrientes(ing.idInsumo, ing.gramas);
     return {
       ...ing,
@@ -109,30 +105,27 @@ export default function FichaTecnica() {
     : tacoDatabase.slice(0, 5);
 
   // Adicionar ingrediente à receita ativa
-  const handleAdicionarIngrediente = (e) => {
+  const handleAdicionarIngrediente = async (e) => {
     e.preventDefault();
-    if (!insumoSelecionado || !gramasInput || isNaN(gramasInput)) return;
+    if (!insumoSelecionado || !gramasInput || isNaN(gramasInput) || !receitaAtiva) return;
 
     const gramas = parseFloat(gramasInput);
     
     // Atualiza a receita ativa no estado
-    setReceitas(prev => prev.map(rec => {
-      if (rec.id === selectedRecId) {
-        // Se o ingrediente já existe, soma a gramatura
-        const existenteIdx = rec.ingredientes.findIndex(ing => ing.idInsumo === insumoSelecionado.id);
-        let novosIngredientes = [...rec.ingredientes];
-        if (existenteIdx > -1) {
-          novosIngredientes[existenteIdx] = {
-            ...novosIngredientes[existenteIdx],
-            gramas: novosIngredientes[existenteIdx].gramas + gramas
-          };
-        } else {
-          novosIngredientes.push({ idInsumo: insumoSelecionado.id, gramas });
-        }
-        return { ...rec, ingredientes: novosIngredientes };
-      }
-      return rec;
-    }));
+    const novaReceita = { ...receitaAtiva };
+    const existenteIdx = novaReceita.ingredientes.findIndex(ing => ing.idInsumo === insumoSelecionado.id);
+    let novosIngredientes = [...novaReceita.ingredientes];
+    if (existenteIdx > -1) {
+      novosIngredientes[existenteIdx] = {
+        ...novosIngredientes[existenteIdx],
+        gramas: novosIngredientes[existenteIdx].gramas + gramas
+      };
+    } else {
+      novosIngredientes.push({ idInsumo: insumoSelecionado.id, gramas });
+    }
+    novaReceita.ingredientes = novosIngredientes;
+    
+    await salvarFicha(novaReceita);
 
     // Reset formulário
     setBuscarInsumo('');
@@ -142,20 +135,17 @@ export default function FichaTecnica() {
   };
 
   // Remover ingrediente
-  const handleRemoverIngrediente = (idInsumo) => {
-    setReceitas(prev => prev.map(rec => {
-      if (rec.id === selectedRecId) {
-        return {
-          ...rec,
-          ingredientes: rec.ingredientes.filter(ing => ing.idInsumo !== idInsumo)
-        };
-      }
-      return rec;
-    }));
+  const handleRemoverIngrediente = async (idInsumo) => {
+    if (!receitaAtiva) return;
+    const novaReceita = {
+      ...receitaAtiva,
+      ingredientes: receitaAtiva.ingredientes.filter(ing => ing.idInsumo !== idInsumo)
+    };
+    await salvarFicha(novaReceita);
   };
 
   // Criar nova receita via UI elegante
-  const salvarNovaReceita = () => {
+  const salvarNovaReceita = async () => {
     if (!novaRecForm.nome) return;
     const novaRec = {
       id: `rec-${Date.now()}`,
@@ -166,7 +156,12 @@ export default function FichaTecnica() {
       ingredientes: []
     };
 
-    setReceitas(prev => [...prev, novaRec]);
+    const res = await salvarFicha(novaRec);
+    if (res.ok) {
+      if (res.fallback) showToast('Salvo Localmente', 'Receita criada, mas o Supabase não estava acessível.', 'warning');
+      else showToast('Receita Salva', 'Ficha Técnica enviada ao Supabase com sucesso!', 'success');
+    }
+    
     setSelectedRecId(novaRec.id);
     setEditMode(true);
     setShowNovaReceita(false);
@@ -223,32 +218,36 @@ export default function FichaTecnica() {
           <h3 style={{ fontFamily: 'Outfit', fontSize: '1rem', color: 'var(--text-muted)', marginBottom: 12, textTransform: 'uppercase', letterSpacing: 1 }}>
             Fichas Ativas
           </h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {receitas.map(rec => {
-              const isSelected = rec.id === selectedRecId;
-              return (
-                <div
-                  key={rec.id}
-                  onClick={() => { setSelectedRecId(rec.id); setEditMode(false); }}
-                  style={{
-                    padding: 16,
-                    background: isSelected ? 'var(--primary)' : 'var(--bg-surface-elevated)',
-                    color: isSelected ? '#fff' : 'var(--text-main)',
-                    borderRadius: 8,
-                    cursor: 'pointer',
-                    border: isSelected ? '1px solid var(--primary)' : '1px solid var(--border-subtle)',
-                    transition: 'all 0.2s',
-                    boxShadow: isSelected ? 'inset 20px 0 30px -10px rgba(0,0,0,0.2)' : 'none'
-                  }}
-                >
-                  <strong style={isSelected ? { color: '#fff' } : {}}>{rec.nome}</strong>
-                  <div style={{ fontSize: '0.8rem', opacity: isSelected ? 0.8 : 0.6, marginTop: 4 }}>
-                    {rec.tipo} · {rec.rendimento}
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: 20 }}><i className="fa-solid fa-circle-notch fa-spin"></i></div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {receitas.map(rec => {
+                const isSelected = rec.id === selectedRecId;
+                return (
+                  <div
+                    key={rec.id}
+                    onClick={() => { setSelectedRecId(rec.id); setEditMode(false); }}
+                    style={{
+                      padding: 16,
+                      background: isSelected ? 'var(--primary)' : 'var(--bg-surface-elevated)',
+                      color: isSelected ? '#fff' : 'var(--text-main)',
+                      borderRadius: 8,
+                      cursor: 'pointer',
+                      border: isSelected ? '1px solid var(--primary)' : '1px solid var(--border-subtle)',
+                      transition: 'all 0.2s',
+                      boxShadow: isSelected ? 'inset 20px 0 30px -10px rgba(0,0,0,0.2)' : 'none'
+                    }}
+                  >
+                    <strong style={isSelected ? { color: '#fff' } : {}}>{rec.nome}</strong>
+                    <div style={{ fontSize: '0.8rem', opacity: isSelected ? 0.8 : 0.6, marginTop: 4 }}>
+                      {rec.tipo} · {rec.rendimento}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Detalhes da Ficha & Formulation Workspace */}

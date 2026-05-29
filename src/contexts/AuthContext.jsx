@@ -194,7 +194,7 @@ export function AuthProvider({ children }) {
           userRole = emailProfile.role;
         } else {
           const prefix = data.user.email.split('@')[0];
-          userRole = prefix === 'admin' ? 'admin' : (prefix === 'nutricao' ? 'nutricao' : (prefix === 'gestor' ? 'gestor' : (prefix === 'auditor' ? 'auditor' : 'operador')));
+          userRole = prefix === 'admin' ? 'admin' : (prefix === 'nutricao' ? 'nutricao' : (prefix === 'gestor' ? 'gestor' : (prefix === 'auditor' ? 'auditor' : (prefix === 'licitacao' ? 'licitacao' : (prefix === 'transportadora' ? 'transportadora' : 'operador')))));
         }
       }
     } catch (err) {

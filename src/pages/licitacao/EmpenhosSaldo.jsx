@@ -4,7 +4,7 @@ import { useContratos } from '../../hooks/useContratos';
 export default function EmpenhosSaldo() {
   const { contratos, loading } = useContratos();
 
-  const formatCurrency = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val || 0);
+  const formatCurrency = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(val || 0);
 
   const totalGeral = contratos.reduce((s, c) => s + Number(c.valor_total || 0), 0);
   const totalExec  = contratos.reduce((s, c) => s + Number(c.valor_executado || 0), 0);
@@ -35,17 +35,17 @@ export default function EmpenhosSaldo() {
         <div className="kpi-grid animate-slide-up" style={{ gridTemplateColumns: 'repeat(3, 1fr)', marginBottom: 30 }}>
           <div className="kpi-card">
             <div className="kpi-icon"><i className="fa-solid fa-sack-dollar"></i></div>
-            <div className="kpi-value" style={{ color: 'var(--text-main)', fontSize: 'clamp(1rem, 2vw, 1.8rem)' }}>{loading ? '...' : formatCurrency(totalGeral)}</div>
+            <div className="kpi-value" style={{ color: 'var(--text-main)', fontSize: 'clamp(1rem, 1.4vw, 1.5rem)', fontWeight: 700 }}>{loading ? '...' : formatCurrency(totalGeral)}</div>
             <div className="kpi-label">Orçamento Total (Contratos)</div>
           </div>
           <div className="kpi-card">
             <div className="kpi-icon"><i className="fa-solid fa-file-invoice"></i></div>
-            <div className="kpi-value" style={{ color: 'var(--alert-green)', fontSize: 'clamp(1rem, 2vw, 1.8rem)' }}>{loading ? '...' : formatCurrency(totalExec)}</div>
+            <div className="kpi-value" style={{ color: 'var(--alert-green)', fontSize: 'clamp(1rem, 1.4vw, 1.5rem)', fontWeight: 700 }}>{loading ? '...' : formatCurrency(totalExec)}</div>
             <div className="kpi-label">Saldo Executado (Liquidado)</div>
           </div>
           <div className="kpi-card">
             <div className="kpi-icon"><i className="fa-solid fa-wallet"></i></div>
-            <div className="kpi-value" style={{ color: 'var(--primary)', fontSize: 'clamp(1rem, 2vw, 1.8rem)' }}>{loading ? '...' : formatCurrency(totalSaldo)}</div>
+            <div className="kpi-value" style={{ color: 'var(--primary)', fontSize: 'clamp(1rem, 1.4vw, 1.5rem)', fontWeight: 700 }}>{loading ? '...' : formatCurrency(totalSaldo)}</div>
             <div className="kpi-label">Saldo Remanescente (Aberto)</div>
           </div>
         </div>

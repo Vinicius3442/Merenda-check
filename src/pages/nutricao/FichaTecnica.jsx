@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import { tacoDatabase, calcularNutrientes } from '../../data/tacoDatabase';
 
@@ -47,7 +47,17 @@ const RECEITAS_INICIAIS = [
 ];
 
 export default function FichaTecnica() {
-  const [receitas, setReceitas] = useState(RECEITAS_INICIAIS);
+  const [receitas, setReceitas] = useState(() => {
+    const saved = localStorage.getItem('receitas_taco');
+    return saved ? JSON.parse(saved) : RECEITAS_INICIAIS;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('receitas_taco', JSON.stringify(receitas));
+  }, [receitas]);
+
+  const [showNovaReceita, setShowNovaReceita] = useState(false);
+  const [novaRecForm, setNovaRecForm] = useState({ nome: '', tipo: 'Almoço Escolar', rendimento: '1 Porção (100g)' });
   const [selectedRecId, setSelectedRecId] = useState('rec-picadinho');
   const [editMode, setEditMode] = useState(false);
   const [buscarInsumo, setBuscarInsumo] = useState('');
@@ -144,18 +154,14 @@ export default function FichaTecnica() {
     }));
   };
 
-  // Criar nova receita
-  const handleNovaReceita = () => {
-    const nome = prompt('Nome da Nova Receita:', 'Receita Nova');
-    if (!nome) return;
-    const tipo = prompt('Tipo de Refeição (ex: Almoço Escolar, Desjejum, Creches):', 'Almoço Escolar');
-    const rendimento = prompt('Rendimento per Capita (ex: 1 Porção (130g)):', '1 Porção (100g)');
-    
+  // Criar nova receita via UI elegante
+  const salvarNovaReceita = () => {
+    if (!novaRecForm.nome) return;
     const novaRec = {
       id: `rec-${Date.now()}`,
-      nome,
-      tipo: tipo || 'Almoço Escolar',
-      rendimento: rendimento || '1 Porção (100g)',
+      nome: novaRecForm.nome,
+      tipo: novaRecForm.tipo || 'Almoço Escolar',
+      rendimento: novaRecForm.rendimento || '1 Porção (100g)',
       custoBase: 1.20,
       ingredientes: []
     };
@@ -163,6 +169,8 @@ export default function FichaTecnica() {
     setReceitas(prev => [...prev, novaRec]);
     setSelectedRecId(novaRec.id);
     setEditMode(true);
+    setShowNovaReceita(false);
+    setNovaRecForm({ nome: '', tipo: 'Almoço Escolar', rendimento: '1 Porção (100g)' });
   };
 
   return (
@@ -178,11 +186,35 @@ export default function FichaTecnica() {
           </p>
         </div>
         <div>
-          <button className="btn btn-primary" onClick={handleNovaReceita}>
+          <button className="btn btn-primary" onClick={() => setShowNovaReceita(true)}>
             <i className="fa-solid fa-plus"></i> Nova Receita
           </button>
         </div>
       </div>
+
+      {showNovaReceita && (
+        <div className="glass-panel animate-fade-in" style={{ padding: 24, marginBottom: 24, border: '1px solid var(--primary)' }}>
+          <h3 style={{ fontFamily: 'Outfit', fontSize: '1.2rem', marginBottom: 16 }}>Criar Nova Ficha Técnica</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label className="form-label">Nome da Receita</label>
+              <input type="text" className="form-control" placeholder="Ex: Sopa de Feijão" value={novaRecForm.nome} onChange={e => setNovaRecForm({...novaRecForm, nome: e.target.value})} />
+            </div>
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label className="form-label">Tipo / Categoria</label>
+              <input type="text" className="form-control" placeholder="Ex: Creches" value={novaRecForm.tipo} onChange={e => setNovaRecForm({...novaRecForm, tipo: e.target.value})} />
+            </div>
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label className="form-label">Rendimento per Capita</label>
+              <input type="text" className="form-control" placeholder="Ex: 1 Porção (150g)" value={novaRecForm.rendimento} onChange={e => setNovaRecForm({...novaRecForm, rendimento: e.target.value})} />
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
+            <button className="btn btn-primary" onClick={salvarNovaReceita}>Salvar e Editar Ingredientes</button>
+            <button className="btn btn-secondary" onClick={() => setShowNovaReceita(false)}>Cancelar</button>
+          </div>
+        </div>
+      )}
 
       <div className="responsive-two-cols">
         

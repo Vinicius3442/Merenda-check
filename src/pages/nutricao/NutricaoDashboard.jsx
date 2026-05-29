@@ -7,7 +7,7 @@ import { useEstoque } from '../../hooks/useEstoque';
 import { useRefeicoes } from '../../hooks/useRefeicoes';
 
 // ── Download de relatório FNDE ────────────────────────────────────────────────
-function gerarRelatorioFNDE() {
+function gerarRelatorioFNDEDinamico(estoqueKg, totalRefeicoes, deficitItem) {
   const hoje = new Date().toLocaleDateString('pt-BR');
   const conteudo = `RELATÓRIO FNDE — Programa Nacional de Alimentação Escolar
 Data de Emissão: ${hoje}
@@ -15,29 +15,18 @@ Data de Emissão: ${hoje}
 
 1. INDICADORES GERAIS
    Cardápios Planejados:      12 / 12  (100%)
-   Custo FNDE Mensal:         R$ 1.200.000,00
-   Fichas Técnicas Ativas:    45
-   Conformidade Nutricional:  98%
+   Estoque Atual Global:      ${estoqueKg} kg
+   Refeições Servidas:        ${totalRefeicoes}
 
-2. DISTRIBUIÇÃO POR FAIXA ETÁRIA (PNAE Art. 17)
-   Creche (0-3 anos):         R$ 1,07/dia por aluno
-   Pré-Escola (4-5 anos):     R$ 1,07/dia por aluno
-   Ensino Fund. (6-10 anos):  R$ 0,36/dia por aluno
-   Ensino Fund. (11+ anos):   R$ 0,36/dia por aluno
-
-3. CONFORMIDADE NUTRICIONAL (IN 01/2013)
+2. CONFORMIDADE NUTRICIONAL (IN 01/2013)
    Energia:        100% dos dias dentro da meta
    Proteínas:       98% dos dias dentro da meta
    Fibras:          95% dos dias dentro da meta
    Sódio:          100% dos dias dentro da meta
 
-4. ALIMENTOS DA AGRICULTURA FAMILIAR
-   Percentual adquirido:  38,5% (mínimo exigido: 30%)
-   Valor investido:       R$ 462.000,00
-
-5. OBSERVAÇÕES
+3. OBSERVAÇÕES
    Nenhuma não-conformidade crítica identificada no período.
-   Déficit projetado de 120kg de Carne Bovina para 22/04 — em tratativa com Licitação.
+   ${deficitItem && parseFloat(deficitItem.volume_kg) < 10 ? `Déficit crítico projetado para ${deficitItem.nome} (${parseFloat(deficitItem.volume_kg).toFixed(1)}kg) — em tratativa com Almoxarifado.` : 'O algoritmo não identificou risco de escassez crítica para a próxima semana.'}
 
 ===========================================================
 Documento gerado automaticamente pelo sistema Merenda Check.
@@ -98,6 +87,7 @@ export default function NutricaoDashboard() {
   const totalEstoqueKg = estoque.reduce((acc, item) => acc + (parseFloat(item.volume_kg) || 0), 0).toFixed(1);
   const totalRefeicoes = refeicoes.reduce((acc, r) => acc + (parseInt(r.total_servidos) || 0), 0);
   const mediaSobras = refeicoes.length > 0 ? (refeicoes.reduce((acc, r) => acc + (parseFloat(r.resto_kg) || 0), 0) / refeicoes.length).toFixed(1) : 0;
+  const itemFaltante = estoque.length > 0 ? [...estoque].sort((a,b) => parseFloat(a.volume_kg) - parseFloat(b.volume_kg))[0] : null;
 
   const metaKpis = [
     { label: 'Cardápios Planejados', value: '12 / 12', icon: 'fa-calendar-check', color: 'var(--alert-green)' },
@@ -109,8 +99,8 @@ export default function NutricaoDashboard() {
   const handleFndeDownload = () => {
     setDownloadingFnde(true);
     setTimeout(() => {
-      gerarRelatorioFNDE();
-      showToast('Relatório Exportado', 'Relatório FNDE gerado e salvo com sucesso.', 'success');
+      gerarRelatorioFNDEDinamico(totalEstoqueKg, totalRefeicoes, itemFaltante);
+      showToast('Relatório Exportado', 'Relatório FNDE gerado com base nos dados reais.', 'success');
       setDownloadingFnde(false);
     }, 1200);
   };
@@ -247,31 +237,25 @@ export default function NutricaoDashboard() {
           
           {compraSolicitada ? (
             <div style={{ padding: 16, background: 'rgba(16,185,129,0.1)', borderLeft: '4px solid var(--alert-green)', borderRadius: '0 8px 8px 0', marginBottom: 20 }}>
-              <strong>Ação Tomada:</strong> O pedido emergencial de <strong>120kg de Carne Bovina</strong> foi encaminhado para o Almoxarifado Central. O déficit será suprido.
+              <strong>Ação Tomada:</strong> O pedido emergencial para repor <strong>{itemFaltante?.nome || 'insumos críticos'}</strong> foi encaminhado para o Almoxarifado Central. O déficit será suprido.
             </div>
           ) : (
-            <div style={{ padding: 16, background: 'rgba(245,158,11,0.1)', borderLeft: '4px solid var(--alert-yellow)', borderRadius: '0 8px 8px 0', marginBottom: 20 }}>
-              <strong>Atenção:</strong> Há déficit projetado de <strong>120kg de Carne Bovina</strong> para o dia 22/04 (Cardápio: Estrogonofe).
-              Recomenda-se acionar o Almoxarifado Central ou alterar o cardápio.
+            <div style={{ padding: 16, background: 'rgba(239,68,68,0.1)', borderLeft: '4px solid var(--alert-red)', borderRadius: '0 8px 8px 0', marginBottom: 20 }}>
+              {itemFaltante && parseFloat(itemFaltante.volume_kg) < 10 ? (
+                <>Déficit crítico projetado no insumo <strong>{itemFaltante.nome}</strong>. O estoque global desta semana consta apenas <strong>{parseFloat(itemFaltante.volume_kg).toFixed(1)}kg</strong> registrados, sendo insuficiente para o cardápio planejado. Recomendamos solicitar a compra emergencial à logística central.</>
+              ) : (
+                <>Estoque em níveis confortáveis. Nenhuma ruptura projetada pela Inteligência Artificial para o cardápio desta semana.</>
+              )}
             </div>
           )}
 
-          {!compraSolicitada && (
-            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-              <Link to="/nutricao/cardapios" className="btn btn-primary">
-                <i className="fa-solid fa-pen-to-square"></i> Editar Cardápio
-              </Link>
-              <button
-                className="btn btn-secondary"
-                onClick={() => {
-                  setCompraSolicitada(true);
-                  mockSubmit({ successTitle: 'Suprimento Solicitado', successMsg: 'A requisição do déficit foi registrada diretamente no sistema do Almoxarifado Central.' });
-                }}
-                disabled={loading}
-              >
-                <i className="fa-solid fa-paper-plane"></i> Solicitar Compra
-              </button>
-            </div>
+          {!compraSolicitada && itemFaltante && parseFloat(itemFaltante.volume_kg) < 10 && (
+            <button className="btn btn-secondary" onClick={() => {
+              setCompraSolicitada(true);
+              mockSubmit({ successTitle: 'Integração Logística', successMsg: 'Ordem de compra emergencial enviada ao Almoxarifado.' });
+            }}>
+              <i className="fa-solid fa-cart-flatbed"></i> Solicitar Remanejamento / Compra Imediata
+            </button>
           )}
         </div>
       </div>

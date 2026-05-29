@@ -13,6 +13,7 @@ export default function SobraLimpa() {
 
   const [pesoSobra, setPesoSobra] = useState('');
   const [motivo, setMotivo] = useState('super');
+  const [justificativa, setJustificativa] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async () => {
@@ -22,17 +23,24 @@ export default function SobraLimpa() {
       return;
     }
 
+    if (kg >= 50 && justificativa.trim().length < 10) {
+      showToast('Quantidade Absurda', 'Para sobras acima de 50kg, é obrigatório preencher uma justificativa detalhada (mínimo 10 caracteres).', 'error');
+      return;
+    }
+
     const motivoTexto = {
       super: 'Estimativa Incorreta de Alunos Presentes',
       sabor: 'Rejeição por Sabor ou Aparência',
       validade: 'Alimento Preparado Inadequadamente',
     }[motivo] || motivo;
 
+    const observacaoFinal = kg >= 50 ? `Sobra Limpa — ${motivoTexto} | Justificativa: ${justificativa}` : `Sobra Limpa — ${motivoTexto}`;
+
     setSubmitting(true);
     const res = await registrarSobra({
       escola_id: user?.escola_id || null,
       quantidade_kg: kg,
-      observacao: `Sobra Limpa — ${motivoTexto}`,
+      observacao: observacaoFinal,
       usuario_id: user?.id || null,
     });
     setSubmitting(false);
@@ -119,6 +127,22 @@ export default function SobraLimpa() {
                   <option value="validade">Alimento Preparado Inadequadamente</option>
                 </select>
               </div>
+
+              {parseFloat(pesoSobra) >= 50 && (
+                <div className="form-group animate-slide-up" style={{ marginTop: 20 }}>
+                  <label className="form-label" style={{ color: 'var(--alert-yellow)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <i className="fa-solid fa-triangle-exclamation"></i> Quantidade Atípica — Justificativa Obrigatória
+                  </label>
+                  <textarea 
+                    className="form-control" 
+                    rows="3" 
+                    placeholder="Explique detalhadamente o motivo deste desperdício excessivo (mínimo 10 caracteres)." 
+                    value={justificativa} 
+                    onChange={(e) => setJustificativa(e.target.value)}
+                    style={{ borderColor: 'var(--alert-yellow)' }}
+                  ></textarea>
+                </div>
+              )}
 
               <div style={{ marginTop: 40 }}>
                 <button

@@ -11,14 +11,23 @@ export default function RegistrarRefeicao() {
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [quantidade, setQuantidade] = useState('');
+  const [justificativa, setJustificativa] = useState('');
 
   const handleSubmit = async () => {
-    if (!quantidade || parseInt(quantidade) <= 0) {
+    const qtdeInt = parseInt(quantidade);
+    if (!quantidade || qtdeInt <= 0) {
       showToast('Campo Obrigatório', 'Informe a quantidade de refeições servidas.', 'error');
       return;
     }
+
+    if (qtdeInt >= 500 && justificativa.trim().length < 10) {
+      showToast('Quantidade Absurda', 'Para mais de 500 refeições num único apontamento, é obrigatório preencher uma justificativa (mínimo 10 caracteres).', 'error');
+      return;
+    }
+
     setLoading(true);
-    const result = await registrarRefeicao({ total_servidos: parseInt(quantidade) });
+    // Aqui incluímos a justificativa se ela existir, idealmente o hook deve salvar nas observações ou log
+    const result = await registrarRefeicao({ total_servidos: qtdeInt, observacao: qtdeInt >= 500 ? `Volume alto justificado: ${justificativa}` : '' });
     setLoading(false);
 
     if (result.ok) {
@@ -86,6 +95,22 @@ export default function RegistrarRefeicao() {
                   }}
                 />
               </div>
+
+              {parseInt(quantidade) >= 500 && (
+                <div className="form-group animate-slide-up" style={{ marginBottom: 40 }}>
+                  <label className="form-label" style={{ color: 'var(--alert-yellow)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <i className="fa-solid fa-triangle-exclamation"></i> Quantidade Atípica — Justificativa Obrigatória
+                  </label>
+                  <textarea 
+                    className="form-control" 
+                    rows="3" 
+                    placeholder="Explique detalhadamente o motivo deste volume alto (ex: evento escolar especial)." 
+                    value={justificativa} 
+                    onChange={(e) => setJustificativa(e.target.value)}
+                    style={{ borderColor: 'var(--alert-yellow)' }}
+                  ></textarea>
+                </div>
+              )}
 
               <div className="form-group">
                 <label className="form-label">Nome do Supervisor / Responsável Legal</label>

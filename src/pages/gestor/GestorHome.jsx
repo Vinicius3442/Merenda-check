@@ -155,19 +155,32 @@ export default function GestorHome() {
       </div>
 
       <div className="kpi-grid animate-slide-up">
-        {kpis.map((kpi, i) => (
-          <div key={i} className="kpi-card">
-            <div className="kpi-icon"><i className={`fa-solid ${kpi.icon}`}></i></div>
-            <div className="kpi-value" style={{ color: kpi.color }}>{kpi.value}</div>
-            <div className="kpi-label">{kpi.label}</div>
-            {kpi.trend && (
-              <div style={{ marginTop: 6, fontSize: '0.75rem', fontWeight: 700, color: kpi.trendColor || kpi.color, display: 'flex', alignItems: 'center', gap: 4 }}>
-                <i className="fa-solid fa-arrow-trend-up" style={{ fontSize: '0.7rem' }}></i>
-                {kpi.trend}
+        {loading || kpis.length === 0 ? (
+          // Skeleton de carregamento
+          [1,2,3,4].map(i => (
+            <div key={i} className="kpi-card" style={{ opacity: 0.5 }}>
+              <div className="kpi-icon" style={{ background: 'rgba(255,255,255,0.05)' }}>
+                <i className="fa-solid fa-circle-notch fa-spin" style={{ color: 'var(--text-muted)' }}></i>
               </div>
-            )}
-          </div>
-        ))}
+              <div className="kpi-value" style={{ color: 'var(--text-muted)', fontSize: '1.4rem' }}>--</div>
+              <div className="kpi-label" style={{ color: 'var(--text-muted)' }}>Carregando...</div>
+            </div>
+          ))
+        ) : (
+          kpis.map((kpi, i) => (
+            <div key={i} className="kpi-card">
+              <div className="kpi-icon"><i className={`fa-solid ${kpi.icon}`}></i></div>
+              <div className="kpi-value" style={{ color: kpi.color }}>{kpi.value}</div>
+              <div className="kpi-label">{kpi.label}</div>
+              {kpi.trend && (
+                <div style={{ marginTop: 6, fontSize: '0.75rem', fontWeight: 700, color: kpi.trendColor || kpi.color, display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <i className="fa-solid fa-arrow-trend-up" style={{ fontSize: '0.7rem' }}></i>
+                  {kpi.trend}
+                </div>
+              )}
+            </div>
+          ))
+        )}
       </div>
 
       {/* Ações Rápidas */}

@@ -53,7 +53,7 @@ export function AuthProvider({ children }) {
       // 1. Tentar buscar por auth_id
       let { data, error } = await supabase
         .from('usuarios')
-        .select('id, nome, role, iniciais, email, escola_id, avatar_url')
+        .select('id, nome, role, iniciais, email, escola_id, avatar_url, status')
         .eq('auth_id', authId)
         .maybeSingle();
 
@@ -68,7 +68,7 @@ export function AuthProvider({ children }) {
           // Buscar perfil pelo email
           const { data: emailData, error: emailErr } = await supabase
             .from('usuarios')
-            .select('id, nome, role, iniciais, email, escola_id, avatar_url')
+            .select('id, nome, role, iniciais, email, escola_id, avatar_url, status')
             .eq('email', authUser.email)
             .maybeSingle();
 
@@ -133,8 +133,18 @@ export function AuthProvider({ children }) {
         return;
       }
 
+      // ✋ Bloquear login de usuários desativados
+      if (data.status === 'inativo') {
+        console.warn('[Auth] Usuário inativo tentou logar:', data.email);
+        if (isSupabaseConfigured) await supabase.auth.signOut();
+        setAuth({ user: null, role: null, isAuthenticated: false });
+        setAuthError('Acesso revogado. Entre em contato com o administrador do sistema.');
+        setLoading(false);
+        return null; // Sinaliza bloqueio
+      }
+
       setAuth({
-        user: { id: data.id, name: data.nome, role: data.role, initials: data.iniciais, email: data.email, escola_id: data.escola_id, avatar_url: data.avatar_url },
+        user: { id: data.id, name: data.nome, role: data.role, initials: data.iniciais, email: data.email, escola_id: data.escola_id, avatar_url: data.avatar_url, status: data.status },
         role: data.role,
         isAuthenticated: true,
       });
@@ -177,6 +187,11 @@ export function AuthProvider({ children }) {
 
     // Aguarda carregar o perfil ANTES de retornar sucesso para evitar o bug do "duplo login"
     const userRole = await fetchUserProfile(data.user.id);
+
+    // Se userRole for null, significa que o usuário está inativo
+    if (userRole === null) {
+      return { ok: false, error: 'Acesso revogado. Entre em contato com o administrador do sistema.' };
+    }
 
     return { ok: true, role: userRole };
   }, []);

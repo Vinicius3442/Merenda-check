@@ -3,18 +3,20 @@ import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { mockKpisGestor, mockKpisAuditor, mockChartData } from '../data/mockData';
 
 export function useDashboardStats(role, escolaId = null) {
-  const [kpis, setKpis] = useState(role === 'gestor' ? mockKpisGestor : mockKpisAuditor);
+  const [kpis, setKpis] = useState([]);
   const [chartData, setChartData] = useState(mockChartData);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchStats() {
+      setLoading(true);
       if (!isSupabaseConfigured) {
+        // Modo mock: usa dados de demonstração
+        setKpis(role === 'gestor' ? mockKpisGestor : mockKpisAuditor);
+        setChartData(mockChartData);
         setLoading(false);
         return;
       }
-
-      setLoading(true);
       try {
         if (role === 'gestor') {
           // 1. Resto-Ingesta e Refeições de Hoje

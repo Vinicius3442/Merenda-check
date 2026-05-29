@@ -4,7 +4,7 @@ import { useEscolas } from '../../hooks/useEscolas';
 import { useToast } from '../../contexts/ToastContext';
 
 export default function GestaoEscolas() {
-  const { escolas, loading, inserirEscola, atualizarStatus } = useEscolas();
+  const { escolas, loading, inserirEscola, atualizarStatus, editarEscola } = useEscolas();
   const { showToast } = useToast();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -16,6 +16,52 @@ export default function GestaoEscolas() {
   const [lng, setLng] = useState('-46.6330');
   const [status, setStatus] = useState('normal');
   const [saving, setSaving] = useState(false);
+
+  // Edit modal state
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingEscola, setEditingEscola] = useState(null);
+  const [editNome, setEditNome] = useState('');
+  const [editDiretora, setEditDiretora] = useState('');
+  const [editEndereco, setEditEndereco] = useState('');
+  const [editLat, setEditLat] = useState('');
+  const [editLng, setEditLng] = useState('');
+  const [editStatus, setEditStatus] = useState('normal');
+  const [savingEdit, setSavingEdit] = useState(false);
+
+  const handleOpenEdit = (escola) => {
+    setEditingEscola(escola);
+    setEditNome(escola.nome || '');
+    setEditDiretora(escola.diretora || '');
+    setEditEndereco(escola.endereco || '');
+    setEditLat(escola.lat?.toString() || '');
+    setEditLng(escola.lng?.toString() || '');
+    setEditStatus(escola.status || 'normal');
+    setIsEditModalOpen(true);
+  };
+
+  const handleSaveEdit = async (e) => {
+    e.preventDefault();
+    if (!editNome || !editEndereco) {
+      showToast('Erro de Validação', 'Preencha o nome e o endereço.', 'error');
+      return;
+    }
+    setSavingEdit(true);
+    const res = await editarEscola(editingEscola.id, {
+      nome: editNome,
+      diretora: editDiretora,
+      endereco: editEndereco,
+      lat: parseFloat(editLat) || null,
+      lng: parseFloat(editLng) || null,
+      status: editStatus,
+    });
+    setSavingEdit(false);
+    if (res.ok) {
+      showToast('Escola Atualizada', `${editNome} foi atualizada com sucesso.`, 'success');
+      setIsEditModalOpen(false);
+    } else {
+      showToast('Erro ao Salvar', res.error || 'Não foi possível salvar as alterações.', 'error');
+    }
+  };
 
   const filteredEscolas = escolas.filter((e) => {
     const term = searchQuery.toLowerCase();
@@ -162,17 +208,27 @@ export default function GestaoEscolas() {
                     </td>
                     <td className="text-nowrap">
                       <div style={{ display: 'flex', gap: 6 }}>
-                        <button className="btn btn-secondary" style={{ padding: '5px 10px', fontSize: '0.8rem' }} title="Editar">
+                        <button
+                          className="btn btn-secondary"
+                          style={{ padding: '5px 10px', fontSize: '0.8rem' }}
+                          title="Editar Escola"
+                          onClick={() => handleOpenEdit(e)}
+                        >
                           <i className="fa-solid fa-pen"></i>
                         </button>
                         <button 
                           className="btn btn-secondary" 
                           style={{ padding: '5px 10px', fontSize: '0.8rem' }} 
                           title="Alterar Status"
-                          onClick={() => {
+                          onClick={async () => {
                             const current = e.status;
                             const next = current === 'normal' ? 'atencao' : current === 'atencao' ? 'urgente' : 'normal';
-                            atualizarStatus(e.id, next);
+                            const res = await atualizarStatus(e.id, next);
+                            if (res.ok) {
+                              showToast('Status Atualizado', `${e.nome}: ${current.toUpperCase()} → ${next.toUpperCase()}`, 'success');
+                            } else {
+                              showToast('Erro', res.error || 'Não foi possível alterar o status.', 'error');
+                            }
                           }}
                         >
                           <i className="fa-solid fa-rotate"></i>
@@ -311,6 +367,133 @@ export default function GestaoEscolas() {
                   disabled={saving}
                 >
                   {saving ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Cadastrando...</> : 'Salvar Escola'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {/* Edit School Modal */}
+      {isEditModalOpen && editingEscola && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(15,23,42,0.88)', backdropFilter: 'blur(12px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 9999, padding: 20
+        }}>
+          <div className="glass-panel animate-slide-up" style={{
+            maxWidth: 520, width: '100%', padding: 40,
+            border: '1px solid rgba(255,255,255,0.08)',
+            boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+            maxHeight: '90vh', overflowY: 'auto'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+              <h2 style={{ fontFamily: 'Outfit', color: 'var(--text-main)', fontSize: '1.3rem', margin: 0 }}>
+                <i className="fa-solid fa-pen-to-square" style={{ color: 'var(--primary)', marginRight: 10 }}></i>
+                Editar Escola
+              </h2>
+              <button
+                onClick={() => setIsEditModalOpen(false)}
+                style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '1.3rem' }}
+              >
+                <i className="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.82rem', marginBottom: 20, marginTop: -12 }}>
+              Editando: <strong style={{ color: 'var(--primary)' }}>{editingEscola.nome}</strong>
+            </p>
+
+            <form onSubmit={handleSaveEdit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label className="form-label" style={{ fontSize: '0.85rem', marginBottom: 6 }}>Nome da Unidade</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={editNome}
+                  onChange={(e) => setEditNome(e.target.value)}
+                  style={{ width: '100%', padding: 10, fontSize: '0.9rem' }}
+                  required
+                />
+              </div>
+
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label className="form-label" style={{ fontSize: '0.85rem', marginBottom: 6 }}>Nome do(a) Diretor(a)</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={editDiretora}
+                  onChange={(e) => setEditDiretora(e.target.value)}
+                  style={{ width: '100%', padding: 10, fontSize: '0.9rem' }}
+                />
+              </div>
+
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label className="form-label" style={{ fontSize: '0.85rem', marginBottom: 6 }}>Endereço Completo</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={editEndereco}
+                  onChange={(e) => setEditEndereco(e.target.value)}
+                  style={{ width: '100%', padding: 10, fontSize: '0.9rem' }}
+                  required
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label className="form-label" style={{ fontSize: '0.85rem', marginBottom: 6 }}>Latitude</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={editLat}
+                    onChange={(e) => setEditLat(e.target.value)}
+                    style={{ width: '100%', padding: 10, fontSize: '0.9rem' }}
+                  />
+                </div>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label className="form-label" style={{ fontSize: '0.85rem', marginBottom: 6 }}>Longitude</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={editLng}
+                    onChange={(e) => setEditLng(e.target.value)}
+                    style={{ width: '100%', padding: 10, fontSize: '0.9rem' }}
+                  />
+                </div>
+              </div>
+
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label className="form-label" style={{ fontSize: '0.85rem', marginBottom: 6 }}>Status Operacional</label>
+                <select
+                  className="form-control"
+                  value={editStatus}
+                  onChange={(e) => setEditStatus(e.target.value)}
+                  style={{ width: '100%', padding: 10, fontSize: '0.9rem' }}
+                >
+                  <option value="normal" style={{ background: 'var(--bg-surface)' }}>Normal (Operando)</option>
+                  <option value="atencao" style={{ background: 'var(--bg-surface)' }}>Atenção</option>
+                  <option value="urgente" style={{ background: 'var(--bg-surface)' }}>Urgente (Sem Operação)</option>
+                </select>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 10 }}>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setIsEditModalOpen(false)}
+                  disabled={savingEdit}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={savingEdit}
+                >
+                  {savingEdit
+                    ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Salvando...</>
+                    : <><i className="fa-solid fa-floppy-disk" style={{ marginRight: 6 }}></i>Salvar Alterações</>
+                  }
                 </button>
               </div>
             </form>

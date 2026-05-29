@@ -5,10 +5,12 @@ import '../models/user_model.dart';
 class AuthProvider extends ChangeNotifier {
   UserModel? _user;
   bool _isLoading = true;
+  String? _loginError;
   
   UserModel? get user => _user;
   bool get isAuthenticated => _user != null;
   bool get isLoading => _isLoading;
+  String? get loginError => _loginError;
 
   AuthProvider() {
     _initialize();
@@ -40,19 +42,31 @@ class AuthProvider extends ChangeNotifier {
     try {
       final data = await Supabase.instance.client
           .from('usuarios')
-          .select('id, nome, role, iniciais, escola_id, avatar_url')
+          .select('id, nome, role, iniciais, escola_id, avatar_url, status')
           .eq('auth_id', authId)
           .maybeSingle();
 
       if (data != null) {
+        // ✋ Bloquear usuários com status inativo
+        if (data['status'] == 'inativo') {
+          debugPrint('[Auth] Usuário inativo tentou acessar: ${data['email'] ?? authId}');
+          await Supabase.instance.client.auth.signOut();
+          _user = null;
+          _loginError = 'Acesso revogado. Entre em contato com o administrador do sistema.';
+          notifyListeners();
+          return;
+        }
+
         _user = UserModel(
           id: data['id'],
-          name: data['nome'],
+          name: data['nome'] ?? '',
           role: data['role'],
-          initials: data['iniciais'],
+          initials: data['iniciais'] ?? 'U',
           escolaId: data['escola_id'],
           avatarUrl: data['avatar_url'],
+          status: data['status'] ?? 'ativo',
         );
+        _loginError = null;
       }
     } catch (e) {
       debugPrint('Error fetching user profile: $e');
@@ -76,22 +90,31 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> login(String email, String password) async {
+  /// Retorna null em sucesso, ou uma mensagem de erro em falha
+  Future<String?> login(String email, String password) async {
+    _loginError = null;
     try {
       final response = await Supabase.instance.client.auth.signInWithPassword(
         email: email,
         password: password,
       );
       
-      // Aguarda carregar o perfil ANTES de retornar sucesso para evitar o bug do "duplo login"
       if (response.session != null) {
         await _fetchUserProfile(response.session!.user.id);
+        // Se _loginError foi setado, o usuário está inativo
+        if (_loginError != null) {
+          return _loginError;
+        }
       }
       
-      return true;
+      return null; // Sucesso
     } catch (e) {
       debugPrint('Login error: $e');
-      return false;
+      final msg = e.toString();
+      if (msg.contains('Invalid login credentials')) {
+        return 'E-mail ou senha incorretos.';
+      }
+      return 'Erro ao fazer login. Tente novamente.';
     }
   }
 

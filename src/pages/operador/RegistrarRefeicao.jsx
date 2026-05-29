@@ -27,7 +27,11 @@ export default function RegistrarRefeicao() {
 
     setLoading(true);
     // Aqui incluímos a justificativa se ela existir, idealmente o hook deve salvar nas observações ou log
-    const result = await registrarRefeicao({ total_servidos: qtdeInt, observacao: qtdeInt >= 500 ? `Volume alto justificado: ${justificativa}` : '' });
+    const result = await registrarRefeicao({
+      total_servidos: qtdeInt,
+      escola_id: user?.escola_id,
+      observacao: qtdeInt >= 500 ? `Volume alto justificado: ${justificativa}` : ''
+    });
     setLoading(false);
 
     if (result.ok) {

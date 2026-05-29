@@ -55,6 +55,27 @@ export function useUsuarios() {
     return { ok: true };
   }
 
+  async function resetarSenha(id, novaSenha) {
+    if (!isSupabaseConfigured) {
+      // No modo mock, apenas simula sucesso
+      return { ok: true };
+    }
+    // Usa a função RPC/Edge ou atualização direta pelo Admin SDK
+    // Via supabase.auth.admin.updateUserById requer service_role key no backend
+    // Aqui usamos uma Edge Function ou update direto na tabela auth.users não é possível pelo client
+    // Solução: chamar a Edge Function 'reset-password-admin' se existir, senão usar updateUser
+    try {
+      const { error: err } = await supabase.rpc('admin_reset_user_password', {
+        user_id: id,
+        new_password: novaSenha,
+      });
+      if (err) return { ok: false, error: err.message };
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, error: e.message };
+    }
+  }
+
   async function inserirUsuario({ nome, email, role, escola_id }) {
     const iniciais = nome.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
     if (!isSupabaseConfigured) {
@@ -82,5 +103,5 @@ export function useUsuarios() {
     fetchUsuarios();
   }, []);
 
-  return { usuarios, loading, error, atualizarStatus, inserirUsuario, refetch: fetchUsuarios };
+  return { usuarios, loading, error, atualizarStatus, inserirUsuario, resetarSenha, refetch: fetchUsuarios };
 }

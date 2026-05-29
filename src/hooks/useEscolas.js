@@ -55,9 +55,25 @@ export function useEscolas() {
   }
 
   async function atualizarStatus(id, newStatus) {
-    if (!isSupabaseConfigured) return { ok: false, error: 'Supabase não configurado' };
+    if (!isSupabaseConfigured) {
+      // Modo mock: atualiza local
+      setEscolas((prev) => prev.map((e) => e.id === id ? { ...e, status: newStatus } : e));
+      return { ok: true };
+    }
     const { error } = await supabase.from('escolas').update({ status: newStatus }).eq('id', id);
     if (error) return { ok: false, error: error.message };
+    await fetchEscolas(); // Atualiza a tabela
+    return { ok: true };
+  }
+
+  async function editarEscola(id, dados) {
+    if (!isSupabaseConfigured) {
+      setEscolas((prev) => prev.map((e) => e.id === id ? { ...e, ...dados } : e));
+      return { ok: true };
+    }
+    const { error } = await supabase.from('escolas').update(dados).eq('id', id);
+    if (error) return { ok: false, error: error.message };
+    await fetchEscolas();
     return { ok: true };
   }
 
@@ -73,5 +89,5 @@ export function useEscolas() {
     }
   }, []);
 
-  return { escolas, loading, error, refetch: fetchEscolas, inserirEscola, atualizarStatus };
+  return { escolas, loading, error, refetch: fetchEscolas, inserirEscola, atualizarStatus, editarEscola };
 }

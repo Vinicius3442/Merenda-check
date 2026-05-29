@@ -5,7 +5,7 @@ import { useEscolas } from '../../hooks/useEscolas';
 import { useToast } from '../../contexts/ToastContext';
 
 export default function GestaoUsuarios() {
-  const { usuarios, loading, atualizarStatus, inserirUsuario } = useUsuarios();
+  const { usuarios, loading, atualizarStatus, inserirUsuario, resetarSenha } = useUsuarios();
   const { escolas } = useEscolas();
   const { showToast } = useToast();
 
@@ -16,6 +16,41 @@ export default function GestaoUsuarios() {
   const [role, setRole] = useState('operador');
   const [escolaId, setEscolaId] = useState('');
   const [saving, setSaving] = useState(false);
+
+  // Reset password modal
+  const [resetModal, setResetModal] = useState({ open: false, usuario: null });
+  const [novaSenha, setNovaSenha] = useState('');
+  const [confirmSenha, setConfirmSenha] = useState('');
+  const [showNovaSenha, setShowNovaSenha] = useState(false);
+  const [savingReset, setSavingReset] = useState(false);
+
+  const handleOpenReset = (u) => {
+    setNovaSenha('');
+    setConfirmSenha('');
+    setShowNovaSenha(false);
+    setResetModal({ open: true, usuario: u });
+  };
+
+  const handleResetSenha = async (e) => {
+    e.preventDefault();
+    if (novaSenha.length < 6) {
+      showToast('Senha Inválida', 'A nova senha deve ter pelo menos 6 caracteres.', 'error');
+      return;
+    }
+    if (novaSenha !== confirmSenha) {
+      showToast('Senhas Diferentes', 'A confirmação de senha não corresponde.', 'error');
+      return;
+    }
+    setSavingReset(true);
+    const res = await resetarSenha(resetModal.usuario.id, novaSenha);
+    setSavingReset(false);
+    if (res.ok) {
+      showToast('Senha Redefinida', `Senha de ${resetModal.usuario.nome} atualizada com sucesso.`, 'success');
+      setResetModal({ open: false, usuario: null });
+    } else {
+      showToast('Erro ao Resetar', res.error || 'Não foi possível redefinir a senha.', 'error');
+    }
+  };
 
   const roleLabels = {
     operador: 'Operador',
@@ -191,11 +226,13 @@ export default function GestaoUsuarios() {
                     </td>
                     <td className="text-nowrap">
                       <div style={{ display: 'flex', gap: 6 }}>
-                        <button className="btn btn-secondary" style={{ padding: '5px 10px', fontSize: '0.8rem' }} title="Resetar Senha">
+                        <button
+                          className="btn btn-secondary"
+                          style={{ padding: '5px 10px', fontSize: '0.8rem' }}
+                          title="Resetar Senha"
+                          onClick={() => handleOpenReset(u)}
+                        >
                           <i className="fa-solid fa-key"></i>
-                        </button>
-                        <button className="btn btn-secondary" style={{ padding: '5px 10px', fontSize: '0.8rem' }} title="Editar Permissões">
-                          <i className="fa-solid fa-sliders"></i>
                         </button>
                         {u.status === 'ativo' ? (
                           <button
@@ -351,6 +388,117 @@ export default function GestaoUsuarios() {
                   style={{ padding: '10px 16px', fontSize: '0.9rem' }}
                 >
                   {saving ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Cadastrando...</> : 'Salvar Cadastro'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {/* Reset Password Modal */}
+      {resetModal.open && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(15,23,42,0.88)', backdropFilter: 'blur(12px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 9999, padding: 20
+        }}>
+          <div className="glass-panel animate-slide-up" style={{
+            maxWidth: 460, width: '100%', padding: 40,
+            border: '1px solid rgba(255,255,255,0.08)',
+            boxShadow: '0 20px 50px rgba(0,0,0,0.5)'
+          }}>
+            {/* Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+              <h2 style={{ fontFamily: 'Outfit', color: 'var(--text-main)', fontSize: '1.3rem', margin: 0 }}>
+                <i className="fa-solid fa-key" style={{ color: 'var(--alert-yellow)', marginRight: 10 }}></i>
+                Redefinir Senha
+              </h2>
+              <button
+                onClick={() => setResetModal({ open: false, usuario: null })}
+                style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '1.3rem' }}
+              >
+                <i className="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: 24 }}>
+              Definindo nova senha para: <strong style={{ color: '#f1f5f9' }}>{resetModal.usuario?.nome}</strong>
+            </p>
+
+            <form onSubmit={handleResetSenha} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+              {/* Nova Senha */}
+              <div className="form-group">
+                <label className="form-label" style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 6 }}>Nova Senha</label>
+                <div style={{ position: 'relative' }}>
+                  <input
+                    type={showNovaSenha ? 'text' : 'password'}
+                    className="form-control"
+                    placeholder="Mínimo 6 caracteres"
+                    value={novaSenha}
+                    onChange={(e) => setNovaSenha(e.target.value)}
+                    style={{ width: '100%', background: 'rgba(15,23,42,0.6)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', padding: '12px 44px 12px 12px', borderRadius: 8, boxSizing: 'border-box' }}
+                    required
+                    autoComplete="new-password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNovaSenha(v => !v)}
+                    style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '0.9rem' }}
+                  >
+                    <i className={showNovaSenha ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'}></i>
+                  </button>
+                </div>
+                {novaSenha.length > 0 && novaSenha.length < 6 && (
+                  <p style={{ color: 'var(--alert-red)', fontSize: '0.75rem', marginTop: 4 }}>
+                    <i className="fa-solid fa-triangle-exclamation" style={{ marginRight: 4 }}></i>Mínimo 6 caracteres
+                  </p>
+                )}
+              </div>
+
+              {/* Confirmar Senha */}
+              <div className="form-group">
+                <label className="form-label" style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 6 }}>Confirmar Nova Senha</label>
+                <input
+                  type={showNovaSenha ? 'text' : 'password'}
+                  className="form-control"
+                  placeholder="Repita a senha"
+                  value={confirmSenha}
+                  onChange={(e) => setConfirmSenha(e.target.value)}
+                  style={{ width: '100%', background: 'rgba(15,23,42,0.6)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', padding: 12, borderRadius: 8, boxSizing: 'border-box' }}
+                  required
+                  autoComplete="new-password"
+                />
+                {confirmSenha.length > 0 && novaSenha !== confirmSenha && (
+                  <p style={{ color: 'var(--alert-red)', fontSize: '0.75rem', marginTop: 4 }}>
+                    <i className="fa-solid fa-triangle-exclamation" style={{ marginRight: 4 }}></i>As senhas não coincidem
+                  </p>
+                )}
+                {confirmSenha.length > 0 && novaSenha === confirmSenha && novaSenha.length >= 6 && (
+                  <p style={{ color: 'var(--alert-green)', fontSize: '0.75rem', marginTop: 4 }}>
+                    <i className="fa-solid fa-circle-check" style={{ marginRight: 4 }}></i>Senhas coincidem
+                  </p>
+                )}
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 8 }}>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setResetModal({ open: false, usuario: null })}
+                  disabled={savingReset}
+                  style={{ padding: '10px 16px', fontSize: '0.9rem' }}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={savingReset || novaSenha.length < 6 || novaSenha !== confirmSenha}
+                  style={{ padding: '10px 16px', fontSize: '0.9rem' }}
+                >
+                  {savingReset
+                    ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Salvando...</>
+                    : <><i className="fa-solid fa-floppy-disk" style={{ marginRight: 6 }}></i>Salvar Senha</>
+                  }
                 </button>
               </div>
             </form>

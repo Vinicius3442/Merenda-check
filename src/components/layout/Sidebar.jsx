@@ -39,6 +39,7 @@ const MENUS = {
   ],
   admin: [
     { to: '/admin',          icon: 'fa-users-gear',    label: 'Gestão de Usuários' },
+    { to: '/admin/escolas',  icon: 'fa-school-flag',   label: 'Unidades Escolares' },
     { to: '/admin/audit-ti', icon: 'fa-shield-halved', label: 'Audit Trail (TI)' },
   ],
   transportadora: [

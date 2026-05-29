@@ -21,6 +21,29 @@ alter table public.escolas enable row level security;
 -- ============================================================
 -- 2. TABELA: usuarios (perfis RBAC vinculados ao Auth)
 -- ============================================================
+create extension if not exists "uuid-ossp";
+
+-- ============================================================
+-- 1. TABELA: escolas
+-- ============================================================
+create table if not exists public.escolas (
+  id              uuid primary key default uuid_generate_v4(),
+  nome            text not null,
+  diretora        text,
+  endereco        text,
+  lat             numeric(10,6),
+  lng             numeric(10,6),
+  health          int default 100 check (health between 0 and 100),
+  status          text default 'normal' check (status in ('normal','atencao','urgente')),
+  criado_em       timestamptz default now()
+);
+
+alter table public.escolas enable row level security;
+-- Políticas de RLS da tabela escolas movidas para depois da tabela usuarios (evita erro 42P01)
+
+-- ============================================================
+-- 2. TABELA: usuarios (perfis RBAC vinculados ao Auth)
+-- ============================================================
 create table if not exists public.usuarios (
   id          uuid primary key default uuid_generate_v4(),
   auth_id     uuid unique references auth.users(id) on delete cascade,
@@ -28,6 +51,7 @@ create table if not exists public.usuarios (
   email       text not null unique,
   role        text not null check (role in ('operador','gestor','auditor','nutricao','licitacao','transportadora','admin')),
   iniciais    text not null,
+  avatar_url  text,
   escola_id   uuid references public.escolas(id) on delete set null,
   status      text not null default 'ativo' check (status in ('ativo','inativo')),
   criado_em   timestamptz default now()
@@ -472,3 +496,53 @@ create policy "Gestão de solicitacoes de compra" on public.solicitacoes_compra 
 
 -- Adiciona status aos cardapios
 alter table public.cardapios add column if not exists status text default 'pendente' check (status in ('pendente', 'aprovado', 'rejeitado'));
+
+-- ============================================================
+-- FUNÇÃO DE AUDITORIA AUTOMÁTICA
+-- ============================================================
+create or replace function public.log_audit_trigger()
+returns trigger as $$
+declare
+  v_user_id uuid;
+  v_user_email text;
+  v_acao text;
+  v_registro_id text;
+  v_tabela text;
+begin
+  -- Pega o ID e Email do usuário da sessão atual
+  select id, email into v_user_id, v_user_email 
+  from public.usuarios 
+  where auth_id = auth.uid() limit 1;
+
+  v_tabela := TG_TABLE_NAME;
+  v_acao := TG_OP;
+  
+  if TG_OP = 'DELETE' then
+    v_registro_id := old.id::text;
+    insert into public.audit_trail (usuario_id, usuario_email, acao, tabela_afetada, registro_id, dados_anteriores)
+    values (v_user_id, v_user_email, v_acao, v_tabela, v_registro_id, row_to_json(old));
+    return old;
+  elsif TG_OP = 'UPDATE' then
+    v_registro_id := new.id::text;
+    insert into public.audit_trail (usuario_id, usuario_email, acao, tabela_afetada, registro_id, dados_anteriores, dados_novos)
+    values (v_user_id, v_user_email, v_acao, v_tabela, v_registro_id, row_to_json(old), row_to_json(new));
+    return new;
+  elsif TG_OP = 'INSERT' then
+    v_registro_id := new.id::text;
+    insert into public.audit_trail (usuario_id, usuario_email, acao, tabela_afetada, registro_id, dados_novos)
+    values (v_user_id, v_user_email, v_acao, v_tabela, v_registro_id, row_to_json(new));
+    return new;
+  end if;
+  return null;
+end;
+$$ language plpgsql security definer;
+
+-- Aplicando os Triggers de Auditoria
+create trigger audit_escolas after insert or update or delete on public.escolas for each row execute function public.log_audit_trigger();
+create trigger audit_usuarios after insert or update or delete on public.usuarios for each row execute function public.log_audit_trigger();
+create trigger audit_fornecedores after insert or update or delete on public.fornecedores for each row execute function public.log_audit_trigger();
+create trigger audit_contratos after insert or update or delete on public.contratos for each row execute function public.log_audit_trigger();
+create trigger audit_lotes after insert or update or delete on public.lotes_transporte for each row execute function public.log_audit_trigger();
+create trigger audit_estoque after insert or update or delete on public.estoque for each row execute function public.log_audit_trigger();
+create trigger audit_movimentacoes after insert or update or delete on public.movimentacoes for each row execute function public.log_audit_trigger();
+create trigger audit_cardapios after insert or update or delete on public.cardapios for each row execute function public.log_audit_trigger();

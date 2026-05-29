@@ -26,9 +26,14 @@ export function useEscolas() {
     } else {
       // Mapear para o formato esperado pelos componentes
       const mapped = (data || []).map((e) => ({
+        ...e,
         id: e.id,
         nome: e.nome,
         diretora: e.diretora,
+        endereco: e.endereco,
+        status: e.status,
+        lat: e.lat,
+        lng: e.lng,
         health: e.health,
         healthClass: e.health >= 90 ? 'health-100' : e.health >= 70 ? 'health-80' : 'health-60',
         badgeClass: e.health >= 90 ? 'badge-success' : e.health >= 70 ? 'badge-warning' : 'badge-danger',
@@ -40,6 +45,20 @@ export function useEscolas() {
       setEscolas(mapped);
     }
     setLoading(false);
+  }
+
+  async function inserirEscola(escolaData) {
+    if (!isSupabaseConfigured) return { ok: false, error: 'Supabase não configurado' };
+    const { data, error } = await supabase.from('escolas').insert([escolaData]).select();
+    if (error) return { ok: false, error: error.message };
+    return { ok: true, data: data[0] };
+  }
+
+  async function atualizarStatus(id, newStatus) {
+    if (!isSupabaseConfigured) return { ok: false, error: 'Supabase não configurado' };
+    const { error } = await supabase.from('escolas').update({ status: newStatus }).eq('id', id);
+    if (error) return { ok: false, error: error.message };
+    return { ok: true };
   }
 
   useEffect(() => {
@@ -54,5 +73,5 @@ export function useEscolas() {
     }
   }, []);
 
-  return { escolas, loading, error, refetch: fetchEscolas };
+  return { escolas, loading, error, refetch: fetchEscolas, inserirEscola, atualizarStatus };
 }

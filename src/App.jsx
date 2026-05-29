@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
+import ScrollToTop from './components/ScrollToTop';
 
 // Pages
 import LandingPage from './pages/LandingPage';
@@ -46,6 +47,7 @@ import LicitacaoSolicitacoes from './pages/licitacao/LicitacaoSolicitacoes';
 
 // Admin
 import GestaoUsuarios from './pages/admin/GestaoUsuarios';
+import GestaoEscolas from './pages/admin/GestaoEscolas';
 import AuditTrailTI from './pages/admin/AuditTrailTI';
 
 // Transportadora
@@ -86,6 +88,7 @@ function ProtectedRoute({ children }) {
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         {/* Public */}
         <Route path="/" element={<LandingPage />} />
@@ -132,6 +135,7 @@ export default function App() {
 
         {/* Admin */}
         <Route path="/admin" element={<ProtectedRoute><GestaoUsuarios /></ProtectedRoute>} />
+        <Route path="/admin/escolas" element={<ProtectedRoute><GestaoEscolas /></ProtectedRoute>} />
         <Route path="/admin/audit-ti" element={<ProtectedRoute><AuditTrailTI /></ProtectedRoute>} />
 
         {/* Transportadora */}

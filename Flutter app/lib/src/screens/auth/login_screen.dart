@@ -93,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
           context.go('/nutricao');
         } else if (role.contains('licita') || role.contains('compra')) {
           context.go('/licitacao');
-        } else if (role.contains('transporte') || role.contains('logist')) {
+        } else if (role.contains('transport') || role.contains('logist')) {
           context.go('/transportadora');
         } else if (role.contains('admin') || role.contains('sys')) {
           context.go('/admin');

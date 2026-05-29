@@ -76,6 +76,7 @@ export default function RegistrarRefeicao() {
                   {loading ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Processando...</> : <><i className="fa-solid fa-cloud-arrow-up"></i> Confirmar Quantidade</>}
                 </button>
               </div>
+            </div>
       </div>
     </DashboardLayout>
   );

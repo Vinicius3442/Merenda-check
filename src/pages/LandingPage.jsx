@@ -134,7 +134,7 @@ export default function LandingPage() {
           </video>
         </div>
       </section>
-
+        {/*Seção BUGADA a animação tá bizarra */}
       {/* Como Funciona */}
       <section className="workflow-section" id="como-funciona">
         <h2 className="section-title animate-fade-in">

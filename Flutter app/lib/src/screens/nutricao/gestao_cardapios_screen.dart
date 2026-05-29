@@ -41,6 +41,7 @@ class _GestaoCardapiosScreenState extends State<GestaoCardapiosScreen> with Sing
   late TabController _tabController;
   bool _isLoading = true;
   bool _isSaving = false;
+  String _semanaSelecionada = 'Atual';
 
   final Map<String, MealPlan> _weeklyPlans = {
     'Segunda': MealPlan(breakfast: 'Leite com cacau', lunch: 'Arroz e feijão', snack: 'Fruta'),
@@ -66,7 +67,7 @@ class _GestaoCardapiosScreenState extends State<GestaoCardapiosScreen> with Sing
           .from('cardapios')
           .select()
           .eq('escola_id', user.escolaId!)
-          .eq('semana', 'Atual')
+          .eq('semana', _semanaSelecionada)
           .maybeSingle();
 
       if (response != null && response['plano'] != null) {
@@ -76,6 +77,13 @@ class _GestaoCardapiosScreenState extends State<GestaoCardapiosScreen> with Sing
             if (plano.containsKey(day)) {
               _weeklyPlans[day] = MealPlan.fromJson(plano[day]);
             }
+          }
+        });
+      } else {
+        // Se não tiver plano no banco para a semana, zera para criar um novo
+        setState(() {
+          for (final day in _weeklyPlans.keys) {
+            _weeklyPlans[day] = MealPlan(breakfast: '', lunch: '', snack: '');
           }
         });
       }
@@ -99,18 +107,18 @@ class _GestaoCardapiosScreenState extends State<GestaoCardapiosScreen> with Sing
 
       await Supabase.instance.client.from('cardapios').upsert({
         'escola_id': user.escolaId,
-        'semana': 'Atual',
+        'semana': _semanaSelecionada,
         'plano': planoJson,
         'criado_por': user.id,
       });
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Cardápio semanal salvo e homologado!'), backgroundColor: Color(0xFF10B981)),
+        SnackBar(content: Text('Cardápio da semana $_semanaSelecionada homologado!'), backgroundColor: const Color(0xFF10B981)),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro ao salvar: $e'), backgroundColor: Colors.red),
+        SnackBar(content: Text('Erro RLS/Banco: Permissão negada para atualizar tabela cardapios.'), backgroundColor: Colors.red),
       );
     } finally {
       if (mounted) setState(() => _isSaving = false);
@@ -143,18 +151,54 @@ class _GestaoCardapiosScreenState extends State<GestaoCardapiosScreen> with Sing
         : Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.all(16.0),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Cardápio Escolar Semanal',
-                  style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'Outfit'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Cardápio Escolar',
+                      style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'Outfit'),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1E293B),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.white.withOpacity(0.1)),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: _semanaSelecionada,
+                          dropdownColor: const Color(0xFF1E293B),
+                          icon: const Icon(Icons.arrow_drop_down, color: Colors.white54),
+                          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                          items: ['Atual', 'Próxima', 'Semana 3', 'Semana 4'].map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text('Semana $value'),
+                            );
+                          }).toList(),
+                          onChanged: (newValue) {
+                            if (newValue != null) {
+                              setState(() {
+                                _semanaSelecionada = newValue;
+                                _isLoading = true;
+                              });
+                              _fetchCardapios();
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(height: 4),
-                Text(
-                  'Edite o planejamento alimentar semanal clicando nos textos abaixo. Não se esqueça de salvar!',
+                const SizedBox(height: 4),
+                const Text(
+                  'Escolha a semana e edite o planejamento. Não se esqueça de salvar!',
                   style: TextStyle(color: Colors.white54, fontSize: 13),
                 ),
               ],

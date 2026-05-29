@@ -302,16 +302,16 @@ class _GestorEstoqueScreenState extends State<GestorEstoqueScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Saldo atual: ${item.quantity} ${item.unit}. Defina o novo valor de saldo ou use valores negativos para descontar.',
+                'Saldo atual: ${item.quantity} ${item.unit}. Defina o novo valor absoluto em kg.',
                 style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 13),
               ),
               const SizedBox(height: 16),
               TextField(
                 controller: _adjustController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: false),
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
-                  labelText: 'Quantidade de Ajuste',
+                  labelText: 'Novo Saldo (${item.unit})',
                   labelStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
@@ -332,15 +332,20 @@ class _GestorEstoqueScreenState extends State<GestorEstoqueScreen> {
             ),
             ElevatedButton(
               onPressed: () async {
-                final double? delta = double.tryParse(_adjustController.text.trim());
-                if (delta != null) {
-                  final newQuantity = (item.quantity + delta).clamp(0.0, 9999.0);
+                final double? newVal = double.tryParse(_adjustController.text.trim().replaceAll(',', '.'));
+                if (newVal != null) {
+                  final newQuantity = newVal.clamp(0.0, 9999.0);
                   
                   try {
-                    await Supabase.instance.client
+                    final res = await Supabase.instance.client
                         .from('estoque')
                         .update({'volume_kg': newQuantity})
-                        .eq('id', item.id);
+                        .eq('id', item.id)
+                        .select();
+
+                    if (res.isEmpty) {
+                      throw Exception('Bloqueado por RLS ou item não encontrado.');
+                    }
 
                     setState(() {
                       item.quantity = newQuantity;

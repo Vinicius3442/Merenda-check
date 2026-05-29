@@ -27,6 +27,11 @@ class AppTheme {
         elevation: 0,
         centerTitle: true,
       ),
+      textTheme: const TextTheme(
+        bodyLarge: TextStyle(color: Colors.white),
+        bodyMedium: TextStyle(color: Colors.white),
+        titleMedium: TextStyle(color: Colors.white),
+      ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryColor,
@@ -51,7 +56,9 @@ class AppTheme {
           borderSide: const BorderSide(color: primaryColor, width: 2),
         ),
         filled: true,
-        fillColor: Colors.transparent,
+        fillColor: const Color(0xFF1E293B),
+        labelStyle: const TextStyle(color: Colors.white70),
+        hintStyle: const TextStyle(color: Colors.white30),
       ),
     );
   }

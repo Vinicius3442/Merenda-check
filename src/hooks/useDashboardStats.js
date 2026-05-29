@@ -30,19 +30,28 @@ export function useDashboardStats(role, escolaId = null) {
             totalResto += Number(r.resto_kg || 0);
           });
 
-          // 2. Itens em Estoque
+          // 2. Comida Preparada (Saídas de estoque hoje)
+          let querySaidas = supabase.from('movimentacoes').select('quantidade_kg').eq('tipo', 'saida').gte('criado_em', today + 'T00:00:00Z');
+          if (escolaId) querySaidas = querySaidas.eq('escola_id', escolaId);
+          const { data: saidasData } = await querySaidas;
+          let totalPreparadoKg = 0;
+          (saidasData || []).forEach(m => totalPreparadoKg += Number(m.quantidade_kg || 0));
+
+          // 3. Itens em Estoque
           let queryEst = supabase.from('estoque').select('id', { count: 'exact' }).gt('volume_kg', 0);
           if (escolaId) queryEst = queryEst.eq('escola_id', escolaId);
           const { count: countEstoque } = await queryEst;
 
-          // Taxa de Aproveitamento Média (calculo simples)
-          const aproveitamento = totalServidos > 0 ? Math.max(0, 100 - (totalResto / totalServidos * 100)) : 100;
+          // Cálculos de Razão e Per Capita
+          const consumoPerCapitaG = totalServidos > 0 ? (totalPreparadoKg * 1000) / totalServidos : 0;
+          const desperdicioPerCapitaG = totalServidos > 0 ? (totalResto * 1000) / totalServidos : 0;
+          const aproveitamento = totalPreparadoKg > 0 ? Math.max(0, 100 - (totalResto / totalPreparadoKg * 100)) : 100;
 
           setKpis([
-            { value: `${aproveitamento.toFixed(0)}%`, label: 'Taxa de Aproveitamento', icon: 'fa-chart-simple', color: 'var(--alert-green)' },
-            { value: `${totalResto.toFixed(1)} kg`, label: 'Resto-Ingesta (Hoje)', icon: 'fa-scale-unbalanced', color: totalResto > 5 ? 'var(--alert-red)' : 'var(--alert-yellow)' },
-            { value: totalServidos.toString(), label: 'Refeições Servidas', icon: 'fa-utensils', color: 'var(--primary)' },
-            { value: (countEstoque || 0).toString(), label: 'Itens em Estoque', icon: 'fa-boxes-stacked', color: 'var(--alert-blue)' },
+            { value: `${consumoPerCapitaG.toFixed(0)} g`, label: 'Consumo Médio por Aluno', icon: 'fa-bowl-food', color: (consumoPerCapitaG < 200 || consumoPerCapitaG > 600) && totalServidos > 0 ? 'var(--alert-yellow)' : 'var(--alert-green)' },
+            { value: `${desperdicioPerCapitaG.toFixed(1)} g`, label: 'Desperdício por Aluno', icon: 'fa-scale-unbalanced', color: desperdicioPerCapitaG > 40 ? 'var(--alert-red)' : 'var(--alert-green)' },
+            { value: `${aproveitamento.toFixed(1)}%`, label: 'Taxa de Aproveitamento', icon: 'fa-chart-pie', color: aproveitamento >= 95 ? 'var(--alert-green)' : (aproveitamento >= 90 ? 'var(--alert-yellow)' : 'var(--alert-red)') },
+            { value: totalServidos.toString(), label: 'Refeições Servidas', icon: 'fa-users', color: 'var(--primary)' },
           ]);
 
           // Fetch chart data (últimos 5 dias)

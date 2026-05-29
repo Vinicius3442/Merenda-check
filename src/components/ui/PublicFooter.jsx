@@ -17,7 +17,6 @@ export default function PublicFooter() {
           <h4 style={{ color: 'var(--text-main)', marginBottom: 16, fontFamily: 'Outfit' }}>Institucional</h4>
           <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
             <li><Link to="/sobre" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>Sobre o Projeto</Link></li>
-            <li><Link to="/transparencia" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>Portal de Transparência</Link></li>
             <li><Link to="/#como-funciona" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>Como Funciona</Link></li>
           </ul>
         </div>

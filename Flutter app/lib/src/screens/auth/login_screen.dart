@@ -17,6 +17,26 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
   bool _keepConnected = false;
 
+  @override
+  void initState() {
+    super.initState();
+    _emailController.addListener(_onFormChange);
+    _senhaController.addListener(_onFormChange);
+  }
+
+  @override
+  void dispose() {
+    _emailController.removeListener(_onFormChange);
+    _senhaController.removeListener(_onFormChange);
+    _emailController.dispose();
+    _senhaController.dispose();
+    super.dispose();
+  }
+
+  void _onFormChange() {
+    setState(() {});
+  }
+
   Future<void> _resetPassword() async {
     final String email = _emailController.text.trim();
     if (email.isEmpty) {

@@ -112,15 +112,16 @@ O console exibirá o link local (geralmente `http://localhost:5173`). Abra o seu
 ## 🔑 Contas de Demonstração (Logins)
 
 Ao executar o script `supabase/schema.sql`, os dados estruturais e as escolas de demonstração são inseridos.
-Email                                  | Senha Inicial
---   ----------------------------------------|--------------------
---   operador@merendacheck.gov.br            | Merenda@2026
---   gestor@merendacheck.gov.br              | Merenda@2026
---   auditor@merendacheck.gov.br             | Merenda@2026
---   nutricao@merendacheck.gov.br            | Merenda@2026
---   licitacao@merendacheck.gov.br           | Merenda@2026
---   transportadora@merendacheck.gov.br      | Merenda@2026
---   admin@merendacheck.gov.br               | Merenda@2026
+
+| Email | Senha Inicial |
+| :--- | :--- |
+| operador@merendacheck.gov.br | Merenda@2026 |
+| gestor@merendacheck.gov.br | Merenda@2026 |
+| auditor@merendacheck.gov.br | Merenda@2026 |
+| nutricao@merendacheck.gov.br | Merenda@2026 |
+| licitacao@merendacheck.gov.br | Merenda@2026 |
+| transportadora@merendacheck.gov.br | Merenda@2026 |
+| admin@merendacheck.gov.br | Merenda@2026 |
 
 ---
 

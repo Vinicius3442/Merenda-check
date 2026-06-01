@@ -4,46 +4,11 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../providers/auth_provider.dart';
 
-class RoleItem {
-  final String key;
-  final IconData icon;
-  final String title;
-  final Color color;
-
-  RoleItem(this.key, this.icon, this.title, this.color);
-}
-
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
-
-  @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
-
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _senhaController = TextEditingController();
   bool _isLoading = false;
-  String? _selectedRole;
   bool _keepConnected = false;
-
-  final List<RoleItem> roles = [
-    RoleItem('operador', Icons.restaurant, 'Operador', const Color(0xFF10b981)),
-    RoleItem('gestor', Icons.bar_chart, 'Gestor', const Color(0xFF3b82f6)),
-    RoleItem('nutricao', Icons.apple, 'Nutrição', const Color(0xFF10b981)),
-    RoleItem('licitacao', Icons.edit_document, 'Licitação', const Color(0xFFf59e0b)),
-    RoleItem('auditor', Icons.account_balance, 'Auditor', const Color(0xFFeab308)),
-    RoleItem('transportadora', Icons.local_shipping, 'Logística', const Color(0xFF8b5cf6)),
-    RoleItem('admin', Icons.dns, 'SysAdmin', const Color(0xFFef4444)),
-  ];
-
-  void _handleRoleSelect(String roleKey) {
-    setState(() {
-      _selectedRole = roleKey;
-      _emailController.text = '$roleKey@merendacheck.gov.br';
-      _senhaController.text = 'Merenda@2026';
-    });
-  }
 
   Future<void> _resetPassword() async {
     final String email = _emailController.text.trim();
@@ -68,20 +33,18 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _login() async {
-    if (_selectedRole == null || _emailController.text.isEmpty || _senhaController.text.isEmpty) return;
+    if (_emailController.text.isEmpty || _senhaController.text.isEmpty) return;
 
     setState(() => _isLoading = true);
 
     final auth = context.read<AuthProvider>();
-    // login() agora retorna String? — null = sucesso, string = mensagem de erro
     final errorMsg = await auth.login(_emailController.text.trim(), _senhaController.text);
 
     if (!mounted) return;
     setState(() => _isLoading = false);
 
     if (errorMsg == null) {
-      // Sucesso — redireciona pelo role real do perfil carregado
-      final userRole = auth.user?.role.toLowerCase() ?? _selectedRole?.toLowerCase() ?? '';
+      final userRole = auth.user?.role.toLowerCase() ?? '';
       if (userRole.contains('operador')) {
         context.go('/operador');
       } else if (userRole.contains('gestor')) {
@@ -100,7 +63,6 @@ class _LoginScreenState extends State<LoginScreen> {
         context.go('/operador');
       }
     } else {
-      // Erro — exibe a mensagem real (ex: "Acesso revogado...")
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(errorMsg),
@@ -113,8 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final selectedRoleItem = roles.where((r) => r.key == _selectedRole).firstOrNull;
-    final isFormValid = _selectedRole != null && _emailController.text.isNotEmpty && _senhaController.text.isNotEmpty;
+    final isFormValid = _emailController.text.isNotEmpty && _senhaController.text.isNotEmpty;
 
     return Scaffold(
       backgroundColor: const Color(0xFF0F172A), // Dark Slate
@@ -155,65 +116,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Selecione seu perfil institucional para acessar seu painel de controle personalizado.',
+                  'Insira seu e-mail institucional e senha para acessar seu painel de controle personalizado.',
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.white.withOpacity(0.6),
                     height: 1.5,
                   ),
-                ),
-                const SizedBox(height: 40),
-
-                // Perfil Selection
-                GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 2.5,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                  ),
-                  itemCount: roles.length,
-                  itemBuilder: (context, index) {
-                    final role = roles[index];
-                    final isSelected = _selectedRole == role.key;
-                    
-                    return GestureDetector(
-                      onTap: () => _handleRoleSelect(role.key),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        decoration: BoxDecoration(
-                          color: isSelected ? role.color.withOpacity(0.1) : Colors.white.withOpacity(0.02),
-                          border: Border.all(
-                            color: isSelected ? role.color : Colors.white.withOpacity(0.05),
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: isSelected ? [
-                            BoxShadow(color: role.color.withOpacity(0.15), blurRadius: 12, offset: const Offset(0, 4))
-                          ] : [],
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: Row(
-                          children: [
-                            Icon(role.icon, color: isSelected ? role.color : Colors.white.withOpacity(0.5), size: 20),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                role.title,
-                                style: TextStyle(
-                                  color: isSelected ? role.color : Colors.white.withOpacity(0.6),
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
                 ),
                 const SizedBox(height: 40),
 
@@ -294,14 +202,14 @@ class _LoginScreenState extends State<LoginScreen> {
                             width: 24, height: 24,
                             child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                           )
-                        : Row(
+                        : const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(Icons.login, color: Colors.white, size: 20),
+                              Icon(Icons.login, color: Colors.white, size: 20),
                               const SizedBox(width: 12),
                               Text(
-                                selectedRoleItem != null ? 'Acessar como ${selectedRoleItem.title}' : 'Selecione seu Perfil',
-                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                                'Acessar Painel',
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
                               ),
                             ],
                           ),

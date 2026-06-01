@@ -120,7 +120,9 @@ export default function BaixaInsumo() {
                       onClick={() => item.eligible && setSelectedId(item.id)}
                     >
                       <div>
-                        <h4 style={{ fontSize: '1.1rem', marginBottom: 4 }}>{item.nome} - Lote {item.lote}</h4>
+                        <h4 style={{ fontSize: '1.1rem', marginBottom: 4 }} title={item.lote}>
+                          {item.nome} - Lote {item.lote && item.lote.length > 12 ? item.lote.substring(0, 10) + '...' : item.lote}
+                        </h4>
                         <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                           <i className="fa-solid fa-cube" style={{ marginRight: 4 }}></i> Disponível: {parseFloat(item.volume_kg || 0).toFixed(1)} kg
                         </div>
@@ -147,7 +149,13 @@ export default function BaixaInsumo() {
                   </h3>
                   <div className="form-group" style={{ marginBottom: 15 }}>
                     <label className="form-label">Insumo Selecionado</label>
-                    <input type="text" className="form-control" value={`${selected.nome} (Lote: ${selected.lote})`} readOnly />
+                    <input 
+                      type="text" 
+                      className="form-control" 
+                      value={`${selected.nome} (Lote: ${selected.lote && selected.lote.length > 12 ? selected.lote.substring(0, 10) + '...' : selected.lote})`} 
+                      title={selected.lote} 
+                      readOnly 
+                    />
                   </div>
                   <div className="form-group" style={{ marginBottom: 15 }}>
                     <label className="form-label">Quantidade para Despacho (kg)</label>
@@ -176,6 +184,7 @@ export default function BaixaInsumo() {
                       className="btn btn-primary btn-lg"
                       onClick={handleAutorizar}
                       disabled={submitting}
+                      style={{ borderRadius: '30px' }}
                     >
                       {submitting ? (
                         <>

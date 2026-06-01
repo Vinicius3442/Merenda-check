@@ -45,11 +45,10 @@ final router = GoRouter(
   initialLocation: '/',
   redirect: (BuildContext context, GoRouterState state) {
     final auth = context.read<AuthProvider>();
-    final isLoggingIn = state.matchedLocation == '/login';
-    final isLanding = state.matchedLocation == '/';
+    final isLoggingIn = state.matchedLocation == '/' || state.matchedLocation == '/login';
 
-    if (!auth.isAuthenticated && !isLoggingIn && !isLanding) return '/';
-    if (auth.isAuthenticated && (isLoggingIn || isLanding)) {
+    if (!auth.isAuthenticated && !isLoggingIn) return '/';
+    if (auth.isAuthenticated && isLoggingIn) {
       final role = auth.user?.role.toLowerCase() ?? '';
       
       if (role.contains('operador')) return '/operador';
@@ -67,7 +66,7 @@ final router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => const LandingScreen(),
+      builder: (context, state) => const LoginScreen(),
     ),
     GoRoute(
       path: '/login',

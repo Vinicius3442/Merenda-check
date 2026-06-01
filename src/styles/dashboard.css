@@ -1,4 +1,4 @@
-/* ============================================
+ï»¿/* ============================================
    MERENDA CHECK â€” DASHBOARD LAYOUT
    ============================================ */
 
@@ -844,9 +844,9 @@
     padding-top: 12px;
   }
 }
-/* OVERRIDES MASSIVOS DE RESPONSIVIDADE MOBILE (SOLICITADOS PELO USUÁRIO) */
+/* OVERRIDES MASSIVOS DE RESPONSIVIDADE MOBILE (SOLICITADOS PELO USUï¿½RIO) */
 @media (max-width: 768px) {
-  /* Forçar Grids a virarem 1 coluna */
+  /* Forï¿½ar Grids a virarem 1 coluna */
   .kpi-grid, 
   .kpi-grid-4, 
   .kpi-grid-5,
@@ -856,14 +856,14 @@
     grid-template-columns: 1fr !important;
   }
 
-  /* Esconder mapas ou gráficos super complexos se estourarem a tela */
+  /* Esconder mapas ou grï¿½ficos super complexos se estourarem a tela */
   .leaflet-container {
     display: none !important;
   }
 
   /* Criar aviso de fallback para o mapa oculto */
   .leaflet-container::before {
-    content: '??? Mapa indisponível na versão mobile (Complexo demais)';
+    content: '??? Mapa indisponï¿½vel na versï¿½o mobile (Complexo demais)';
     display: block;
     background: var(--bg-surface-elevated);
     padding: 20px;
@@ -871,13 +871,13 @@
     border-radius: 12px;
   }
 
-  /* Ocultar gráficos pesados no mobile (Recharts) */
+  /* Ocultar grï¿½ficos pesados no mobile (Recharts) */
   .recharts-responsive-container,
   .recharts-wrapper {
     display: none !important;
   }
 
-  /* Tabelas gigantes ganharem scroll horizontal ao invés de quebrarem a tela */
+  /* Tabelas gigantes ganharem scroll horizontal ao invï¿½s de quebrarem a tela */
   table, 
   .table-container {
     display: block !important;
@@ -886,7 +886,7 @@
     white-space: nowrap;
   }
 
-  /* Sidebar esmagando conteúdo? */
+  /* Sidebar esmagando conteï¿½do? */
   .dashboard-layout {
     flex-direction: column !important;
   }
@@ -897,7 +897,7 @@
     position: relative !important;
   }
 
-  /* Ajustar painéis de vidro */
+  /* Ajustar painï¿½is de vidro */
   .glass-panel {
     padding: 16px !important;
     margin-bottom: 16px;

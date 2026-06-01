@@ -12,8 +12,19 @@ class GestaoUsuariosScreen extends StatefulWidget {
 
 class _GestaoUsuariosScreenState extends State<GestaoUsuariosScreen> {
   List<dynamic> _users = [];
+  List<dynamic> _schools = [];
   bool _isLoading = true;
   String _searchQuery = '';
+
+  final Map<String, String> _roleLabels = {
+    'operador': 'Operador',
+    'gestor': 'Gestor',
+    'auditor': 'Auditor',
+    'nutricao': 'Nutrição',
+    'licitacao': 'Licitação',
+    'transportadora': 'Logística',
+    'admin': 'SysAdmin',
+  };
 
   @override
   void initState() {
@@ -25,19 +36,319 @@ class _GestaoUsuariosScreenState extends State<GestaoUsuariosScreen> {
     try {
       final response = await Supabase.instance.client
           .from('usuarios')
-          .select('id, nome, email, role, status, avatar_url, escolas(nome)')
+          .select('id, nome, email, role, status, avatar_url, escola_id, escolas(nome)')
+          .order('nome');
+
+      final schoolsResponse = await Supabase.instance.client
+          .from('escolas')
+          .select('id, nome')
           .order('nome');
 
       setState(() {
         _users = response as List<dynamic>;
+        _schools = schoolsResponse as List<dynamic>;
         _isLoading = false;
       });
     } catch (e) {
-      debugPrint('Erro ao carregar usuários: $e');
+      debugPrint('Erro ao carregar dados: $e');
       setState(() {
         _isLoading = false;
       });
     }
+  }
+
+  Future<void> _updateUser(String id, String nome, String email, String role, String? escolaId) async {
+    try {
+      final parts = nome.trim().split(' ').where((p) => p.isNotEmpty).toList();
+      String iniciais = 'U';
+      if (parts.length >= 2) {
+        iniciais = '${parts[0][0]}${parts[parts.length - 1][0]}'.toUpperCase();
+      } else if (parts.isNotEmpty) {
+        iniciais = parts[0].substring(0, 1).toUpperCase();
+      }
+
+      await Supabase.instance.client.from('usuarios').update({
+        'nome': nome,
+        'email': email,
+        'role': role,
+        'iniciais': iniciais,
+        'escola_id': escolaId,
+      }).eq('id', id);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Servidor atualizado com sucesso!'),
+          backgroundColor: Color(0xFF10B981),
+        ),
+      );
+
+      _fetchUsers();
+    } catch (e) {
+      debugPrint('Erro ao atualizar usuário: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao atualizar servidor: $e'),
+          backgroundColor: const Color(0xFFEF4444),
+        ),
+      );
+    }
+  }
+
+  void _showEditDialog(Map<String, dynamic> u) {
+    final TextEditingController nameController = TextEditingController(text: u['nome'] ?? '');
+    final TextEditingController emailController = TextEditingController(text: u['email'] ?? '');
+    String selectedRole = u['role'] ?? 'operador';
+    String? selectedEscolaId = u['escola_id']?.toString();
+
+    // Validar se escola_id existe na lista _schools, se não setar como nulo
+    bool isEscolaIdValid = _schools.any((sch) => sch['id'].toString() == selectedEscolaId);
+    if (!isEscolaIdValid) {
+      selectedEscolaId = null;
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return Dialog(
+              backgroundColor: const Color(0xFF1E293B),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.white.withOpacity(0.08)),
+              ),
+              child: Container(
+                constraints: const BoxConstraints(maxWidth: 450),
+                padding: const EdgeInsets.all(24.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Header
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: const [
+                              Icon(Icons.settings, color: Color(0xFF10B981), size: 22),
+                              SizedBox(width: 8),
+                              Text(
+                                'Editar Servidor',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  fontFamily: 'Outfit',
+                                ),
+                              ),
+                            ],
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.close, color: Colors.white54, size: 20),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      
+                      // Nome Field
+                      const Text(
+                        'Nome Completo',
+                        style: TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(height: 6),
+                      TextField(
+                        controller: nameController,
+                        style: const TextStyle(color: Colors.white, fontSize: 14),
+                        decoration: InputDecoration(
+                          hintText: 'Ex: Luiz Felipe',
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                          filled: true,
+                          fillColor: const Color(0xFF0F172A),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: const BorderSide(color: Color(0xFF10B981), width: 1.5),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // E-mail Field
+                      const Text(
+                        'E-mail Corporativo',
+                        style: TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(height: 6),
+                      TextField(
+                        controller: emailController,
+                        style: const TextStyle(color: Colors.white, fontSize: 14),
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                          hintText: 'nome@merendacheck.gov.br',
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                          filled: true,
+                          fillColor: const Color(0xFF0F172A),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: const BorderSide(color: Color(0xFF10B981), width: 1.5),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Role and School
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Perfil de Acesso',
+                            style: TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w500),
+                          ),
+                          const SizedBox(height: 6),
+                          DropdownButtonFormField<String>(
+                            value: selectedRole,
+                            dropdownColor: const Color(0xFF1E293B),
+                            style: const TextStyle(color: Colors.white, fontSize: 14),
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                              filled: true,
+                              fillColor: const Color(0xFF0F172A),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: const BorderSide(color: Color(0xFF10B981), width: 1.5),
+                              ),
+                            ),
+                            items: _roleLabels.entries.map((entry) {
+                              return DropdownMenuItem<String>(
+                                value: entry.key,
+                                child: Text(entry.value),
+                              );
+                            }).toList(),
+                            onChanged: (val) {
+                              if (val != null) {
+                                setDialogState(() {
+                                  selectedRole = val;
+                                });
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Unidade Escolar',
+                            style: TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w500),
+                          ),
+                          const SizedBox(height: 6),
+                          DropdownButtonFormField<String?>(
+                            value: selectedEscolaId,
+                            dropdownColor: const Color(0xFF1E293B),
+                            style: const TextStyle(color: Colors.white, fontSize: 14),
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                              filled: true,
+                              fillColor: const Color(0xFF0F172A),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: const BorderSide(color: Color(0xFF10B981), width: 1.5),
+                              ),
+                            ),
+                            items: [
+                              const DropdownMenuItem<String?>(
+                                value: null,
+                                child: Text('Todas (Geral)'),
+                              ),
+                              ..._schools.map((sch) {
+                                return DropdownMenuItem<String?>(
+                                  value: sch['id'].toString(),
+                                  child: Text(
+                                    sch['nome'] ?? 'Sem Nome',
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                );
+                              }).toList(),
+                            ],
+                            onChanged: (val) {
+                              setDialogState(() {
+                                selectedEscolaId = val;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+
+                      // Footer Buttons
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('Cancelar', style: TextStyle(color: Colors.white54)),
+                          ),
+                          const SizedBox(width: 12),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF10B981),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                            ),
+                            onPressed: () {
+                              if (nameController.text.trim().isEmpty || emailController.text.trim().isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Preencha o nome e o e-mail do servidor.'),
+                                    backgroundColor: Color(0xFFEF4444),
+                                  ),
+                                );
+                                return;
+                              }
+                              Navigator.pop(context);
+                              _updateUser(
+                                u['id'],
+                                nameController.text.trim(),
+                                emailController.text.trim(),
+                                selectedRole,
+                                selectedEscolaId,
+                              );
+                            },
+                            child: const Text(
+                              'Salvar Alterações',
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -179,11 +490,7 @@ class _GestaoUsuariosScreenState extends State<GestaoUsuariosScreen> {
                           ),
                         ),
                         IconButton(
-                          onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Configurar permissões de "${u['nome']}"...')),
-                            );
-                          },
+                          onPressed: () => _showEditDialog(u),
                           icon: const Icon(Icons.settings, color: Colors.white38),
                         ),
                       ],

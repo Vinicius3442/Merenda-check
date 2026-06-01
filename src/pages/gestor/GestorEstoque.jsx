@@ -320,8 +320,11 @@ export default function GestorEstoque() {
                 {estoque.map((item) => (
                   <tr key={item.id} style={item.status === 'bloqueado' ? { opacity: 0.55 } : {}}>
                     <td>
-                      <span style={{ fontFamily: 'monospace', color: 'var(--primary)', fontWeight: 700, fontSize: '0.85rem' }}>
-                        {item.lote}
+                      <span 
+                        style={{ fontFamily: 'monospace', color: 'var(--primary)', fontWeight: 700, fontSize: '0.85rem' }}
+                        title={item.lote}
+                      >
+                        {item.lote && item.lote.length > 12 ? item.lote.substring(0, 10) + '...' : item.lote}
                       </span>
                       <br />
                       <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'monospace' }}>{item.hash}</span>

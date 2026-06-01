@@ -60,7 +60,8 @@ export default function EntradaInsumo() {
             .then(({ data, error }) => {
               if (error || !data) {
                 showToast('Erro', 'Lote não encontrado no sistema.', 'error');
-                setForm(prev => ({ ...prev, lote: hashLimpo }));
+                const loteCurto = hashLimpo.length > 10 ? hashLimpo.substring(0, 10).toUpperCase() : hashLimpo.toUpperCase();
+                setForm(prev => ({ ...prev, lote: loteCurto }));
               } else if (data.fornecedores?.status_ceis && data.fornecedores.status_ceis !== 'Limpo') {
                 showToast(
                   'Assinatura Digital Revogada', 
@@ -79,13 +80,14 @@ export default function EntradaInsumo() {
                   delete fileInputRef.current.dataset.loteId;
                 }
               } else {
+                const loteValor = data.nota_fiscal || (hashLimpo.length > 10 ? hashLimpo.substring(0, 10).toUpperCase() : hashLimpo.toUpperCase());
                 setForm({
                   fornecedor: data.fornecedores?.nome || 'Fornecedor Desconhecido',
                   nome: data.itens?.[0]?.descricao || 'Vários itens',
                   volume_kg: data.itens?.[0]?.qtd?.toString() || '',
                   validade: data.itens?.[0]?.validade || '',
                   observacao: `Motorista: ${data.motorista} | Placa: ${data.placa}`,
-                  lote: hashLimpo,
+                  lote: loteValor,
                 });
                 // Guarda o ID do lote para confirmar a entrega no submit
                 if (fileInputRef.current) {

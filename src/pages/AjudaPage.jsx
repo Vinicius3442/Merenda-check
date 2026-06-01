@@ -74,7 +74,7 @@ const FAQ = [
 
 const CONTATOS = [
   { icon: 'fa-headset',     label: 'Suporte Técnico',      valor: '0800 123 4567',            sub: 'Seg a Sex, 08h–18h' },
-  { icon: 'fa-envelope',    label: 'E-mail',                valor: 'suporte@merendacheck.gov', sub: 'Resposta em até 24h' },
+  { icon: 'fa-envelope',    label: 'E-mail',                valor: 'suporte@merendacheck.gov.br', sub: 'Resposta em até 24h', link: 'mailto:suporte@merendacheck.gov.br' },
   { icon: 'fa-bullhorn',    label: 'Ouvidoria',             valor: '/ouvidoria',               sub: 'Denúncias e sugestões', link: '/ouvidoria' },
 ];
 

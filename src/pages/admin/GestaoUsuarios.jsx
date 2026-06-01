@@ -5,7 +5,7 @@ import { useEscolas } from '../../hooks/useEscolas';
 import { useToast } from '../../contexts/ToastContext';
 
 export default function GestaoUsuarios() {
-  const { usuarios, loading, atualizarStatus, inserirUsuario, resetarSenha } = useUsuarios();
+  const { usuarios, loading, atualizarStatus, inserirUsuario, resetarSenha, atualizarUsuario } = useUsuarios();
   const { escolas } = useEscolas();
   const { showToast } = useToast();
 
@@ -16,6 +16,46 @@ export default function GestaoUsuarios() {
   const [role, setRole] = useState('operador');
   const [escolaId, setEscolaId] = useState('');
   const [saving, setSaving] = useState(false);
+
+  // Edit modal
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editUserId, setEditUserId] = useState('');
+  const [editNome, setEditNome] = useState('');
+  const [editEmail, setEditEmail] = useState('');
+  const [editRole, setEditRole] = useState('operador');
+  const [editEscolaId, setEditEscolaId] = useState('');
+  const [editing, setEditing] = useState(false);
+
+  const handleOpenEdit = (u) => {
+    setEditUserId(u.id);
+    setEditNome(u.nome || '');
+    setEditEmail(u.email || '');
+    setEditRole(u.role || 'operador');
+    setEditEscolaId(u.escola_id || '');
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditUser = async (e) => {
+    e.preventDefault();
+    if (!editNome || !editEmail) {
+      showToast('Erro de Validação', 'Preencha o nome e o e-mail do servidor.', 'error');
+      return;
+    }
+    setEditing(true);
+    const res = await atualizarUsuario(editUserId, {
+      nome: editNome,
+      email: editEmail,
+      role: editRole,
+      escola_id: editEscolaId,
+    });
+    setEditing(false);
+    if (res.ok) {
+      showToast('Servidor Atualizado', 'Permissões e cadastro salvos com sucesso.', 'success');
+      setIsEditModalOpen(false);
+    } else {
+      showToast('Erro ao Atualizar', res.error || 'Ocorreu um erro ao salvar as alterações.', 'error');
+    }
+  };
 
   // Reset password modal
   const [resetModal, setResetModal] = useState({ open: false, usuario: null });
@@ -228,6 +268,14 @@ export default function GestaoUsuarios() {
                       <div style={{ display: 'flex', gap: 6 }}>
                         <button
                           className="btn btn-secondary"
+                          style={{ padding: '5px 10px', fontSize: '0.8rem', background: 'rgba(16,185,129,0.1)', color: 'var(--primary)', border: '1px solid rgba(16,185,129,0.2)' }}
+                          title="Editar Servidor"
+                          onClick={() => handleOpenEdit(u)}
+                        >
+                          <i className="fa-solid fa-pen"></i>
+                        </button>
+                        <button
+                          className="btn btn-secondary"
                           style={{ padding: '5px 10px', fontSize: '0.8rem' }}
                           title="Resetar Senha"
                           onClick={() => handleOpenReset(u)}
@@ -286,6 +334,114 @@ export default function GestaoUsuarios() {
           </div>
         )}
       </div>
+
+      {/* Edit Server Dialog Modal */}
+      {isEditModalOpen && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(15,23,42,0.85)', backdropFilter: 'blur(12px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 9999, padding: 20
+        }}>
+          <div className="glass-panel animate-slide-up" style={{
+            maxWidth: 500, width: '100%', padding: 40,
+            border: '1px solid rgba(255,255,255,0.08)',
+            boxShadow: '0 20px 50px rgba(0,0,0,0.5)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+              <h2 style={{ fontFamily: 'Outfit', color: 'var(--text-main)', fontSize: '1.4rem', margin: 0 }}>
+                <i className="fa-solid fa-pen" style={{ color: 'var(--primary)', marginRight: 10 }}></i>
+                Editar Permissões do Servidor
+              </h2>
+              <button 
+                onClick={() => setIsEditModalOpen(false)}
+                style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '1.3rem' }}
+              >
+                <i className="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+
+            <form onSubmit={handleEditUser} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              <div className="form-group">
+                <label className="form-label" style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 6 }}>Nome Completo</label>
+                <input 
+                  type="text" 
+                  className="form-control" 
+                  placeholder="Ex: Luiz Felipe" 
+                  value={editNome}
+                  onChange={(e) => setEditNome(e.target.value)}
+                  style={{ width: '100%', background: 'rgba(15,23,42,0.6)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', padding: 12, borderRadius: 8 }}
+                  required 
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label" style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 6 }}>E-mail Corporativo</label>
+                <input 
+                  type="email" 
+                  className="form-control" 
+                  placeholder="nome@merendacheck.gov.br" 
+                  value={editEmail}
+                  onChange={(e) => setEditEmail(e.target.value)}
+                  style={{ width: '100%', background: 'rgba(15,23,42,0.6)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', padding: 12, borderRadius: 8 }}
+                  required 
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                <div className="form-group">
+                  <label className="form-label" style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 6 }}>Perfil de Acesso</label>
+                  <select 
+                    className="form-control" 
+                    value={editRole} 
+                    onChange={(e) => setEditRole(e.target.value)}
+                    style={{ width: '100%', background: 'rgba(15,23,42,0.6)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', padding: 11, borderRadius: 8, outline: 'none' }}
+                  >
+                    {Object.entries(roleLabels).map(([key, value]) => (
+                      <option key={key} value={key} style={{ background: 'var(--bg-surface)' }}>{value}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 6 }}>Unidade Escolar</label>
+                  <select 
+                    className="form-control" 
+                    value={editEscolaId} 
+                    onChange={(e) => setEditEscolaId(e.target.value)}
+                    style={{ width: '100%', background: 'rgba(15, 23, 42, 0.6)', border: '1px solid rgba(255, 255, 255, 0.1)', color: '#fff', padding: 11, borderRadius: 8, outline: 'none' }}
+                  >
+                    <option value="" style={{ background: 'var(--bg-surface)' }}>Todas (Geral)</option>
+                    {escolas.map((e) => (
+                      <option key={e.id} value={e.id} style={{ background: 'var(--bg-surface)' }}>{e.nome}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 15 }}>
+                <button 
+                  type="button" 
+                  className="btn btn-secondary" 
+                  onClick={() => setIsEditModalOpen(false)}
+                  disabled={editing}
+                  style={{ padding: '10px 16px', fontSize: '0.9rem' }}
+                >
+                  Cancelar
+                </button>
+                <button 
+                  type="submit" 
+                  className="btn btn-primary"
+                  disabled={editing}
+                  style={{ padding: '10px 16px', fontSize: '0.9rem' }}
+                >
+                  {editing ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Salvando...</> : 'Salvar Alterações'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* New Server Dialog Modal */}
       {isModalOpen && (

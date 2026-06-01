@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import { useAuth } from '../../contexts/AuthContext';
@@ -47,6 +48,7 @@ const statusColor = { danger: 'var(--alert-red)', warning: 'var(--alert-yellow)'
 export default function OperadorHome() {
   const { user } = useAuth();
   const { estoque } = useEstoque(user?.escola_id);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
 
   const ativos = estoque.filter(e => e.status !== 'arquivado');
 
@@ -138,49 +140,65 @@ export default function OperadorHome() {
         style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 20 }}
         className="animate-slide-up delay-100"
       >
-        {actions.map((a) => (
-          <Link
-            key={a.to}
-            to={a.to}
-            className="glass-panel"
-            style={{ 
-              padding: '24px', textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: 12,
-              background: `linear-gradient(135deg, rgba(30,41,59,0.9), rgba(15,23,42,0.95))`
-            }}
-          >
-            {/* Ícone */}
-            <div style={{
-              width: 50, height: 50, borderRadius: 14,
-              background: `linear-gradient(135deg, ${a.color}20, ${a.color}10)`, 
-              color: a.color, border: `1px solid ${a.color}30`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', flexShrink: 0,
-              boxShadow: `0 10px 20px ${a.color}15`
-            }}>
-              <i className={`fa-solid ${a.icon}`}></i>
-            </div>
-
-            <div style={{ flex: 1, marginTop: 10 }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: 8, fontFamily: 'Outfit' }}>{a.title}</h3>
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', lineHeight: 1.6 }}>{a.desc}</p>
-            </div>
-
-            {/* Botão de ação — design flat e vivo */}
-            <div
-              style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
-                padding: '14px 0', borderRadius: 12, marginTop: 16,
-                background: a.color, color: '#fff', fontWeight: 700, fontSize: '0.95rem',
-                boxShadow: `0 8px 16px ${a.color}40`,
+        {actions.map((a, index) => {
+          const isHovered = hoveredIndex === index;
+          return (
+            <Link
+              key={a.to}
+              to={a.to}
+              className="glass-panel"
+              onMouseEnter={() => setHoveredIndex(index)}
+              onMouseLeave={() => setHoveredIndex(null)}
+              style={{ 
+                padding: '24px', 
+                textDecoration: 'none', 
+                display: 'flex', 
+                flexDirection: 'column', 
+                gap: 12,
+                background: `linear-gradient(135deg, rgba(30,41,59,0.9), rgba(15,23,42,0.95))`,
+                transform: isHovered ? 'translateY(-8px)' : 'translateY(0)',
+                borderColor: isHovered ? a.color : 'rgba(255,255,255,0.06)',
+                boxShadow: isHovered 
+                  ? `0 12px 30px rgba(0,0,0,0.5), 0 0 25px ${a.color}50` 
+                  : '0 4px 6px rgba(0,0,0,0.1)',
+                borderWidth: '1px',
+                borderStyle: 'solid',
                 transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
               }}
-              onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.filter = 'brightness(1.1)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.filter = 'brightness(1)'; }}
             >
-              Iniciar Operação
-              <i className="fa-solid fa-arrow-right" style={{ fontSize: '0.85rem' }}></i>
-            </div>
-          </Link>
-        ))}
+              {/* Ícone */}
+              <div style={{
+                width: 50, height: 50, borderRadius: 14,
+                background: `linear-gradient(135deg, ${a.color}20, ${a.color}10)`, 
+                color: a.color, border: `1px solid ${a.color}30`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', flexShrink: 0,
+                boxShadow: `0 10px 20px ${a.color}15`
+              }}>
+                <i className={`fa-solid ${a.icon}`}></i>
+              </div>
+
+              <div style={{ flex: 1, marginTop: 10 }}>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: 8, fontFamily: 'Outfit' }}>{a.title}</h3>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', lineHeight: 1.6 }}>{a.desc}</p>
+              </div>
+
+              {/* Botão de ação — design flat e vivo */}
+              <div
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+                  padding: '14px 0', borderRadius: '30px', marginTop: 16,
+                  background: a.color, color: '#fff', fontWeight: 700, fontSize: '0.95rem',
+                  boxShadow: `0 8px 16px ${a.color}40`,
+                  transform: isHovered ? 'scale(1.05)' : 'scale(1)',
+                  transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                }}
+              >
+                Iniciar Operação
+                <i className="fa-solid fa-arrow-right" style={{ fontSize: '0.85rem' }}></i>
+              </div>
+            </Link>
+          );
+        })}
       </div>
     </DashboardLayout>
   );

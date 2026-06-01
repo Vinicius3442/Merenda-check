@@ -3,7 +3,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function LoginPage() {
-  const [selected, setSelected] = useState(null);
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [loginLoading, setLoginLoading] = useState(false);
@@ -12,27 +11,9 @@ export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const roles = [
-    { key: 'operador', icon: 'fa-utensils',      title: 'Operador',  color: 'var(--primary)' },
-    { key: 'gestor',   icon: 'fa-chart-bar',     title: 'Gestor',    color: 'var(--alert-blue)' },
-    { key: 'nutricao', icon: 'fa-apple-whole',   title: 'Nutrição',  color: 'var(--alert-green)' },
-    { key: 'licitacao',icon: 'fa-file-signature',title: 'Licitação', color: '#f59e0b' },
-    { key: 'auditor',  icon: 'fa-building-columns',title: 'Auditor', color: 'var(--alert-yellow)' },
-    { key: 'transportadora', icon: 'fa-truck-fast', title: 'Logística', color: '#8b5cf6' },
-    { key: 'admin',    icon: 'fa-server',        title: 'SysAdmin',  color: 'var(--alert-red)' },
-  ];
-
-  const selectedRole = roles.find((r) => r.key === selected);
-
-  const handleRoleSelect = (key) => {
-    setSelected(key);
-    setEmail(`${key}@merendacheck.gov.br`);
-    setSenha('Merenda@2026');
-  };
-
   const handleLogin = async (e) => {
     e.preventDefault();
-    if (!selected) return;
+    if (!email || !senha) return;
     setLoginLoading(true);
     setLoginError(null);
     const result = await login(email, senha);
@@ -121,27 +102,8 @@ export default function LoginPage() {
               Acesso ao Sistema
             </h1>
             <p style={{ color: 'var(--text-muted)', fontSize: '1rem', lineHeight: 1.5 }}>
-              Selecione seu perfil institucional para acessar seu painel de controle personalizado.
+              Insira seu e-mail institucional e senha para acessar seu painel de controle personalizado.
             </p>
-          </div>
-
-          {/* Seleção de Perfil */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 10, marginBottom: 32 }}>
-            {roles.map((role) => {
-              const isSelected = selected === role.key;
-              return (
-                <button
-                  key={role.key}
-                  type="button"
-                  onClick={() => handleRoleSelect(role.key)}
-                  className={`role-btn ${isSelected ? 'selected' : ''}`}
-                  style={{ flexDirection: 'column', gap: 6, padding: '10px 8px', textAlign: 'center' }}
-                >
-                  <i className={`fa-solid ${role.icon}`} style={{ fontSize: '1.1rem', color: isSelected ? role.color : 'inherit' }}></i>
-                  <span style={{ fontSize: '0.78rem', fontWeight: 600, lineHeight: 1.2 }}>{role.title}</span>
-                </button>
-              );
-            })}
           </div>
 
           <form onSubmit={handleLogin}>
@@ -193,7 +155,7 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              disabled={!selected || !email || !senha || loginLoading}
+              disabled={!email || !senha || loginLoading}
               className="btn btn-primary"
               style={{
                 width: '100%',
@@ -204,17 +166,15 @@ export default function LoginPage() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: 12,
-                opacity: (selected && !loginLoading) ? 1 : 0.5,
-                boxShadow: selected ? '0 12px 24px rgba(16,185,129,0.25)' : 'none',
+                opacity: (email && senha && !loginLoading) ? 1 : 0.5,
+                boxShadow: (email && senha) ? '0 12px 24px rgba(16,185,129,0.25)' : 'none',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
               }}
             >
               {loginLoading ? (
                 <><i className="fa-solid fa-circle-notch fa-spin"></i> Autenticando...</>
-              ) : selected ? (
-                <><i className="fa-solid fa-arrow-right-to-bracket"></i> Acessar como {selectedRole?.title}</>
               ) : (
-                'Selecione seu Perfil'
+                <><i className="fa-solid fa-arrow-right-to-bracket"></i> Acessar Painel</>
               )}
             </button>
           </form>

@@ -115,7 +115,7 @@ class _GestaoUsuariosScreenState extends State<GestaoUsuariosScreen> {
               backgroundColor: const Color(0xFF1E293B),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white.withOpacity(0.08)),
+                side: BorderSide(color: Colors.white.withOpacity(0.08)),
               ),
               child: Container(
                 constraints: const BoxConstraints(maxWidth: 450),

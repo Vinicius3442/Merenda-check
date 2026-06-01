@@ -111,15 +111,16 @@ O console exibirá o link local (geralmente `http://localhost:5173`). Abra o seu
 
 ## 🔑 Contas de Demonstração (Logins)
 
-Ao executar o script `supabase/schema.sql`, os dados estruturais e as escolas de demonstração são inseridos. Para realizar os logins, crie as contas correspondentes no painel **Supabase Auth Dashboard** (ou utilize os emails abaixo no formulário de login; o sistema se encarregará de auto-vincular o `auth_id` no primeiro acesso):
-
-| Perfil | E-mail Padrão | Senha Padrão recomendada | Função no Sistema |
-| :--- | :--- | :--- | :--- |
-| **Administrador (SysAdmin)** | `admin@merendacheck.gov.br` | *Sua Senha do Supabase Auth* | Gerenciar usuários e ver logs |
-| **Nutricionista** | `nutricao@merendacheck.gov.br` | *Sua Senha do Supabase Auth* | Fichas técnicas e cardápios |
-| **Gestor Escolar** | `gestor@merendacheck.gov.br` | *Sua Senha do Supabase Auth* | Gerir estoque da escola |
-| **Auditor Fiscal** | `auditor@merendacheck.gov.br` | *Sua Senha do Supabase Auth* | Investigar desvios e rastrear |
-| **Operador de Cozinha** | `operador@merendacheck.gov.br` | *Sua Senha do Supabase Auth* | Lançar sobras e pratos servidos |
+Ao executar o script `supabase/schema.sql`, os dados estruturais e as escolas de demonstração são inseridos.
+Email                                  | Senha Inicial
+--   ----------------------------------------|--------------------
+--   operador@merendacheck.gov.br            | Merenda@2026
+--   gestor@merendacheck.gov.br              | Merenda@2026
+--   auditor@merendacheck.gov.br             | Merenda@2026
+--   nutricao@merendacheck.gov.br            | Merenda@2026
+--   licitacao@merendacheck.gov.br           | Merenda@2026
+--   transportadora@merendacheck.gov.br      | Merenda@2026
+--   admin@merendacheck.gov.br               | Merenda@2026
 
 ---
 

@@ -114,7 +114,7 @@ class _OperadorHomeScreenState extends State<OperadorHomeScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Bom dia, ${user?.name?.split(' ').first ?? 'Operador'}! Controle o fluxo de insumos e refeições de hoje.',
+                          'Bom dia, ${user?.name.split(' ').first ?? 'Operador'}! Controle o fluxo de insumos e refeições de hoje.',
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.white.withOpacity(0.7),

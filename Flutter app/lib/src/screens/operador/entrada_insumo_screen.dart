@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:go_router/go_router.dart';
 import '../../providers/auth_provider.dart';
-import '../../utils/theme.dart';
 
 
 class EntradaInsumoScreen extends StatefulWidget {

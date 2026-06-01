@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/auth_provider.dart';
-import 'screens/auth/landing_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/profile_screen.dart';
 import 'screens/operador/operador_home_screen.dart';

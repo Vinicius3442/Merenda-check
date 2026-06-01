@@ -100,7 +100,7 @@ class _AuditorEscolasScreenState extends State<AuditorEscolasScreen> {
                 itemBuilder: (context, index) {
                   final school = filteredSchools[index];
                   final isConforming = school.complianceRate >= 95.0;
-                  final rateColor = school.complianceRate >= 95.0
+                  final rateColor = isConforming
                       ? const Color(0xFF10B981)
                       : school.complianceRate >= 80.0
                           ? const Color(0xFFF59E0B)

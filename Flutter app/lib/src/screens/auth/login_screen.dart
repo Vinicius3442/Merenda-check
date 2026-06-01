@@ -4,6 +4,13 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../providers/auth_provider.dart';
 
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _senhaController = TextEditingController();
